@@ -22,20 +22,37 @@ export interface ConnectButtonProps {
   showBalance?: ResponsiveValue<boolean>;
   chainStatus?: ResponsiveValue<ChainStatus>;
   label?: string;
+  address?: string;
+  chainId?: number;
+  clientId?: string;
+  resource?: string;
+  scopes?: string[];
 }
 
 const defaultProps = {
   accountStatus: 'full',
   chainStatus: { largeScreen: 'full', smallScreen: 'icon' },
-  label: 'Connect Wallet',
+  label: 'Connect Wallet',  
   showBalance: { largeScreen: true, smallScreen: false },
-} as const;
+  address: {},
+  chainId: {},
+  clientId: {},
+  resource: {},
+  scopes: {},
 
+
+} as const;
+//HERE SHOULD BE THE BUTTON ATTRIBUTE, STILL NOT COMPLETE 
 export function ConnectButton({
   accountStatus = defaultProps.accountStatus,
   chainStatus = defaultProps.chainStatus,
   label = defaultProps.label,
   showBalance = defaultProps.showBalance,
+  address = defaultProps.address,
+  chainId = defaultProps.chainId,
+  clientId = defaultProps.clientId,
+  resource = defaultProps.resource,
+  scopes = defaultProps.scopes,
 }: ConnectButtonProps) {
   const chains = useRainbowKitChains();
   const connectionStatus = useConnectionStatus();
@@ -46,6 +63,11 @@ export function ConnectButton({
         account,
         chain,
         mounted,
+        address,
+        chainId,
+        clientId,
+        resource,
+        scopes,
         openAccountModal,
         openChainModal,
         openConnectModal,

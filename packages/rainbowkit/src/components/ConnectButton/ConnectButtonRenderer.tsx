@@ -52,6 +52,11 @@ export interface ConnectButtonRendererProps {
     accountModalOpen: boolean;
     chainModalOpen: boolean;
     connectModalOpen: boolean;
+    address?: string;
+    chainId?: number;
+    clientId?: string;
+    resource?: string;
+    scopes?: string;
   }) => ReactNode;
 }
 

@@ -42,5 +42,10 @@
     "type": "git",
     "url": "git+https://github.com/rainbow-me/rainbowkit.git",
     "directory": "packages/rainbowkit-siwe-next-auth"
+  },
+  "dependencies": {
+    "@wagmi/connectors": "^0.2.6",
+    "ethers": "^6.0.5",
+    "wagmi": "^0.11.6"
   }
 }

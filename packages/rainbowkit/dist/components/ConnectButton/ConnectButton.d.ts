@@ -8,6 +8,11 @@ export interface ConnectButtonProps {
     showBalance?: ResponsiveValue<boolean>;
     chainStatus?: ResponsiveValue<ChainStatus>;
     label?: string;
+    address?: string;
+    chainId?: number;
+    clientId?: string;
+    resource?: string;
+    scopes?: string[];
 }
 export declare function ConnectButton({ accountStatus, chainStatus, label, showBalance, }: ConnectButtonProps): JSX.Element;
 export declare namespace ConnectButton {

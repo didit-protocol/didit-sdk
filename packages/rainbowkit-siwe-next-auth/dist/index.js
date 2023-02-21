@@ -92,7 +92,6 @@ function RainbowKitSiweNextAuthProvider({
       await signOut({ redirect: false });
     },
     verify: async ({ clientId, signature, code }) => {
-      console.log("WITHIN VERIFY ENDPOINT");
       const endpoint = "https://auth.dev.gamium.fun/api/token";
       const parameters = `grant_type=walletconnect&code=${code}&client_id=${clientId}&code=${code}&wallet_signature=${signature}`;
       try {
