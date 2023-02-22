@@ -58,18 +58,19 @@ const wagmiClient = createClient({
   provider,
   webSocketProvider,
 });
-
+console.log("wagmiClient")
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <SessionProvider refetchInterval={0} session={pageProps.session}>
       <WagmiConfig client={wagmiClient}>
-        <RainbowKitSiweNextAuthProvider>
+        <RainbowKitSiweNextAuthProvider clientId='' ressource='' chainId='' address='' scopes='' account='' >
           <RainbowKitProvider appInfo={demoAppInfo} chains={chains}>
             <Component {...pageProps} />
           </RainbowKitProvider>
         </RainbowKitSiweNextAuthProvider>
       </WagmiConfig>
     </SessionProvider>
+    
   );
 }
