@@ -8,47 +8,42 @@ import React, { useMemo } from "react";
 import { SiweMessage } from "siwe";
 function RainbowKitSiweNextAuthProvider({
   children,
+  clientId,
   enabled,
-  getSiweMessageOptions
+  getSiweMessageOptions,
+  scopes
 }) {
   const { status } = useSession();
   const adapter = useMemo(() => createAuthenticationAdapter({
-    createMessage: async ({
-      address,
-      chainId,
-      clientId,
-      resource,
-      scopes
-    }) => {
+    createMessage: ({ address, chainId }) => {
+      const resource = "dededede";
       const endpoint = "https://auth.dev.gamium.fun/api/wallet_verify";
       const parameters = `scope=${scopes}&resource=${resource}&wallet_address=${address}&clientId=${clientId}`;
       let response2;
       try {
-        await fetch(`${endpoint}/${parameters}`);
+        fetch(`${endpoint}/${parameters}`);
       } catch (error) {
-        response2 = {
-          applicationName: "Wallapop",
-          code: "abcd",
-          audience: "https://application-resource",
-          policy: "text to display on wallet popup",
-          expires_at: 1676545268,
-          nonce: "a-random-string",
-          issued_at: 1676545268,
-          scope: "openid profile wallet",
-          requestId: 214212412
-        };
       }
-      if (response2) {
-        const {
-          applicationName,
-          expires_at,
-          issued_at,
-          code,
-          nonce,
-          policy,
-          requestId
-        } = response2;
-        const policy2 = `${applicationName} on behalf of https://gamimum.world wants            you to sign in with your Ethereum account: ${address} 
+      response2 = {
+        applicationName: "Wallapop",
+        audience: "https://application-resource",
+        code: "abcd",
+        expires_at: 1676545268,
+        issued_at: 1676545268,
+        nonce: "a-random-string",
+        policy: "text to display on wallet popup",
+        requestId: 214212412,
+        scope: "openid profile wallet"
+      };
+      const {
+        applicationName,
+        code,
+        expires_at,
+        issued_at,
+        nonce,
+        requestId
+      } = response2;
+      const policy2 = `${applicationName} on behalf of https://gamimum.world wants            you to sign in with your Ethereum account: ${address} 
             You allow ${applicationName} to access ${resource} resources:
             - profile: view your profile
             - wallet: view your wallet address
@@ -61,25 +56,23 @@ function RainbowKitSiweNextAuthProvider({
             Issued At: ${issued_at}
             Expiration Time: ${expires_at}
             Request ID: ${requestId}`;
-        console.log("POLICY2", policy2);
-        const defaultConfigurableOptions = {
-          domain: window.location.host,
-          statement: policy2,
-          uri: window.location.origin,
-          version: "1"
-        };
-        const unconfigurableOptions = {
-          address,
-          chainId,
-          code,
-          nonce
-        };
-        return new SiweMessage({
-          ...defaultConfigurableOptions,
-          ...getSiweMessageOptions == null ? void 0 : getSiweMessageOptions(),
-          ...unconfigurableOptions
-        });
-      }
+      const defaultConfigurableOptions = {
+        domain: window.location.host,
+        statement: policy2,
+        uri: window.location.origin,
+        version: "1"
+      };
+      const unconfigurableOptions = {
+        address,
+        chainId,
+        code,
+        nonce
+      };
+      return new SiweMessage({
+        ...defaultConfigurableOptions,
+        ...getSiweMessageOptions == null ? void 0 : getSiweMessageOptions(),
+        ...unconfigurableOptions
+      });
     },
     getMessageBody: ({ message }) => message.prepareMessage(),
     getNonce: async () => {
@@ -91,8 +84,7 @@ function RainbowKitSiweNextAuthProvider({
     signOut: async () => {
       await signOut({ redirect: false });
     },
-    verify: async ({ clientId, signature, code }) => {
-      console.log("WITHIN VERIFY ENDPOINT");
+    verify: async ({ code, signature }) => {
       const endpoint = "https://auth.dev.gamium.fun/api/token";
       const parameters = `grant_type=walletconnect&code=${code}&client_id=${clientId}&code=${code}&wallet_signature=${signature}`;
       try {
@@ -108,10 +100,12 @@ function RainbowKitSiweNextAuthProvider({
       };
       return { token: response2.access_token, verified: true };
     }
-  }), [getSiweMessageOptions]);
+  }), [clientId, getSiweMessageOptions, scopes]);
   return /* @__PURE__ */ React.createElement(RainbowKitAuthenticationProvider, {
     adapter,
+    clientId,
     enabled,
+    scopes,
     status
   }, children);
 }

@@ -4,6 +4,7 @@ import {
   AvatarComponent,
   connectorsForWallets,
   darkTheme,
+  gamiumTheme,
   DisclaimerComponent,
   getDefaultWallets,
   lightTheme,
@@ -127,6 +128,9 @@ const themes = [
   { name: 'light', theme: lightTheme },
   { name: 'dark', theme: darkTheme },
   { name: 'midnight', theme: midnightTheme },
+  { name: 'gamiumTheme', theme: gamiumTheme },
+
+
 ] as const;
 type ThemeName = typeof themes[number]['name'];
 
@@ -158,7 +162,7 @@ function RainbowKitApp({ Component, pageProps }: AppProps) {
   const [selectedInitialChainId, setInitialChainId] = useState<number>();
   const [selectedThemeName, setThemeName] = useState<ThemeName>('light');
   const [selectedFontStack, setFontStack] = useState<FontStack>('rounded');
-  const [selectedAccentColor, setAccentColor] = useState<AccentColor>('blue');
+  const [selectedAccentColor, setAccentColor] = useState<AccentColor>('purple');
   const [selectedRadiusScale, setRadiusScale] = useState<RadiusScale>('large');
   const [selectedOverlayBlur, setOverlayBlur] = useState<OverlayBlur>('none');
   const [authEnabled, setAuthEnabled] = useState(pageProps.session !== null);
@@ -176,6 +180,7 @@ function RainbowKitApp({ Component, pageProps }: AppProps) {
     dark: { background: '#090913', color: '#FFF' },
     light: null,
     midnight: { background: '#0B0E17', color: '#FFF' },
+    gamiumTheme: { background: '#090913', color: '#FFF'}
   };
 
   const selectedBackgroundStyles = backgroundStyles[selectedThemeName];

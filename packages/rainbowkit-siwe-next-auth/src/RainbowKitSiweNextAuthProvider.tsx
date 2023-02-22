@@ -2,9 +2,9 @@ import {
   createAuthenticationAdapter,
   RainbowKitAuthenticationProvider,
 } from '@rainbow-me/rainbowkit';
-import { getCsrfToken, signIn, signOut, useSession } from 'next-auth/react';
+import { getCsrfToken, signOut, useSession } from 'next-auth/react';
 import React, { ReactNode, useMemo } from 'react';
-import { SiweMessage } from 'siwe';
+import { SiweMessage } from "siwe";
 
 type UnconfigurableMessageOptions = {
   address: string;
@@ -24,50 +24,54 @@ interface RainbowKitSiweNextAuthProviderProps {
   enabled?: boolean;
   getSiweMessageOptions?: GetSiweMessageOptions;
   children: ReactNode;
+  clientId: string;
+  scopes: string;
 }
 
 export function RainbowKitSiweNextAuthProvider({
   children,
+  clientId,
   enabled,
   getSiweMessageOptions,
+  scopes,
 }: RainbowKitSiweNextAuthProviderProps) {
   const { status } = useSession();
   const adapter = useMemo(
     () =>
       createAuthenticationAdapter({
-        createMessage: async ({
-          address,
-          chainId,
-          clientId,
-          resource,
-          scopes,
-        }) => {
+        // THIS METHOD SHOULD NOT BE ASYNC FOR message.prepareMessage() 
+        // THIS METHOD SHOUL ALWAYS RETURN SiweMessage
+        // @Todo: we should get it out from the response2 if statement
+        createMessage: ({ address, chainId }) => {
+          //What have to be this?? Ask hsioming
+          //TO DANI : ALL CONFIGS SHOULD BE IN .ENV OR CONF FILE 
+          const resource = 'dededede';
           const endpoint = 'https://auth.dev.gamium.fun/api/wallet_verify';
           const parameters = `scope=${scopes}&resource=${resource}&wallet_address=${address}&clientId=${clientId}`;
           let response2;
           try {
-            await fetch(`${endpoint}/${parameters}`);
+             fetch(`${endpoint}/${parameters}`);
           } catch (error) {
-            response2 = {
-              applicationName: 'Wallapop',
-              code: 'abcd',
-              audience: 'https://application-resource',
-              policy: 'text to display on wallet popup',
-              expires_at: 1676545268,
-              nonce: 'a-random-string',
-              issued_at: 1676545268,
-              scope: 'openid profile wallet',
-              requestId: 214212412,
-            };
+ 
           }
-          if (response2) {
+          response2 = {
+            applicationName: 'Wallapop',
+            audience: 'https://application-resource',
+            code: 'abcd',
+            expires_at: 1676545268,
+            issued_at: 1676545268,
+            nonce: 'a-random-string',
+            policy: 'text to display on wallet popup',
+            requestId: 214212412,
+            scope: 'openid profile wallet',
+          };
+          //if (response2) {
             const {
               applicationName,
+              code,
               expires_at,
               issued_at,
-              code,
               nonce,
-              policy,
               requestId,
             } = response2;
 
@@ -89,8 +93,6 @@ export function RainbowKitSiweNextAuthProvider({
             Expiration Time: ${expires_at}\n\
             Request ID: ${requestId}`;
 
-            console.log('POLICY2', policy2);
-
             const defaultConfigurableOptions = {
               domain: window.location.host,
               statement: policy2,
@@ -110,10 +112,11 @@ export function RainbowKitSiweNextAuthProvider({
                 : getSiweMessageOptions()),
               ...unconfigurableOptions,
             });
-        }
+        //  }
+
         },
 
-        getMessageBody: ({ message }) => message.prepareMessage(),
+        getMessageBody:  ({ message }) => message.prepareMessage(),
 
         getNonce: async () => {
           const nonce = await getCsrfToken();
@@ -125,13 +128,15 @@ export function RainbowKitSiweNextAuthProvider({
           await signOut({ redirect: false });
         },
 
-        verify: async ({ clientId, signature, code }) => {
+        verify: async ({ code, signature }) => {
           //TOKEN ENDPOINT
           const endpoint = 'https://auth.dev.gamium.fun/api/token';
           const parameters = `grant_type=walletconnect&code=${code}&client_id=${clientId}&code=${code}&wallet_signature=${signature}`;
           try {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const response = await fetch(`${endpoint}/${parameters}`);
           } catch (error) {
+            // eslint-disable-next-line no-console
             console.log('ERROR', error);
           }
           const response2 = {
@@ -143,13 +148,15 @@ export function RainbowKitSiweNextAuthProvider({
           return { token: response2.access_token, verified: true };
         },
       }),
-    [getSiweMessageOptions]
+    [clientId, getSiweMessageOptions, scopes]
   );
 
   return (
     <RainbowKitAuthenticationProvider
       adapter={adapter}
+      clientId={clientId}
       enabled={enabled}
+      scopes={scopes}
       status={status}
     >
       {children}

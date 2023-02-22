@@ -1,3 +1,5 @@
+import { gamiumTheme } from './themes/gamiumTheme';
+
 export * from './components';
 export { getDefaultWallets } from './wallets/getDefaultWallets';
 export { getWalletConnectConnector } from './wallets/getWalletConnectConnector';
@@ -23,6 +25,7 @@ export type { DisclaimerComponent } from './components/RainbowKitProvider/AppCon
 export type { AvatarComponent } from './components/RainbowKitProvider/AvatarContext';
 export { lightTheme } from './themes/lightTheme';
 export { darkTheme } from './themes/darkTheme';
+export { gamiumTheme } from './themes/gamiumTheme';
 export { midnightTheme } from './themes/midnightTheme';
 export { cssStringFromTheme } from './css/cssStringFromTheme';
 export { cssObjectFromTheme } from './css/cssObjectFromTheme';

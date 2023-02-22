@@ -2,6 +2,7 @@ import {
   ConnectButton,
   darkTheme,
   lightTheme,
+  gamiumTheme,
   RainbowKitProvider,
 } from '@rainbow-me/rainbowkit';
 import { Badge } from 'components/Badge/Badge';

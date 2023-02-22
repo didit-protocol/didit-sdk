@@ -2,6 +2,9 @@ import {
   darkTheme
 } from "./chunk-FRF2GUPO.js";
 import {
+  gamiumTheme
+} from "./chunk-TXK7DDYY.js";
+import {
   midnightTheme
 } from "./chunk-O2CXI27D.js";
 import {
@@ -24,7 +27,7 @@ import {
   useChainModal,
   useConnectModal,
   useTransactionStore
-} from "./chunk-ZVY7YVWX.js";
+} from "./chunk-72OYQX2S.js";
 import {
   lightTheme
 } from "./chunk-ATKR4544.js";
@@ -523,6 +526,7 @@ export {
   cssObjectFromTheme,
   cssStringFromTheme,
   darkTheme,
+  gamiumTheme,
   getDefaultWallets,
   getWalletConnectConnector,
   lightTheme,
