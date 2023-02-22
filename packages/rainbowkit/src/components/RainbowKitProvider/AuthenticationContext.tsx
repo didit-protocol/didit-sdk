@@ -15,13 +15,12 @@ export type AuthenticationStatus =
 
 export interface AuthenticationAdapter<Message> {
   getNonce: () => Promise<string>;
-  createMessage: (args: {
-    nonce: string;
-    address: string;
-    chainId: number;
-  }) => Message;
+  createMessage: (args: { address: string; chainId: number }) => Message;
   getMessageBody: (args: { message: Message }) => string;
-  verify: (args: { message: Message; signature: string }) => Promise<boolean>;
+  verify: (args: {
+    signature: string;
+    code: string;
+  }) => Promise<{ verified: boolean; token: string }>;
   signOut: () => Promise<void>;
 }
 
@@ -45,13 +44,17 @@ interface RainbowKitAuthenticationProviderProps<Message>
   extends AuthenticationConfig<Message> {
   enabled?: boolean;
   children: ReactNode;
+  clientId: string;
+  scopes: string;
 }
 
 export function RainbowKitAuthenticationProvider<Message = unknown>({
   adapter,
   children,
+  clientId,
   enabled = true,
-  status,
+  scopes,
+  status
 }: RainbowKitAuthenticationProviderProps<Message>) {
   // When the wallet is disconnected, we want to tell the auth
   // adapter that the user session is no longer active.
@@ -80,8 +83,8 @@ export function RainbowKitAuthenticationProvider<Message = unknown>({
   return (
     <AuthenticationContext.Provider
       value={useMemo(
-        () => (enabled ? { adapter, status } : null),
-        [enabled, adapter, status]
+        () => (scopes && clientId && enabled ? { adapter, status } : null),
+        [enabled, adapter, status, clientId, scopes]
       )}
     >
       {children}

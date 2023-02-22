@@ -62,7 +62,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
       const chainId = activeChain?.id;
       const { nonce } = state;
 
-      if (!address || !chainId || !nonce) {
+      if (!address || !chainId) {
         return;
       }
 
@@ -71,8 +71,10 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         errorMessage: undefined,
         status: 'signing',
       }));
-
-      const message = authAdapter.createMessage({ address, chainId, nonce });
+      const message = await authAdapter.createMessage({
+        address,
+        chainId
+      });
       let signature: string;
 
       try {
@@ -98,7 +100,11 @@ export function SignIn({ onClose }: { onClose: () => void }) {
       setState(x => ({ ...x, status: 'verifying' }));
 
       try {
-        const verified = await authAdapter.verify({ message, signature });
+        const { token, verified } = await authAdapter.verify({
+          code: message?.code,
+          signature,
+        });
+        console.log("TOKEN", token)
 
         if (verified) {
           return;

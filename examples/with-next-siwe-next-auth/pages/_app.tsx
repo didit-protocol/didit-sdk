@@ -59,17 +59,12 @@ const wagmiClient = createClient({
   webSocketProvider,
 });
 
-const getSiweMessageOptions: GetSiweMessageOptions = () => ({
-  statement: 'Sign in to the RainbowKit + SIWE example app',
-});
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <SessionProvider refetchInterval={0} session={pageProps.session}>
       <WagmiConfig client={wagmiClient}>
-        <RainbowKitSiweNextAuthProvider
-          getSiweMessageOptions={getSiweMessageOptions}
-        >
+        <RainbowKitSiweNextAuthProvider clientId='demo-app' scopes='openId'>
           <RainbowKitProvider appInfo={demoAppInfo} chains={chains}>
             <Component {...pageProps} />
           </RainbowKitProvider>
