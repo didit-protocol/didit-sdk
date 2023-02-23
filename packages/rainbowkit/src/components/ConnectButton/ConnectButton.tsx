@@ -27,7 +27,7 @@ export interface ConnectButtonProps {
 const defaultProps = {
   accountStatus: 'full',
   chainStatus: { largeScreen: 'full', smallScreen: 'icon' },
-  label: 'Connect Wallet',
+  label: 'Connect to Gamium',
   showBalance: { largeScreen: true, smallScreen: false },
 } as const;
 

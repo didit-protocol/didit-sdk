@@ -193,7 +193,7 @@ const Example = ({ authEnabled }: AppContextProps) => {
                   if (!connected) {
                     return (
                       <button onClick={openConnectModal} type="button">
-                        Connect Wallet
+                        Connect to Gamium
                       </button>
                     );
                   }

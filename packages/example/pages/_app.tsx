@@ -5,6 +5,7 @@ import {
   connectorsForWallets,
   darkTheme,
   DisclaimerComponent,
+  gamiumTheme,
   getDefaultWallets,
   lightTheme,
   midnightTheme,
@@ -127,6 +128,7 @@ const themes = [
   { name: 'light', theme: lightTheme },
   { name: 'dark', theme: darkTheme },
   { name: 'midnight', theme: midnightTheme },
+  { name: 'gamiumTheme', theme: gamiumTheme },
 ] as const;
 type ThemeName = typeof themes[number]['name'];
 
@@ -156,9 +158,9 @@ type ModalSize = typeof modalSizes[number];
 function RainbowKitApp({ Component, pageProps }: AppProps) {
   const { disconnect } = useDisconnect();
   const [selectedInitialChainId, setInitialChainId] = useState<number>();
-  const [selectedThemeName, setThemeName] = useState<ThemeName>('light');
+  const [selectedThemeName, setThemeName] = useState<ThemeName>('gamiumTheme');
   const [selectedFontStack, setFontStack] = useState<FontStack>('rounded');
-  const [selectedAccentColor, setAccentColor] = useState<AccentColor>('blue');
+  const [selectedAccentColor, setAccentColor] = useState<AccentColor>('purple');
   const [selectedRadiusScale, setRadiusScale] = useState<RadiusScale>('large');
   const [selectedOverlayBlur, setOverlayBlur] = useState<OverlayBlur>('none');
   const [authEnabled, setAuthEnabled] = useState(pageProps.session !== null);
@@ -174,6 +176,7 @@ function RainbowKitApp({ Component, pageProps }: AppProps) {
 
   const backgroundStyles = {
     dark: { background: '#090913', color: '#FFF' },
+    gamiumTheme: { background: '#090913', color: '#FFF' },
     light: null,
     midnight: { background: '#0B0E17', color: '#FFF' },
   };

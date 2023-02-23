@@ -35,7 +35,7 @@ const Home: NextPage = () => {
                 if (!mounted || !account || !chain) {
                   return (
                     <button onClick={openConnectModal} type="button">
-                      Connect Wallet
+                      Connect to Gamium
                     </button>
                   );
                 }
