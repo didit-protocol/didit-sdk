@@ -104,9 +104,9 @@ export function SignIn({ onClose }: { onClose: () => void }) {
           code: message?.code,
           signature,
         });
-        console.log("TOKEN", token)
-
         if (verified) {
+          localStorage.setItem("accessToken", token)
+          //SHOULD AUTHENTHICATE
           return;
         } else {
           throw new Error();

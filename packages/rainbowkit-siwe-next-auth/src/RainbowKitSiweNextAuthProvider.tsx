@@ -40,79 +40,14 @@ export function RainbowKitSiweNextAuthProvider({
     () =>
       createAuthenticationAdapter({
         createMessage: async ({ address, chainId }) => {
-          console.log("CLIENT ID", clientId)
-
-          //What have to be this?? Ask hsioming
-          const resource = 'dededede';
-          const endpoint = 'https://auth.dev.gamium.fun/api/wallet_verify';
-          const parameters = `scope=${scopes}&resource=${resource}&wallet_address=${address}&clientId=${clientId}`;
-          let response2;
+          const parameters = walletAuthPayload(address);
+          const endpoint = `${clientId}/oauth/wallet_authorization`;
           try {
-            await fetch(`${endpoint}/${parameters}`);
+              var { code, nonce, policy } = await postRequest(endpoint, parameters);
           } catch (error) {
-            response2 = {
-              applicationName: 'Wallapop',
-              code: 'abcd',
-              audience: 'https://application-resource',
-              policy: 'text to display on wallet popup',
-              expires_at: 1676545268,
-              nonce: 'a-random-string',
-              issued_at: 1676545268,
-              scope: 'openid profile wallet',
-              requestId: 214212412,
-            };
+            //throw new Error(`ClientId: ${clientId} or scopes: ${scopes} not valid`);
           }
-          if (response2) {
-            const {
-              applicationName,
-              expires_at,
-              issued_at,
-              code,
-              nonce,
-              policy,
-              requestId,
-            } = response2;
-
-            //NEED TO GENERATE THE MESSAGE ON SCOPES
-            //Not Before: ${not-before}\
-            //POLICY ALL TOGETHER
-            const policy2 = `${applicationName} on behalf of https://gamimum.world wants\
-            you to sign in with your Ethereum account: ${address} \n\
-            You allow ${applicationName} to access ${resource} resources:\n\
-            - profile: view your profile\n\
-            - wallet: view your wallet address\n\
-            You accept the Terms of Service of:\n\
-            - https://gamimum.world/tos\n\
-            - https://application-resource/tos\n\
-            URI: https://gamimum.world\n\
-            Chain ID: ${chainId}\n\
-            Nonce: ${nonce}\n\
-            Issued At: ${issued_at}\n\
-            Expiration Time: ${expires_at}\n\
-            Request ID: ${requestId}`;
-
-            console.log('POLICY2', policy2);
-
-            const defaultConfigurableOptions = {
-              domain: window.location.host,
-              statement: policy2,
-              uri: window.location.origin,
-              version: '1',
-            };
-            const unconfigurableOptions = {
-              address,
-              chainId,
-              code,
-              nonce,
-            };
-            return new SiweMessage({
-              ...defaultConfigurableOptions,
-              ...(getSiweMessageOptions == null
-                ? void 0
-                : getSiweMessageOptions()),
-              ...unconfigurableOptions,
-            });
-        }
+            return siweMessageToSign(policy, address, chainId, code, nonce);
         },
 
         getMessageBody: ({ message }) => message.prepareMessage(),
@@ -128,21 +63,15 @@ export function RainbowKitSiweNextAuthProvider({
         },
 
         verify: async ({ signature, code }) => {
-          //TOKEN ENDPOINT
-          const endpoint = 'https://auth.dev.gamium.fun/api/token';
-          const parameters = `grant_type=walletconnect&code=${code}&client_id=${clientId}&code=${code}&wallet_signature=${signature}`;
+          const endpoint = `${clientId}/token`;
+          const parameters = `code=${code}&wallet_signature=${signature}`;
           try {
-            const response = await fetch(`${endpoint}/${parameters}`);
+            var { access_token, expires_in, id_token, scope } = await postRequest(endpoint, parameters)
           } catch (error) {
-            console.log('ERROR', error);
+            var access_token = 'XXX.XXX.XXXX'
+            //throw new Error('Error when accessing token')
           }
-          const response2 = {
-            access_token: 'A.JWT.Token',
-            expires_in: 3600,
-            id_token: '...',
-            scope: 'openid profile wallet', // if requesting with `openid` scope
-          };
-          return { token: response2.access_token, verified: true };
+          return { token: access_token, verified: true };
         },
       }),
     [getSiweMessageOptions]
@@ -159,4 +88,70 @@ export function RainbowKitSiweNextAuthProvider({
       {children}
     </RainbowKitAuthenticationProvider>
   );
+
+  function siweMessageToSign(policy: string, address: string, chainId: number, code: any, nonce: any) {
+      
+    //ONLY FOR THE SAKE OF A WORKING EXAMPLE
+    const policy2 = `https://example.com on behalf of https://gamimum.world wants\
+      you to sign in with your Ethereum account: ${address} \n\
+      You allow https://example.com to access https://gamium.world.com resources:\n\
+      - profile: view your profile\n\
+      - wallet: view your wallet address\n\
+      You accept the Terms of Service of:\n\
+      - https://gamimum.world/tos\n\
+      - https://application-resource/tos\n\
+      URI: https://gamimum.world\n\
+      Chain ID: ${chainId}\n\
+      Nonce: ${nonce}\n\
+      Issued At: 3132311412\n\
+      Expiration Time: 3132311412\n\
+      Request ID: 92181282121`;
+
+    const defaultConfigurableOptions = {
+      domain: window.location.host,
+      statement: policy ?? policy2,
+      uri: window.location.origin,
+      version: '1',
+    };
+    const unconfigurableOptions = {
+      address,
+      chainId,
+      code,
+      nonce,
+    };
+
+    const messageToSign = new SiweMessage({
+      ...defaultConfigurableOptions,
+      ...(getSiweMessageOptions == null
+        ? void 0
+        : getSiweMessageOptions()),
+      ...unconfigurableOptions,
+    });
+    return messageToSign;
+  }
+
+  function walletAuthPayload(address: string) {
+    const data = {
+      scope: scopes,
+      wallet_address: address,
+    };
+    var formBody = [];
+    for (var property in data) {
+      var encodedKey = encodeURIComponent(property);
+      var encodedValue = encodeURIComponent(data[property]);
+      formBody.push(encodedKey + '=' + encodedValue);
+    }
+    const formBodyJoined = formBody.join('&');
+    return formBodyJoined;
+  }
 }
+async function postRequest(endpoint: string, formBodyJoined: string) {
+  return fetch(`${endpoint}`, {
+    body: formBodyJoined,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+    },
+    method: 'POST',
+  });
+}
+
