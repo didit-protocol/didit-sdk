@@ -56,11 +56,23 @@ export function SignIn({ onClose }: { onClose: () => void }) {
   const { signMessageAsync } = useSignMessage();
   const { disconnect } = useDisconnect();
   const cancel = () => disconnect();
-
+  //logic for the move to next page
+  const authenticateUser = async (accessToken: string) => {
+    // Make API call to authenticate user using accessToken
+    const response = await fetch('/oauth/wallet_authorization', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+    });
+    JSON.stringify({ accessToken });
+    const data = await response.json();
+    return data;
+  };
   const signIn = async () => {
     try {
       const chainId = activeChain?.id;
-      const { nonce } = state;
+      //const { nonce } = state;
 
       if (!address || !chainId) {
         return;
@@ -73,7 +85,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
       }));
       const message = await authAdapter.createMessage({
         address,
-        chainId
+        chainId,
       });
       let signature: string;
 
@@ -105,9 +117,14 @@ export function SignIn({ onClose }: { onClose: () => void }) {
           signature,
         });
         if (verified) {
-          localStorage.setItem("accessToken", token)
-          //SHOULD AUTHENTHICATE
-          return;
+          // Authenticate user here
+          const response = await authenticateUser(token);
+          if (response.status === 'success') {
+            // Redirect to new page with accessToken as prop
+            window.location.href = `/user_info?accessToken=${token}`;
+          } else {
+            throw new Error();
+          }
         } else {
           throw new Error();
         }

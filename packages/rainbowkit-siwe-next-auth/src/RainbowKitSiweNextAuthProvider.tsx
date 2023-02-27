@@ -66,7 +66,7 @@ export function RainbowKitSiweNextAuthProvider({
           const endpoint = `${clientId}/token`;
           const parameters = `code=${code}&wallet_signature=${signature}`;
           try {
-            var { access_token, expires_in, id_token, scope } = await postRequest(endpoint, parameters)
+            var { access_token } = await postRequest(endpoint, parameters)
           } catch (error) {
             var access_token = 'XXX.XXX.XXXX'
             //throw new Error('Error when accessing token')
@@ -89,8 +89,8 @@ export function RainbowKitSiweNextAuthProvider({
     </RainbowKitAuthenticationProvider>
   );
 
-  function siweMessageToSign(policy: string, address: string, chainId: number, code: any, nonce: any) {
-      
+  function siweMessageToSign(policy: string, address: string, chainId: number, code: any, nonce: any) 
+    {
     //ONLY FOR THE SAKE OF A WORKING EXAMPLE
     const policy2 = `https://example.com on behalf of https://gamimum.world wants\
       you to sign in with your Ethereum account: ${address} \n\
@@ -122,28 +122,10 @@ export function RainbowKitSiweNextAuthProvider({
 
     const messageToSign = new SiweMessage({
       ...defaultConfigurableOptions,
-      ...(getSiweMessageOptions == null
-        ? void 0
-        : getSiweMessageOptions()),
+      ...(getSiweMessageOptions == null ? void 0 : getSiweMessageOptions()),
       ...unconfigurableOptions,
     });
     return messageToSign;
-  }
-
-  function walletAuthPayload(address: string) {
-    const data = {
-      scope: scopes,
-      wallet_address: address,
-    };
-    var formBody = [];
-    for (var property in data) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(data[property]);
-      formBody.push(encodedKey + '=' + encodedValue);
-    }
-    const formBodyJoined = formBody.join('&');
-    return formBodyJoined;
-  }
 }
 async function postRequest(endpoint: string, formBodyJoined: string) {
   return fetch(`${endpoint}`, {
@@ -154,4 +136,6 @@ async function postRequest(endpoint: string, formBodyJoined: string) {
     method: 'POST',
   });
 }
-
+  function walletAuthPayload(address: string) {
+    throw new Error('Function not implemented.');
+}

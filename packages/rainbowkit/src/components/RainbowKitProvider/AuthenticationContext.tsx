@@ -54,7 +54,7 @@ export function RainbowKitAuthenticationProvider<Message = unknown>({
   clientId,
   enabled = true,
   scopes,
-  status
+  status,
 }: RainbowKitAuthenticationProviderProps<Message>) {
   // When the wallet is disconnected, we want to tell the auth
   // adapter that the user session is no longer active.
