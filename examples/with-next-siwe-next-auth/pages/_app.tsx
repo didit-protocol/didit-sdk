@@ -64,7 +64,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <SessionProvider refetchInterval={0} session={pageProps.session}>
       <WagmiConfig client={wagmiClient}>
-        <RainbowKitSiweNextAuthProvider clientId='https://auth.gamium.fun' scopes='openId'>
+        <RainbowKitSiweNextAuthProvider clientId='http://127.0.0.1:8000/oauth' scopes='openId'>
           <RainbowKitProvider appInfo={demoAppInfo} chains={chains}>
             <Component {...pageProps} />
           </RainbowKitProvider>

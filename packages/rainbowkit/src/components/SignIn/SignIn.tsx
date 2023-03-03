@@ -56,11 +56,11 @@ export function SignIn({ onClose }: { onClose: () => void }) {
   const { signMessageAsync } = useSignMessage();
   const { disconnect } = useDisconnect();
   const cancel = () => disconnect();
+  const GAMIUM_LOCALSTORAGE = 'GTOKEN';
 
   const signIn = async () => {
     try {
       const chainId = activeChain?.id;
-      const { nonce } = state;
 
       if (!address || !chainId) {
         return;
@@ -73,13 +73,14 @@ export function SignIn({ onClose }: { onClose: () => void }) {
       }));
       const message = await authAdapter.createMessage({
         address,
-        chainId
+        chainId,
       });
       let signature: string;
 
       try {
+        const messageBody = authAdapter.getMessageBody({ message });
         signature = await signMessageAsync({
-          message: authAdapter.getMessageBody({ message }),
+          message: messageBody,
         });
       } catch (error) {
         if (error instanceof UserRejectedRequestError) {
@@ -101,13 +102,11 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
       try {
         const { token, verified } = await authAdapter.verify({
-          code: message?.code,
+          code: message?.requestId,
           signature,
         });
         if (verified) {
-          localStorage.setItem("accessToken", token)
-          //SHOULD AUTHENTHICATE
-          return;
+          localStorage.setItem(GAMIUM_LOCALSTORAGE, token);
         } else {
           throw new Error();
         }
