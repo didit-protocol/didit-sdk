@@ -107,6 +107,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         });
         if (verified) {
           localStorage.setItem(GAMIUM_LOCALSTORAGE, token);
+          setState(x => ({ ...x, status: 'idle' }));
         } else {
           throw new Error();
         }

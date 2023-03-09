@@ -1,9 +1,9 @@
 import {
   createAuthenticationAdapter,
   RainbowKitAuthenticationProvider,
-} from '@rainbow-me/rainbowkit';
+} from 'diditgamiumsdk';
 import { getCsrfToken, signOut, useSession } from 'next-auth/react';
-import React, { ReactNode, useMemo } from 'react';
+import React, { ReactNode, useMemo, useState } from 'react';
 import { SiweMessage } from 'siwe';
 
 type UnconfigurableMessageOptions = {
@@ -35,7 +35,9 @@ export function RainbowKitSiweNextAuthProvider({
   getSiweMessageOptions,
   scopes,
 }: RainbowKitSiweNextAuthProviderProps) {
-  const { status } = useSession();
+  const [status, setStatus] = useState<
+  'loading' | 'authenticated' | 'unauthenticated'
+>('unauthenticated');
   const adapter = useMemo(
     () =>
       createAuthenticationAdapter({
@@ -63,9 +65,7 @@ export function RainbowKitSiweNextAuthProvider({
         getMessageBody: ({ message }) => message.prepareMessage(),
 
         getNonce: async () => {
-          const nonce = await getCsrfToken();
-          if (!nonce) throw new Error();
-          return nonce;
+          return "isMandatoryButNotUsed";
         },
 
         signOut: async () => {
@@ -77,6 +77,7 @@ export function RainbowKitSiweNextAuthProvider({
           const parameters = `code=${code}&wallet_signature=${signature}`;
           try {
             var { access_token } = await postRequest(endpoint, parameters);
+            setStatus('authenticated')
           } catch (error) {
             throw new Error('Error when accessing token');
           }
@@ -141,11 +142,12 @@ export function RainbowKitSiweNextAuthProvider({
       wallet_address: address,
     };
     var formBody = [];
-    for (var property in data) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(data[property]);
-      formBody.push(encodedKey + '=' + encodedValue);
-    }
+    var encodedKey = encodeURIComponent("scope");
+    var encodedValue = encodeURIComponent(scopes);
+    formBody.push(encodedKey + '=' + encodedValue);
+    var encodedKey = encodeURIComponent('wallet_address');
+    var encodedValue = encodeURIComponent(address);
+    formBody.push(encodedKey + '=' + encodedValue);
     const formBodyJoined = formBody.join('&');
     return formBodyJoined;
   }
