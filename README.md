@@ -1,79 +1,56 @@
-<a href="https://rainbowkit.com">
-  <img alt="rainbowkit" src="https://user-images.githubusercontent.com/372831/168174718-685980e0-391e-4621-94a1-29bf83979fa5.png" />
-</a>
+# Didit-SDK
 
-# RainbowKit
+**The best way to connect a wallet**
 
-**The best way to connect a wallet 🌈**
-
-RainbowKit is a [React](https://reactjs.org/) library that makes it easy to add wallet connection to your dapp.
+Didit-SDK is a [React](https://reactjs.org/) library that makes it easy to add wallet connection to your dapp.
 
 - 🔥 Out-of-the-box wallet management
 - ✅ Easily customizable
 - 🦄 Built on top of [wagmi](https://github.com/tmm/wagmi) and [ethers](https://docs.ethers.io)
-
-## Quick start
-
-You can scaffold a new RainbowKit + [wagmi](https://wagmi.sh) + [Next.js](https://nextjs.org) app with one of the following commands, using your package manager of choice:
-
-```bash
-npm init @rainbow-me/rainbowkit@latest
-# or
-pnpm create @rainbow-me/rainbowkit@latest
-# or
-yarn create @rainbow-me/rainbowkit
-```
-
-## Documentation
-
-For full documentation, visit [rainbowkit.com](https://rainbowkit.com).
-
-### Try it out
-
-You can use the CodeSandbox links below try out RainbowKit:
-
-- with [Create React App](https://codesandbox.io/s/rainbowkit-create-react-app-1vwx1r)
-- with [Create React App (TypeScript)](https://codesandbox.io/s/rainbowkit-create-typescript-app-xuxnqy)
-- with [Next.js](https://codesandbox.io/s/rainbowkit-nextjs-gz890p)
-
 ## Examples
 
 The following examples are provided in the [examples](./examples/) folder of this repo.
 
-- `with-create-react-app`
-- `with-next`
-- `with-next-custom-button`
-- `with-next-mint-nft`
-- `with-next-siwe-next-auth`
-- `with-next-siwe-iron-session`
-- `with-remix`
+- SDK for reactJS
+  - ```cd lib-didit-typescript-sdk```
+  - ```pnpm i```
+  - ```cd examples/with-create-react-app```
+  - ```pnpm dev```
+  - try it out on localhost:3030!
 
-### Running examples
+### How to integrate
 
-To run an example locally, install dependencies.
+To integrate didit you will need 3 things:
+1) [Wagmi client](https://github.com/tmm/wagmi)
+2) SetUp the DiditProvider
+    - ```npm i diditprovidertest```
+    - Pass the next parameters to the provider
+      - **client_id (str)**: URL to you backend server [i.e: 'http://127.0.0.1:8000/avatar/integrations']
+      - **scopes (str)**: Requested scopes [i.e: 'openid profile']
+      - Example:  
+      `<DiditProvider client_id='http://127.0.0.1:8000/avatar/integrations' scopes='openid'>`
+3) Set up the DiditAuthProvider:
+  - ```npm i diditsdktest```
+  - Pass the next parameters to the provider:
+    - **chains (str)**: Wagmi config of the requested chain [i.e: wagmi.chains]
+  - Example: `<DiditAuthProvider chains={chains} theme={ midnightTheme() }>`
 
-```bash
-pnpm install
+Full code Example:
+
 ```
-
-Then go into an example directory, eg: `with-next`.
-
-```bash
-cd examples/with-next
+    <WagmiConfig client={wagmiClient}>
+      <DiditProvider client_id='http://127.0.0.1:8000/avatar/integrations' scopes='openid'>
+          <DiditAuthProvider chains={chains} theme={ midnightTheme() }>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'flex-end',
+        padding: 12,
+      }}
+    >
+      <ConnectButton />
+    </div>
+       </DiditAuthProvider>
+      </DiditProvider>
+    </WagmiConfig>
 ```
-
-Then run the dev script.
-
-```bash
-pnpm run dev
-```
-
-## Contributing
-
-Please follow our [contributing guidelines](./.github/CONTRIBUTING.md).
-
-## License
-
-Licensed under the MIT License, Copyright © 2022-present [Rainbow](https://rainbow.me).
-
-See [LICENSE](./LICENSE) for more information.
