@@ -24,17 +24,17 @@ npm install @rainbow-me/rainbowkit-siwe-next-auth
 
 ### Set up the provider
 
-In your `App` component, import `RainbowKitSiweNextAuthProvider`.
+In your `App` component, import `DiditAuthProvider`.
 
 ```tsx
-import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
+import { DiditAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
 ```
 
-Wrap `RainbowKitProvider` with `RainbowKitSiweNextAuthProvider`, ensuring it's nested within NextAuth's `SessionProvider` so that it has access to the session.
+Wrap `DiditAuthProvider` with `DiditAuthProvider`, ensuring it's nested within NextAuth's `SessionProvider` so that it has access to the session.
 
 ```tsx
-import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { DiditAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
+import { DiditAuthProvider } from '@rainbow-me/rainbowkit';
 import { SessionProvider } from 'next-auth/react';
 import { AppProps } from 'next/app';
 import { WagmiConfig } from 'wagmi';
@@ -43,28 +43,28 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <WagmiConfig {...etc}>
       <SessionProvider refetchInterval={0} session={pageProps.session}>
-        <RainbowKitSiweNextAuthProvider>
-          <RainbowKitProvider {...etc}>
+        <DiditAuthProvider>
+          <DiditAuthProvider {...etc}>
             <Component {...pageProps} />
           </RainbowKitProvider>
-        </RainbowKitSiweNextAuthProvider>
+        </RainbowKitProvider>
       </SessionProvider>
     </WagmiConfig>
   );
 }
 ```
 
-With `RainbowKitSiweNextAuthProvider` in place, your users will now be prompted to authenticate by signing a message once they've connected their wallet.
+With `DiditAuthProvider` in place, your users will now be prompted to authenticate by signing a message once they've connected their wallet.
 
 ### Customize the SIWE message options
 
-You can customize the [SIWE message options](https://github.com/spruceid/siwe/blob/v1.1.6/packages/siwe/lib/client.ts#L29) by passing a function to the `getSiweMessageOptions` prop on `RainbowKitSiweNextAuthProvider`.
+You can customize the [SIWE message options](https://github.com/spruceid/siwe/blob/v1.1.6/packages/siwe/lib/client.ts#L29) by passing a function to the `getSiweMessageOptions` prop on `DiditAuthProvider`.
 
 This function will be called whenever a new message is created. Options returned from this function will be merged with the defaults.
 
 ```tsx
 import {
-  RainbowKitSiweNextAuthProvider,
+  DiditAuthProvider,
   GetSiweMessageOptions,
 } from '@rainbow-me/rainbowkit-siwe-next-auth';
 
@@ -72,9 +72,9 @@ const getSiweMessageOptions: GetSiweMessageOptions = () => ({
   statement: 'Sign in to my RainbowKit app',
 });
 
-<RainbowKitSiweNextAuthProvider getSiweMessageOptions={getSiweMessageOptions}>
+<DiditAuthProvider getSiweMessageOptions={getSiweMessageOptions}>
   ...
-</RainbowKitSiweNextAuthProvider>;
+</RainbowKitProvider>;
 ```
 
 ### Access the session server-side

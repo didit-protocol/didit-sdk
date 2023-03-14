@@ -21,13 +21,15 @@ export interface AuthenticationAdapter<Message> {
     chainId: number;
   }) => Message;
   getMessageBody: (args: { message: Message }) => string;
-  verify: (args: { message: Message; signature: string }) => Promise<boolean>;
+  verify: (args: { code: string; signature: string }) => Promise<boolean>;
   signOut: () => Promise<void>;
 }
 
 export interface AuthenticationConfig<Message> {
   adapter: AuthenticationAdapter<Message>;
   status: AuthenticationStatus;
+  token: string;
+  address: string;
 }
 
 // Right now this function only serves to infer the generic Message type
@@ -49,9 +51,11 @@ interface RainbowKitAuthenticationProviderProps<Message>
 
 export function RainbowKitAuthenticationProvider<Message = unknown>({
   adapter,
+  address = '',
   children,
   enabled = true,
   status,
+  token = '',
 }: RainbowKitAuthenticationProviderProps<Message>) {
   // When the wallet is disconnected, we want to tell the auth
   // adapter that the user session is no longer active.
@@ -75,13 +79,13 @@ export function RainbowKitAuthenticationProvider<Message = unknown>({
     if (isDisconnected && status === 'authenticated') {
       adapter.signOut();
     }
-  }, [status, adapter, isDisconnected]);
+  }, [status, adapter, isDisconnected, token, address]);
 
   return (
     <AuthenticationContext.Provider
       value={useMemo(
-        () => (enabled ? { adapter, status } : null),
-        [enabled, adapter, status]
+        () => (enabled ? { adapter, address, status, token } : null),
+        [enabled, adapter, status, token, address]
       )}
     >
       {children}
@@ -103,4 +107,9 @@ export function useAuthenticationStatus() {
   const contextValue = useContext(AuthenticationContext);
 
   return contextValue?.status ?? null;
+}
+
+export function useDiditStatus() {
+  const { address, status, token } = useContext(AuthenticationContext) ?? {};
+  return { address, status, token };
 }

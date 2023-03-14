@@ -48,7 +48,7 @@ export type Theme =
       darkMode: ThemeVars;
     };
 
-export interface RainbowKitProviderProps {
+export interface DiditAuthProviderProps {
   chains: RainbowKitChain[];
   initialChain?: RainbowKitChain | number;
   id?: string;
@@ -67,7 +67,7 @@ export interface RainbowKitProviderProps {
 
 const defaultTheme = lightTheme();
 
-export function RainbowKitProvider({
+export function DiditAuthProvider({
   chains,
   initialChain,
   id,
@@ -78,7 +78,7 @@ export function RainbowKitProvider({
   coolMode = false,
   avatar,
   modalSize = ModalSizeOptions.WIDE,
-}: RainbowKitProviderProps) {
+}: DiditAuthProviderProps) {
   usePreloadImages();
 
   useAccount({ onDisconnect: clearWalletConnectDeepLink });

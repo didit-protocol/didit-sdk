@@ -412,7 +412,7 @@
 
 ### Patch Changes
 
-- 4333995: Support filtering chains before passing them to `RainbowKitProvider`.
+- 4333995: Support filtering chains before passing them to `DiditAuthProvider`.
 
   This is particularly useful if you're building an L2-only project and you want mainnet to be available for resolving ENS details but you don't want it to be listed in the chain selector.
 
@@ -438,7 +438,7 @@
 
 ### Patch Changes
 
-- 1a4f2f7: Add a 'compact' modal size option for developers looking to use a simpler version of RainbowKit, available by setting the `modalSize` prop to `"compact"` on `RainbowKitProvider`.
+- 1a4f2f7: Add a 'compact' modal size option for developers looking to use a simpler version of RainbowKit, available by setting the `modalSize` prop to `"compact"` on `DiditAuthProvider`.
 
 ## 0.4.6
 
@@ -464,20 +464,20 @@
 ### Patch Changes
 
 - 4857e75: Fix duplicate wallets in connect modal after hot module reloading
-- c6a1033: Added `initialChain` prop to `RainbowKitProvider`
+- c6a1033: Added `initialChain` prop to `DiditAuthProvider`
 
-  RainbowKit (as of v0.3.2) automatically connects to the first chain in the `chains` array passed to `RainbowKitProvider`. This behavior can now be customized via the `initialChain` prop.
+  RainbowKit (as of v0.3.2) automatically connects to the first chain in the `chains` array passed to `DiditAuthProvider`. This behavior can now be customized via the `initialChain` prop.
 
   The initial chain can be configured using a chain ID.
 
   ```tsx
-  <RainbowKitProvider chains={chains} initialChain={1}>
+  <DiditAuthProvider chains={chains} initialChain={1}>
   ```
 
   As a convenience, you can also pass a chain object.
 
   ```tsx
-  <RainbowKitProvider chains={chains} initialChain={chain.mainnet}>
+  <DiditAuthProvider chains={chains} initialChain={chain.mainnet}>
   ```
 
 - 396308f: Added Hooks for programmatically opening modals
@@ -680,7 +680,7 @@
 ### Patch Changes
 
 - 0686c2f: Fix visual bug where focus outlines were out of sync with buttons/links on click when toggling between keyboard and mouse usage
-- dfc7d13: Add the `avatar` prop to `RainbowKitProvider` to allow developers to provide their own custom avatar component.
+- dfc7d13: Add the `avatar` prop to `DiditAuthProvider` to allow developers to provide their own custom avatar component.
 
 ## 0.2.2
 
@@ -701,7 +701,7 @@
 
 ### Patch Changes
 
-- a921853: Add `disclaimer` to the `appInfo` property in `RainbowKitProvider`, which displays a custom disclaimer at the bottom of the connection modal's welcome screen
+- a921853: Add `disclaimer` to the `appInfo` property in `DiditAuthProvider`, which displays a custom disclaimer at the bottom of the connection modal's welcome screen
 
 ## 0.2.0
 
@@ -893,11 +893,11 @@
   When using a custom accent color:
 
   ```tsx
-  import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
+  import { DiditAuthProvider, darkTheme } from '@rainbow-me/rainbowkit';
 
   const App = () => {
     return (
-      <RainbowKitProvider
+      <DiditAuthProvider
         theme={darkTheme({
           accentColor: '#7b3fe4',
           accentColorForeground: 'white',
@@ -912,11 +912,11 @@
   When using a built-in accent color preset:
 
   ```tsx
-  import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
+  import { DiditAuthProvider, darkTheme } from '@rainbow-me/rainbowkit';
 
   const App = () => {
     return (
-      <RainbowKitProvider
+      <DiditAuthProvider
         theme={darkTheme({
           ...darkTheme.accentColors.purple,
         })}
@@ -927,7 +927,7 @@
   };
   ```
 
-- e9a374e: You now pass the `learnMoreUrl` as a property to the new `appInfo` property instead of directly to `RainbowkitProvider`. This `appInfo` also exposes `appName` to display your app's name in Rainbowkit.
+- e9a374e: You now pass the `learnMoreUrl` as a property to the new `appInfo` property instead of directly to `DiditAuthProvider`. This `appInfo` also exposes `appName` to display your app's name in Rainbowkit.
 - 2c79870: Reserve height of `ConnectButton` during server/static render
 
   In order to reduce layout shift during page load, the `ConnectButton` component now renders its content in an invisible and inert state before mount.
@@ -1013,7 +1013,7 @@
   const App = () => {
     return (
       <WagmiProvider autoConnect connectors={connectors} provider={provider}>
-        <RainbowKitProvider chains={chains}>
+        <DiditAuthProvider chains={chains}>
           <YourApp />
         </RainbowKitProvider>
       </WagmiProvider>
@@ -1035,7 +1035,7 @@
   const App = () => {
     return (
       <WagmiProvider client={wagmiClient}>
-        <RainbowKitProvider chains={chains}>
+        <DiditAuthProvider chains={chains}>
           <YourApp />
         </RainbowKitProvider>
       </WagmiProvider>
@@ -1070,14 +1070,14 @@
 
   You can now opt in to displaying recent transactions within RainbowKit’s account modal. Note that all transactions must be manually registered with RainbowKit in order to be displayed.
 
-  First enable the `showRecentTransactions` option on `RainbowKitProvider`.
+  First enable the `showRecentTransactions` option on `DiditAuthProvider`.
 
   ```tsx
-  import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+  import { DiditAuthProvider } from '@rainbow-me/rainbowkit';
 
   const App = () => {
     return (
-      <RainbowKitProvider showRecentTransactions={true} {...etc}>
+      <DiditAuthProvider showRecentTransactions={true} {...etc}>
         {/* ... */}
       </RainbowKitProvider>
     );
@@ -1159,7 +1159,7 @@
 
   ```tsx
   import {
-    RainbowKitProvider,
+    DiditAuthProvider,
     Chain,
     getDefaultWallets,
   } from '@rainbow-me/rainbowkit';
@@ -1200,7 +1200,7 @@
   const App = () => {
     return (
       <WagmiProvider client={wagmiClient}>
-        <RainbowKitProvider chains={chains}>
+        <DiditAuthProvider chains={chains}>
           <YourApp />
         </RainbowKitProvider>
       </WagmiProvider>
@@ -1216,7 +1216,7 @@
     Chain,
     configureChains,
     getDefaultWallets,
-    RainbowKitProvider,
+    DiditAuthProvider,
   } from '@rainbow-me/rainbowkit';
   import { createClient, WagmiProvider, chain } from 'wagmi';
   import { providers } from 'ethers';
@@ -1240,7 +1240,7 @@
   const App = () => {
     return (
       <WagmiProvider client={wagmiClient}>
-        <RainbowKitProvider chains={chains}>
+        <DiditAuthProvider chains={chains}>
           <YourApp />
         </RainbowKitProvider>
       </WagmiProvider>
@@ -1272,7 +1272,7 @@
   - The `iconUrl` property now optionally accepts an async function that returns a string (`() => Promise<string>`). This is to support bundling lazy-loadable Base64 images in JavaScript when publishing to npm. All built-in chains are now using this feature to delay loading of images until after app hydration.
   - The `iconBackground` property has been added to improve the visual appearance of chain icons while loading.
 
-- 13fa857: `RainbowKitProvider` must now be nested inside `WagmiProvider` since it now makes use of wagmi hooks internally.
+- 13fa857: `DiditAuthProvider` must now be nested inside `WagmiProvider` since it now makes use of wagmi hooks internally.
 
 ## 0.0.2
 
@@ -1320,7 +1320,7 @@
 - a696f2c: Add Hardhat chain (chainId: 31337) icon
 - e33d34b: Add support for custom “Learn more” URLs
 
-  - To customize the URL for the “Learn more” link within the “What is a wallet?” section, you can provide the optional `learnMoreUrl` prop to `RainbowKitProvider`.
+  - To customize the URL for the “Learn more” link within the “What is a wallet?” section, you can provide the optional `learnMoreUrl` prop to `DiditAuthProvider`.
   - If you‘ve created a custom wallet with QR code instructions, you must now provide the `qrCode.instructions.learnMoreUrl` property.
 
 - 96e78b3: Add `fontStack` option to built-in themes, supporting `"rounded"` and `"system"` variants.

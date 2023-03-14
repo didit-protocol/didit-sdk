@@ -60,9 +60,8 @@ export function SignIn({ onClose }: { onClose: () => void }) {
   const signIn = async () => {
     try {
       const chainId = activeChain?.id;
-      const { nonce } = state;
 
-      if (!address || !chainId || !nonce) {
+      if (!address || !chainId) {
         return;
       }
 
@@ -71,13 +70,17 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         errorMessage: undefined,
         status: 'signing',
       }));
-
-      const message = authAdapter.createMessage({ address, chainId, nonce });
+      const message = await authAdapter.createMessage({
+        address,
+        chainId,
+        nonce: '',
+      });
       let signature: string;
 
       try {
+        const messageBody = authAdapter.getMessageBody({ message });
         signature = await signMessageAsync({
-          message: authAdapter.getMessageBody({ message }),
+          message: messageBody,
         });
       } catch (error) {
         if (error instanceof UserRejectedRequestError) {
@@ -98,10 +101,12 @@ export function SignIn({ onClose }: { onClose: () => void }) {
       setState(x => ({ ...x, status: 'verifying' }));
 
       try {
-        const verified = await authAdapter.verify({ message, signature });
-
+        const verified = await authAdapter.verify({
+          code: message?.requestId,
+          signature,
+        });
         if (verified) {
-          return;
+          setState(x => ({ ...x, status: 'idle' }));
         } else {
           throw new Error();
         }
