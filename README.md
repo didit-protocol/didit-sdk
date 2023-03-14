@@ -54,3 +54,10 @@ Full code Example:
       </DiditProvider>
     </WagmiConfig>
 ```
+
+## Retrieve the accessToken & walletAddress
+
+```
+import { useDiditStatus } from "diditsdktest";
+const [address, token, status] = useDiditStatus()
+```
