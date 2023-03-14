@@ -17,8 +17,7 @@ The following examples are provided in the [examples](./examples/) folder of thi
   - ```cd examples/with-create-react-app```
   - ```pnpm dev```
   - try it out on localhost:3030!
-
-### How to integrate
+## How to integrate
 
 To integrate didit you will need 3 things:
 1) [Wagmi client](https://github.com/tmm/wagmi)
