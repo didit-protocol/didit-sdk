@@ -1,8 +1,9 @@
 import {
   createAuthenticationAdapter,
   RainbowKitAuthenticationProvider,
+  useDiditStatus
 } from 'diditsdktest';
-import React, { ReactNode, useMemo, useState } from 'react';
+import React, { ReactNode, useEffect, useMemo, useState } from 'react';
 import { SiweMessage } from 'siwe';
 
 type UnconfigurableMessageOptions = {
@@ -31,14 +32,20 @@ export function DiditProvider({
   children,
   client_id,
   enabled,
-  getSiweMessageOptions,
   scopes,
 }: DiditProviderProps) {
   const [status, setStatus] = useState<
     'loading' | 'authenticated' | 'unauthenticated'
   >('unauthenticated');
+  // TO CHANGE
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      cleanLocalStorage();
+    }
+  }, [status]);
   const [token, setToken] = useState('');
   const [address, setAddress] = useState('');
+
   const adapter = useMemo(
     () =>
       createAuthenticationAdapter({
@@ -47,24 +54,15 @@ export function DiditProvider({
           const parameters = walletAuthPayload(address);
           const endpoint = `${client_id}/wallet_authorization`;
           try {
-            var { application, code, expires_at, issued_at, nonce, policy } =
-              await postRequest(endpoint, parameters);
+            var { code, policy } = await postRequest(endpoint, parameters);
+            window.localStorage.setItem(`_gamium_address`, address);
           } catch (error) {
             throw new Error('Error when accessing wallet authorization');
           }
-          return siweMessageToSign(
-            policy,
-            address,
-            chainId,
-            code,
-            nonce,
-            application,
-            expires_at,
-            issued_at
-          );
+          return { code, policy };
         },
 
-        getMessageBody: ({ message }) => message.prepareMessage(),
+        getMessageBody: ({ message }) => message,
 
         getNonce: async () => {
           return 'dededeededed';
@@ -82,6 +80,7 @@ export function DiditProvider({
           try {
             var { access_token } = await postRequest(endpoint, parameters);
             setStatus('authenticated');
+            window.localStorage.setItem(`_gamium_token_`, access_token);
           } catch (error) {
             throw new Error('Error when accessing token');
           }
@@ -89,45 +88,8 @@ export function DiditProvider({
           return true;
         },
       }),
-    [getSiweMessageOptions]
+    []
   );
-
-  function siweMessageToSign(
-    policy: string,
-    address: string,
-    chainId: number,
-    code: any,
-    nonce: any,
-    application: string,
-    expires_at: string,
-    issued_at: string
-  ) {
-    const RESOURCE = 'https://gamimum.world';
-    const VERSION = '1';
-    const domain = application + ' on behalf of ' + RESOURCE;
-
-    const defaultConfigurableOptions = {
-      domain: domain,
-      statement: policy,
-      uri: RESOURCE,
-      version: VERSION,
-    };
-    const unconfigurableOptions = {
-      address,
-      chainId,
-      expirationTime: expires_at,
-      issuedAt: issued_at,
-      nonce,
-      requestId: code,
-    };
-
-    const messageToSign = new SiweMessage({
-      ...defaultConfigurableOptions,
-      ...(getSiweMessageOptions == null ? void 0 : getSiweMessageOptions()),
-      ...unconfigurableOptions,
-    });
-    return messageToSign;
-  }
 
   function walletAuthPayload(address: string) {
     var formBody = [];
@@ -163,4 +125,8 @@ export function DiditProvider({
       {children}
     </RainbowKitAuthenticationProvider>
   );
+}
+function cleanLocalStorage() {
+  window.localStorage.removeItem(`_gamium_token_`);
+  window.localStorage.removeItem(`_gamium_address`);
 }

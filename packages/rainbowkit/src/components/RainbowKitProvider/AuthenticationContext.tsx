@@ -13,50 +13,45 @@ export type AuthenticationStatus =
   | 'unauthenticated'
   | 'authenticated';
 
-export interface AuthenticationAdapter<Message> {
+export interface AuthenticationAdapter {
   getNonce: () => Promise<string>;
   createMessage: (args: {
     nonce: string;
     address: string;
     chainId: number;
-  }) => Message;
-  getMessageBody: (args: { message: Message }) => string;
+  }) => { code: string; policy: string };
+  getMessageBody: (args: { message: string }) => string;
   verify: (args: { code: string; signature: string }) => Promise<boolean>;
   signOut: () => Promise<void>;
 }
 
-export interface AuthenticationConfig<Message> {
-  adapter: AuthenticationAdapter<Message>;
+export interface AuthenticationConfig {
+  adapter: AuthenticationAdapter;
   status: AuthenticationStatus;
   token: string;
   address: string;
 }
 
 // Right now this function only serves to infer the generic Message type
-export function createAuthenticationAdapter<Message>(
-  adapter: AuthenticationAdapter<Message>
-) {
+export function createAuthenticationAdapter(adapter: AuthenticationAdapter) {
   return adapter;
 }
 
-const AuthenticationContext = createContext<AuthenticationConfig<any> | null>(
-  null
-);
+const AuthenticationContext = createContext<AuthenticationConfig | null>(null);
 
-interface RainbowKitAuthenticationProviderProps<Message>
-  extends AuthenticationConfig<Message> {
+interface RainbowKitAuthenticationProviderProps extends AuthenticationConfig {
   enabled?: boolean;
   children: ReactNode;
 }
 
-export function RainbowKitAuthenticationProvider<Message = unknown>({
+export function RainbowKitAuthenticationProvider({
   adapter,
-  address = '',
+  address,
   children,
   enabled = true,
   status,
-  token = '',
-}: RainbowKitAuthenticationProviderProps<Message>) {
+  token,
+}: RainbowKitAuthenticationProviderProps) {
   // When the wallet is disconnected, we want to tell the auth
   // adapter that the user session is no longer active.
   useAccount({

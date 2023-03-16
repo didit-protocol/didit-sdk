@@ -70,7 +70,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         errorMessage: undefined,
         status: 'signing',
       }));
-      const message = await authAdapter.createMessage({
+      const { code, policy } = await authAdapter.createMessage({
         address,
         chainId,
         nonce: '',
@@ -78,7 +78,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
       let signature: string;
 
       try {
-        const messageBody = authAdapter.getMessageBody({ message });
+        const messageBody = authAdapter.getMessageBody({ message: policy });
         signature = await signMessageAsync({
           message: messageBody,
         });
@@ -102,7 +102,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
       try {
         const verified = await authAdapter.verify({
-          code: message?.requestId,
+          code: code,
           signature,
         });
         if (verified) {
