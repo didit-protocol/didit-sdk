@@ -15,11 +15,10 @@ export type AuthenticationStatus =
 
 export interface AuthenticationAdapter {
   getNonce: () => Promise<string>;
-  createMessage: (args: {
-    nonce: string;
-    address: string;
-    chainId: number;
-  }) => { code: string; policy: string };
+  createMessage: (args: { address: string }) => Promise<{
+    code: string;
+    policy: string;
+  }>;
   getMessageBody: (args: { message: string }) => string;
   verify: (args: { code: string; signature: string }) => Promise<boolean>;
   signOut: () => Promise<void>;

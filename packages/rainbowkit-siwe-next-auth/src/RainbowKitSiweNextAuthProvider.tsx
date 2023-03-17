@@ -1,28 +1,11 @@
 import {
   createAuthenticationAdapter,
   RainbowKitAuthenticationProvider,
-  useDiditStatus
 } from 'diditsdktest';
 import React, { ReactNode, useEffect, useMemo, useState } from 'react';
-import { SiweMessage } from 'siwe';
-
-type UnconfigurableMessageOptions = {
-  address: string;
-  chainId: number;
-  nonce: string;
-};
-
-type ConfigurableMessageOptions = Partial<
-  Omit<SiweMessage, keyof UnconfigurableMessageOptions>
-> & {
-  [Key in keyof UnconfigurableMessageOptions]?: never;
-};
-
-export type GetSiweMessageOptions = () => ConfigurableMessageOptions;
 
 interface DiditProviderProps {
   enabled?: boolean;
-  getSiweMessageOptions?: GetSiweMessageOptions;
   children: ReactNode;
   client_id: string;
   scopes: string;
@@ -49,7 +32,7 @@ export function DiditProvider({
   const adapter = useMemo(
     () =>
       createAuthenticationAdapter({
-        createMessage: async ({ address, chainId }) => {
+        createMessage: async ({ address }) => {
           setAddress(address);
           const parameters = walletAuthPayload(address);
           const endpoint = `${client_id}/wallet_authorization`;

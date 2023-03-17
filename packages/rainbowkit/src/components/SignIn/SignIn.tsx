@@ -72,8 +72,6 @@ export function SignIn({ onClose }: { onClose: () => void }) {
       }));
       const { code, policy } = await authAdapter.createMessage({
         address,
-        chainId,
-        nonce: '',
       });
       let signature: string;
 
