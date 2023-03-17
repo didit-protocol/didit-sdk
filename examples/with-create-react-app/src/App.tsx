@@ -1,13 +1,15 @@
 import { ConnectButton } from 'diditsdktest';
-import { midnightTheme, getDefaultWallets, DiditAuthProvider } from 'diditsdktest';
+import {
+  midnightTheme,
+  getDefaultWallets,
+  DiditAuthProvider,
+} from 'diditsdktest';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum, goerli } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import SecondView from './views/SecondView';
-import {
-  DiditProvider,
-} from 'diditprovidertest';
+import { DiditProvider } from 'diditprovidertest';
 
 const { chains, provider, webSocketProvider } = configureChains(
   [
@@ -32,19 +34,21 @@ const wagmiClient = createClient({
   webSocketProvider,
 });
 
-
 const App = () => {
   return (
     <WagmiConfig client={wagmiClient}>
-      <DiditProvider client_id='http://127.0.0.1:8000/avatar/integrations' scopes='openid write:profile_picture read:phone write:email read:email'>
-      <DiditAuthProvider chains={chains} theme={ midnightTheme() }>
-        <Router>
-          <Routes>
-              <Route path="/app" element={<SecondView />}/>
-              <Route path="" element={<ConnectButton />}/>
-          </Routes>
-        </Router>
-      </DiditAuthProvider>
+      <DiditProvider
+        client_id="http://127.0.0.1:8000/avatar/integrations"
+        scopes="openid write:profile_picture read:phone write:email read:email"
+      >
+        <DiditAuthProvider chains={chains} theme={midnightTheme()}>
+          <Router>
+            <Routes>
+              <Route path="/app" element={<SecondView />} />
+              <Route path="" element={<ConnectButton />} />
+            </Routes>
+          </Router>
+        </DiditAuthProvider>
       </DiditProvider>
     </WagmiConfig>
   );
