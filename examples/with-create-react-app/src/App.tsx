@@ -40,7 +40,7 @@ const App = () => {
       <DiditProvider
         client_id="http://127.0.0.1:8000/avatar/integrations"
         scopes="openid"
-        claims='write:email read:email'
+        claims="write:email read:email"
       >
         <DiditAuthProvider chains={chains} theme={midnightTheme()}>
           <Router>
