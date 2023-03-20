@@ -154,11 +154,9 @@ importers:
 
   packages/rainbowkit-siwe-next-auth:
     specifiers:
-      diditsdktest: ^0.0.1
-      siwe: ^1.1.6
+      diditsdktest: ^0.0.3
     dependencies:
       diditsdktest: link:../rainbowkit
-      siwe: 1.1.6
 
 packages:
 
