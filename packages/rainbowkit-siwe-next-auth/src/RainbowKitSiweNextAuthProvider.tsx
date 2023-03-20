@@ -7,12 +7,14 @@ import React, { ReactNode, useEffect, useMemo, useState } from 'react';
 interface DiditProviderProps {
   enabled?: boolean;
   children: ReactNode;
+  claims?: string;
   client_id: string;
   scopes: string;
 }
 
 export function DiditProvider({
   children,
+  claims,
   client_id,
   enabled,
   scopes,
@@ -48,7 +50,7 @@ export function DiditProvider({
         getMessageBody: ({ message }) => message,
 
         getNonce: async () => {
-          return 'dededeededed';
+          return 'ThisIsNotUsed';
         },
 
         signOut: async () => {
@@ -75,13 +77,18 @@ export function DiditProvider({
   );
 
   function walletAuthPayload(address: string) {
-    var formBody = [];
-    var encodedKey = encodeURIComponent('scope');
-    var encodedValue = encodeURIComponent(scopes);
-    formBody.push(encodedKey + '=' + encodedValue);
-    encodedKey = encodeURIComponent('wallet_address');
-    encodedValue = encodeURIComponent(address);
-    formBody.push(encodedKey + '=' + encodedValue);
+    var encodedKey;
+    var encodedValue;
+    const data: { [key: string]: any } = {
+      claims,
+      scope: scopes,
+      wallet_address: address,
+    };
+    var formBody: string[] = Object.entries(data).map(([key, val]) => {
+      encodedKey = encodeURIComponent(key);
+      encodedValue = encodeURIComponent(val);
+      return encodedKey + '=' + encodedValue;
+    });
     const formBodyJoined = formBody.join('&');
     return formBodyJoined;
   }
