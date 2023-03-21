@@ -65,3 +65,23 @@ Full code Example:
 import { useDiditStatus } from "diditsdktest";
 const [address, token, status] = useDiditStatus()
 ```
+
+## Login & Logout functions
+
+```
+  import {
+    useAuthenticationAdapter,
+    useConnectModal,
+  } from 'diditsdktest';
+  const adapter = useAuthenticationAdapter();
+  const { openConnectModal } = useConnectModal();
+  return (
+    <>
+      <button onClick={() => adapter.signOut()}>LOGOUT</button>
+      {openConnectModal && (
+        <button onClick={() => openConnectModal()}>LOGIN</button>
+      )}
+    </>
+  );
+}
+```
