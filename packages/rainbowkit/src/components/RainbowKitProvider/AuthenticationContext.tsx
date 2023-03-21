@@ -27,7 +27,7 @@ export interface AuthenticationAdapter {
 export interface AuthenticationConfig {
   adapter: AuthenticationAdapter;
   status: AuthenticationStatus;
-  token: string;
+  token: string | boolean;
   address: string;
 }
 

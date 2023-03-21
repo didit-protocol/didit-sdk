@@ -3,6 +3,8 @@ import {
   RainbowKitAuthenticationProvider,
 } from 'diditsdktest';
 import React, { ReactNode, useEffect, useMemo, useState } from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { useAccount } from 'wagmi';
 
 interface DiditProviderProps {
   enabled?: boolean;
@@ -19,23 +21,41 @@ export function DiditProvider({
   enabled,
   scopes,
 }: DiditProviderProps) {
+  const wagmiAccount = useAccount();
+  const tokenTemp = getLocalStorage();
+  const STATUS_INIT = 'loading';
+
   const [status, setStatus] = useState<
     'loading' | 'authenticated' | 'unauthenticated'
-  >('unauthenticated');
-  // TO CHANGE
+  >(STATUS_INIT);
+  const [token, setToken] = useState(tokenTemp);
+  const [address, setAddress] = useState(wagmiAccount?.address);
+
+  useEffect(() => {
+    if (address && token) {
+      setStatus('authenticated');
+    } else {
+      setStatus('unauthenticated');
+    }
+  }, [address, token]);
   useEffect(() => {
     if (status === 'unauthenticated') {
-      cleanLocalStorage();
+      window.localStorage.removeItem(`_gamium_token_`);
+      setToken(false);
     }
   }, [status]);
-  const [token, setToken] = useState('');
-  const [address, setAddress] = useState('');
+  useEffect(() => {
+    if (wagmiAccount.address) {
+      setAddress(wagmiAccount.address);
+    } else {
+      setAddress(false);
+    }
+  }, [wagmiAccount]);
 
   const adapter = useMemo(
     () =>
       createAuthenticationAdapter({
         createMessage: async ({ address }) => {
-          setAddress(address);
           const parameters = walletAuthPayload(address);
           const endpoint = `${client_id}/wallet_authorization`;
           try {
@@ -54,9 +74,8 @@ export function DiditProvider({
         },
 
         signOut: async () => {
-          setStatus('unauthenticated');
-          setToken('');
-          setAddress('');
+          setToken(false);
+          window.localStorage.removeItem(`_gamium_token_`);
         },
 
         verify: async ({ code, signature }) => {
@@ -116,7 +135,11 @@ export function DiditProvider({
     </RainbowKitAuthenticationProvider>
   );
 }
-function cleanLocalStorage() {
-  window.localStorage.removeItem(`_gamium_token_`);
-  window.localStorage.removeItem(`_gamium_address`);
+function getLocalStorage() {
+  const token = window.localStorage.getItem(`_gamium_token_`);
+  if (token) {
+    return token;
+  } else {
+    return false;
+  }
 }
