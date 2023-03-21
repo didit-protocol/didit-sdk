@@ -10,7 +10,7 @@ Didit-SDK is a [React](https://reactjs.org/) library that makes it easy to add w
 
 ## Examples
 
-The following examples are provided in the [examples](./examples/) folder of this repo.
+The following examples are provided in the [examples](./examples/) folder of this repo. The example contains a first view 'localhost:3030' where you can test the ConnetButton and a second view 'localhost:3030/app' where you can login, logout and check the auth status from with you own buttons and hooks!
 
 - SDK for reactJS
   - `cd lib-didit-typescript-sdk`
