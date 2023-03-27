@@ -105,6 +105,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         });
         if (verified) {
           setState(x => ({ ...x, status: 'idle' }));
+          onClose();
         } else {
           throw new Error();
         }
