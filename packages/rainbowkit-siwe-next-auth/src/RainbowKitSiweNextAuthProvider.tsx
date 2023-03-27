@@ -76,6 +76,7 @@ export function DiditProvider({
         signOut: async () => {
           setToken(false);
           window.localStorage.removeItem(`_gamium_token_`);
+          window.localStorage.removeItem(`_gamium_address`);
         },
 
         verify: async ({ code, signature }) => {
