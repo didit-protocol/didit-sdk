@@ -45,12 +45,19 @@ export function DiditProvider({
     }
   }, [status]);
   useEffect(() => {
-    if (wagmiAccount.address) {
+    if (!address && wagmiAccount.address) {
       setAddress(wagmiAccount.address);
+    } else if (address && wagmiAccount.address) {
+      if (address !== wagmiAccount.address) {
+        adapter.signOut();
+        setAddress(wagmiAccount.address);
+      }
     } else {
+      adapter.signOut();
       setAddress(false);
     }
-  }, [wagmiAccount]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wagmiAccount, address]);
 
   const adapter = useMemo(
     () =>
@@ -93,6 +100,7 @@ export function DiditProvider({
           return true;
         },
       }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
