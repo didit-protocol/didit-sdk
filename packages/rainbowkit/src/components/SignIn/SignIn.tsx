@@ -1,7 +1,6 @@
 import React, { useCallback, useRef } from 'react';
 import {
   useAccount,
-  useDisconnect,
   useNetwork,
   UserRejectedRequestError,
   useSignMessage,
@@ -54,8 +53,6 @@ export function SignIn({ onClose }: { onClose: () => void }) {
   const { address } = useAccount();
   const { chain: activeChain } = useNetwork();
   const { signMessageAsync } = useSignMessage();
-  const { disconnect } = useDisconnect();
-  const cancel = () => disconnect();
 
   const signIn = async () => {
     try {
@@ -70,15 +67,13 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         errorMessage: undefined,
         status: 'signing',
       }));
-      const message = await authAdapter.createMessage({
+      const { code, policy } = await authAdapter.createMessage({
         address,
-        chainId,
-        nonce: '',
       });
       let signature: string;
 
       try {
-        const messageBody = authAdapter.getMessageBody({ message });
+        const messageBody = authAdapter.getMessageBody({ message: policy });
         signature = await signMessageAsync({
           message: messageBody,
         });
@@ -102,11 +97,12 @@ export function SignIn({ onClose }: { onClose: () => void }) {
 
       try {
         const verified = await authAdapter.verify({
-          code: message?.requestId,
+          code: code,
           signature,
         });
         if (verified) {
           setState(x => ({ ...x, status: 'idle' }));
+          onClose();
         } else {
           throw new Error();
         }
@@ -222,7 +218,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
           {mobile ? (
             <ActionButton
               label="Cancel"
-              onClick={cancel}
+              onClick={onClose}
               size="large"
               type="secondary"
             />
@@ -232,7 +228,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
               borderRadius="full"
               className={touchableStyles({ active: 'shrink', hover: 'grow' })}
               display="block"
-              onClick={cancel}
+              onClick={onClose}
               paddingX="10"
               paddingY="5"
               rel="noreferrer"

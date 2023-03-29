@@ -2,78 +2,88 @@ import {
   createAuthenticationAdapter,
   RainbowKitAuthenticationProvider,
 } from 'diditsdktest';
-import React, { ReactNode, useMemo, useState } from 'react';
-import { SiweMessage } from 'siwe';
-
-type UnconfigurableMessageOptions = {
-  address: string;
-  chainId: number;
-  nonce: string;
-};
-
-type ConfigurableMessageOptions = Partial<
-  Omit<SiweMessage, keyof UnconfigurableMessageOptions>
-> & {
-  [Key in keyof UnconfigurableMessageOptions]?: never;
-};
-
-export type GetSiweMessageOptions = () => ConfigurableMessageOptions;
+import React, { ReactNode, useEffect, useMemo, useState } from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { useAccount } from 'wagmi';
 
 interface DiditProviderProps {
   enabled?: boolean;
-  getSiweMessageOptions?: GetSiweMessageOptions;
   children: ReactNode;
+  claims?: string;
   client_id: string;
   scopes: string;
 }
 
 export function DiditProvider({
   children,
+  claims,
   client_id,
   enabled,
-  getSiweMessageOptions,
   scopes,
 }: DiditProviderProps) {
+  const wagmiAccount = useAccount();
+  const tokenTemp = getLocalStorage();
+  const STATUS_INIT = 'loading';
+
   const [status, setStatus] = useState<
     'loading' | 'authenticated' | 'unauthenticated'
-  >('unauthenticated');
-  const [token, setToken] = useState('');
-  const [address, setAddress] = useState('');
+  >(STATUS_INIT);
+  const [token, setToken] = useState(tokenTemp);
+  const [address, setAddress] = useState(wagmiAccount?.address);
+
+  useEffect(() => {
+    if (address && token) {
+      setStatus('authenticated');
+    } else {
+      setStatus('unauthenticated');
+    }
+  }, [address, token]);
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      window.localStorage.removeItem(`_gamium_token_`);
+      setToken(false);
+    }
+  }, [status]);
+  useEffect(() => {
+    if (!address && wagmiAccount.address) {
+      setAddress(wagmiAccount.address);
+    } else if (address && wagmiAccount.address) {
+      if (address !== wagmiAccount.address) {
+        adapter.signOut();
+        setAddress(wagmiAccount.address);
+      }
+    } else {
+      adapter.signOut();
+      setAddress(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wagmiAccount, address]);
+
   const adapter = useMemo(
     () =>
       createAuthenticationAdapter({
-        createMessage: async ({ address, chainId }) => {
-          setAddress(address);
+        createMessage: async ({ address }) => {
           const parameters = walletAuthPayload(address);
           const endpoint = `${client_id}/wallet_authorization`;
           try {
-            var { application, code, expires_at, issued_at, nonce, policy } =
-              await postRequest(endpoint, parameters);
+            var { code, policy } = await postRequest(endpoint, parameters);
+            window.localStorage.setItem(`_gamium_address`, address);
           } catch (error) {
             throw new Error('Error when accessing wallet authorization');
           }
-          return siweMessageToSign(
-            policy,
-            address,
-            chainId,
-            code,
-            nonce,
-            application,
-            expires_at,
-            issued_at
-          );
+          return { code, policy };
         },
 
-        getMessageBody: ({ message }) => message.prepareMessage(),
+        getMessageBody: ({ message }) => message,
 
         getNonce: async () => {
-          return 'dededeededed';
+          return 'ThisIsNotUsed';
         },
 
         signOut: async () => {
-          setStatus('unauthenticated');
-          setToken('');
-          setAddress('');
+          setToken(false);
+          window.localStorage.removeItem(`_gamium_token_`);
+          window.localStorage.removeItem(`_gamium_address`);
         },
 
         verify: async ({ code, signature }) => {
@@ -82,6 +92,7 @@ export function DiditProvider({
           try {
             var { access_token } = await postRequest(endpoint, parameters);
             setStatus('authenticated');
+            window.localStorage.setItem(`_gamium_token_`, access_token);
           } catch (error) {
             throw new Error('Error when accessing token');
           }
@@ -89,54 +100,23 @@ export function DiditProvider({
           return true;
         },
       }),
-    [getSiweMessageOptions]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   );
 
-  function siweMessageToSign(
-    policy: string,
-    address: string,
-    chainId: number,
-    code: any,
-    nonce: any,
-    application: string,
-    expires_at: string,
-    issued_at: string
-  ) {
-    const RESOURCE = 'https://gamimum.world';
-    const VERSION = '1';
-    const domain = application + ' on behalf of ' + RESOURCE;
-
-    const defaultConfigurableOptions = {
-      domain: domain,
-      statement: policy,
-      uri: RESOURCE,
-      version: VERSION,
-    };
-    const unconfigurableOptions = {
-      address,
-      chainId,
-      expirationTime: expires_at,
-      issuedAt: issued_at,
-      nonce,
-      requestId: code,
-    };
-
-    const messageToSign = new SiweMessage({
-      ...defaultConfigurableOptions,
-      ...(getSiweMessageOptions == null ? void 0 : getSiweMessageOptions()),
-      ...unconfigurableOptions,
-    });
-    return messageToSign;
-  }
-
   function walletAuthPayload(address: string) {
-    var formBody = [];
-    var encodedKey = encodeURIComponent('scope');
-    var encodedValue = encodeURIComponent(scopes);
-    formBody.push(encodedKey + '=' + encodedValue);
-    encodedKey = encodeURIComponent('wallet_address');
-    encodedValue = encodeURIComponent(address);
-    formBody.push(encodedKey + '=' + encodedValue);
+    var encodedKey;
+    var encodedValue;
+    const data: { [key: string]: any } = {
+      claims,
+      scope: scopes,
+      wallet_address: address,
+    };
+    var formBody: string[] = Object.entries(data).map(([key, val]) => {
+      encodedKey = encodeURIComponent(key);
+      encodedValue = encodeURIComponent(val);
+      return encodedKey + '=' + encodedValue;
+    });
     const formBodyJoined = formBody.join('&');
     return formBodyJoined;
   }
@@ -163,4 +143,12 @@ export function DiditProvider({
       {children}
     </RainbowKitAuthenticationProvider>
   );
+}
+function getLocalStorage() {
+  const token = window.localStorage.getItem(`_gamium_token_`);
+  if (token) {
+    return token;
+  } else {
+    return false;
+  }
 }
