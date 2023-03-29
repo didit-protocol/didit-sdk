@@ -63,8 +63,13 @@ Full code Example:
 
 ```
 import { useDiditStatus } from "diditsdktest";
-const [address, token, status] = useDiditStatus()
+const {address, token, status, error} = useDiditStatus()
 ```
+
+- **address:** connected address
+- **token:** provided accessToken
+- **status:** "authenthicated"/"unauthenthicated"
+- **error:** any error from within the SDK
 
 ## Login & Logout functions
 

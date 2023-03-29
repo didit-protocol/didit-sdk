@@ -6,14 +6,14 @@ import {
 } from 'diditsdktest';
 
 function SecondView() {
-  const { token, address, status } = useDiditStatus();
+  const { token, address, status, error } = useDiditStatus();
   const adapter = useAuthenticationAdapter();
   const { openConnectModal } = useConnectModal();
   return (
     <>
       <h1>
         This is the second view token: {token} address: {address} status:{' '}
-        {status}
+        {status} error: {error}
       </h1>
       <button onClick={() => adapter.signOut()}>LOGOUT</button>
       {openConnectModal && (
