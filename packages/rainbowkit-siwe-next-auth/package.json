@@ -1,6 +1,6 @@
 {
   "name": "diditprovidertest",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Gamium authentication adapter for Sign-In",
   "files": [
     "dist"
@@ -29,11 +29,11 @@
   "author": "Rainbow",
   "license": "MIT",
   "peerDependencies": {
-    "diditsdktest": "^0.0.8",
+    "diditsdktest": "^0.0.9",
     "react": ">=17"
   },
   "dependencies": {
-    "diditsdktest": "^0.0.8"
+    "diditsdktest": "^0.0.9"
   },
   "devDependencies": {
     "diditsdktest": "workspace:*"

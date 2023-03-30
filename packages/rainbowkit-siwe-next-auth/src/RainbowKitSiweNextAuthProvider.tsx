@@ -70,9 +70,7 @@ export function DiditProvider({
             var { code, policy } = await postRequest(endpoint, parameters);
             window.localStorage.setItem(`_gamium_address`, address);
           } catch (walletAuthError) {
-            if (typeof walletAuthError === 'string') {
-              throw new Error(walletAuthError);
-            }
+            throw walletAuthError;
           }
           return { code, policy };
         },
@@ -98,9 +96,7 @@ export function DiditProvider({
             setStatus('authenticated');
             window.localStorage.setItem(`_gamium_token_`, access_token);
           } catch (tokenError) {
-            if (typeof tokenError === 'string') {
-              throw new Error(tokenError);
-            }
+            throw tokenError;
           }
           setToken(access_token);
           return true;
@@ -138,9 +134,9 @@ export function DiditProvider({
     if (response.status === 200) {
       return response.json();
     } else {
-      const { detail } = await response.json();
-      setError(detail);
-      throw new Error(detail);
+      const responseObj = await response.json();
+      setError(responseObj);
+      throw new Error(responseObj);
     }
   }
 
