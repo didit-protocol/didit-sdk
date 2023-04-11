@@ -29,6 +29,7 @@ export interface AuthenticationConfig {
   status: AuthenticationStatus;
   token: string | boolean;
   address: string;
+  error: string;
 }
 
 // Right now this function only serves to infer the generic Message type
@@ -48,6 +49,7 @@ export function RainbowKitAuthenticationProvider({
   address,
   children,
   enabled = true,
+  error,
   status,
   token,
 }: RainbowKitAuthenticationProviderProps) {
@@ -78,8 +80,8 @@ export function RainbowKitAuthenticationProvider({
   return (
     <AuthenticationContext.Provider
       value={useMemo(
-        () => (enabled ? { adapter, address, status, token } : null),
-        [enabled, adapter, status, token, address]
+        () => (enabled ? { adapter, address, error, status, token } : null),
+        [enabled, adapter, status, token, address, error]
       )}
     >
       {children}
@@ -104,6 +106,7 @@ export function useAuthenticationStatus() {
 }
 
 export function useDiditStatus() {
-  const { address, status, token } = useContext(AuthenticationContext) ?? {};
-  return { address, status, token };
+  const { address, error, status, token } =
+    useContext(AuthenticationContext) ?? {};
+  return { address, error, status, token };
 }

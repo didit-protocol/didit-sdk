@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   useDiditStatus,
   useAuthenticationAdapter,
@@ -6,9 +6,16 @@ import {
 } from 'diditsdktest';
 
 function SecondView() {
-  const { token, address, status } = useDiditStatus();
+  const { token, address, status, error } = useDiditStatus();
   const adapter = useAuthenticationAdapter();
   const { openConnectModal } = useConnectModal();
+
+  useEffect(() => {
+    if (error) {
+      console.error(error);
+    }
+  }, [error]);
+
   return (
     <>
       <h1>

@@ -30,6 +30,7 @@ export function DiditProvider({
   >(STATUS_INIT);
   const [token, setToken] = useState(tokenTemp);
   const [address, setAddress] = useState(wagmiAccount?.address);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (address && token) {
@@ -68,8 +69,8 @@ export function DiditProvider({
           try {
             var { code, policy } = await postRequest(endpoint, parameters);
             window.localStorage.setItem(`_gamium_address`, address);
-          } catch (error) {
-            throw new Error('Error when accessing wallet authorization');
+          } catch (walletAuthError) {
+            throw walletAuthError;
           }
           return { code, policy };
         },
@@ -82,6 +83,7 @@ export function DiditProvider({
 
         signOut: async () => {
           setToken(false);
+          setError('');
           window.localStorage.removeItem(`_gamium_token_`);
           window.localStorage.removeItem(`_gamium_address`);
         },
@@ -93,8 +95,8 @@ export function DiditProvider({
             var { access_token } = await postRequest(endpoint, parameters);
             setStatus('authenticated');
             window.localStorage.setItem(`_gamium_token_`, access_token);
-          } catch (error) {
-            throw new Error('Error when accessing token');
+          } catch (tokenError) {
+            throw tokenError;
           }
           setToken(access_token);
           return true;
@@ -129,7 +131,13 @@ export function DiditProvider({
       },
       method: 'POST',
     });
-    return response.json();
+    if (response.status === 200) {
+      return response.json();
+    } else {
+      const responseObj = await response.json();
+      setError(responseObj);
+      throw new Error(responseObj);
+    }
   }
 
   return (
@@ -137,6 +145,7 @@ export function DiditProvider({
       adapter={adapter}
       address={address}
       enabled={enabled}
+      error={error}
       status={status}
       token={token}
     >
