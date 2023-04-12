@@ -37,11 +37,7 @@ const wagmiClient = createClient({
 const App = () => {
   return (
     <WagmiConfig client={wagmiClient}>
-      <DiditProvider
-        client_id="http://127.0.0.1:8000/avatar/auth"
-        scopes="openid"
-        claims="write:email read:email"
-      >
+      <DiditProvider client_url="http://127.0.0.1:8000/avatar/auth">
         <DiditAuthProvider chains={chains} theme={midnightTheme()}>
           <Router>
             <Routes>

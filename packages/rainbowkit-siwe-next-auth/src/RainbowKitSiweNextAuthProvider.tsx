@@ -9,17 +9,13 @@ import { useAccount } from 'wagmi';
 interface DiditProviderProps {
   enabled?: boolean;
   children: ReactNode;
-  claims?: string;
-  client_id: string;
-  scopes: string;
+  client_url: string;
 }
 
 export function DiditProvider({
   children,
-  claims,
-  client_id,
+  client_url,
   enabled,
-  scopes,
 }: DiditProviderProps) {
   const wagmiAccount = useAccount();
   const tokenTemp = getLocalStorage();
@@ -65,7 +61,7 @@ export function DiditProvider({
       createAuthenticationAdapter({
         createMessage: async ({ address }) => {
           const parameters = walletAuthPayload(address);
-          const endpoint = `${client_id}/wallet_authorization`;
+          const endpoint = `${client_url}/wallet_authorization`;
           try {
             var { code, policy } = await postRequest(endpoint, parameters);
             window.localStorage.setItem(`_gamium_address`, address);
@@ -89,7 +85,7 @@ export function DiditProvider({
         },
 
         verify: async ({ code, signature }) => {
-          const endpoint = `${client_id}/token`;
+          const endpoint = `${client_url}/token`;
           const parameters = `code=${code}&wallet_signature=${signature}`;
           try {
             var { access_token } = await postRequest(endpoint, parameters);
@@ -110,8 +106,6 @@ export function DiditProvider({
     var encodedKey;
     var encodedValue;
     const data: { [key: string]: any } = {
-      claims,
-      scope: scopes,
       wallet_address: address,
     };
     var formBody: string[] = Object.entries(data).map(([key, val]) => {
