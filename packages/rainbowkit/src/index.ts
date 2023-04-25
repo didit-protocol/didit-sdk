@@ -12,6 +12,7 @@ export {
   RainbowKitAuthenticationProvider,
   createAuthenticationAdapter,
   useDiditStatus,
+  useAuthenticationAdapter,
 } from './components/RainbowKitProvider/AuthenticationContext';
 export type { Wallet, WalletList } from './wallets/Wallet';
 export type { Chain } from './components/RainbowKitProvider/RainbowKitChainContext';
