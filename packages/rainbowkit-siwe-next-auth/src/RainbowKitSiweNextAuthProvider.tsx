@@ -25,7 +25,7 @@ export function DiditProvider({
     'loading' | 'authenticated' | 'unauthenticated'
   >(STATUS_INIT);
   const [token, setToken] = useState(tokenTemp);
-  const [address, setAddress] = useState(wagmiAccount?.address);
+  const [address, setAddress] = useState(wagmiAccount?.address ?? undefined);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export function DiditProvider({
       }
     } else {
       adapter.signOut();
-      setAddress(false);
+      setAddress(undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wagmiAccount, address]);
