@@ -212,7 +212,9 @@ export function SignIn({ onClose }: { onClose: () => void }) {
             weight="bold"
           >
             {address.length > MAXLIMIT
-              ? address.substring(0, MAXLIMIT - 3) + '...'
+              ? address.substring(0, 6) +
+                '...' +
+                address.substring(MAXLIMIT - 4, MAXLIMIT)
               : address}
           </Text>
         </Box>
