@@ -52,7 +52,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
   const mobile = isMobile();
   const { address, connector } = useAccount();
   const { chain: activeChain } = useNetwork();
-  const { signMessageAsync } = useSignMessage();
+  const { data, signMessage } = useSignMessage();
   const MAXLIMIT = mobile ? 10 : 20;
 
   const signIn = async () => {
@@ -71,11 +71,9 @@ export function SignIn({ onClose }: { onClose: () => void }) {
       const { code, policy } = await authAdapter.createMessage({
         address,
       });
-      let signature: string;
-
       try {
         const messageBody = authAdapter.getMessageBody({ message: policy });
-        signature = await signMessageAsync({
+        signMessage({
           message: messageBody,
         });
       } catch (error) {
@@ -97,15 +95,18 @@ export function SignIn({ onClose }: { onClose: () => void }) {
       setState(x => ({ ...x, status: 'verifying' }));
 
       try {
-        const verified = await authAdapter.verify({
-          code: code,
-          signature,
-        });
-        if (verified) {
-          setState(x => ({ ...x, status: 'idle' }));
-          onClose();
-        } else {
-          throw new Error();
+        if (data) {
+          const verified = await authAdapter.verify({
+            code: code,
+            signature: data,
+          });
+
+          if (verified) {
+            setState(x => ({ ...x, status: 'idle' }));
+            onClose();
+          } else {
+            throw new Error();
+          }
         }
       } catch (error) {
         return setState(x => ({
