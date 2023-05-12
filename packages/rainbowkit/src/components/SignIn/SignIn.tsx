@@ -16,7 +16,13 @@ import { Text } from '../Text/Text';
 
 export const signInIcon = async () => (await import('./sign.png')).default;
 
-export function SignIn({ onClose }: { onClose: () => void }) {
+export function SignIn({
+  onClose,
+  onFinish,
+}: {
+  onClose: () => void;
+  onFinish: () => void;
+}) {
   const [{ status, ...state }, setState] = React.useState<{
     status: 'idle' | 'signing' | 'verifying';
     errorMessage?: string;
@@ -103,7 +109,7 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         });
         if (verified) {
           setState(x => ({ ...x, status: 'idle' }));
-          onClose();
+          onFinish();
         } else {
           throw new Error();
         }

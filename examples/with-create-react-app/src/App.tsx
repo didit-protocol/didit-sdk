@@ -37,7 +37,7 @@ const wagmiClient = createClient({
 const App = () => {
   return (
     <WagmiConfig client={wagmiClient}>
-      <DiditProvider clientUrl="http://127.0.0.1:8000/avatar/auth">
+      <DiditProvider clientUrl="https://apx.dev.gamium.world/avatar/auth">
         <DiditAuthProvider chains={chains} theme={midnightTheme()}>
           <Router>
             <Routes>
