@@ -9,12 +9,12 @@ import { useAccount } from 'wagmi';
 interface DiditProviderProps {
   enabled?: boolean;
   children: ReactNode;
-  client_url: string;
+  clientUrl: string;
 }
 
 export function DiditProvider({
   children,
-  client_url,
+  clientUrl,
   enabled,
 }: DiditProviderProps) {
   const wagmiAccount = useAccount();
@@ -25,7 +25,7 @@ export function DiditProvider({
     'loading' | 'authenticated' | 'unauthenticated'
   >(STATUS_INIT);
   const [token, setToken] = useState(tokenTemp);
-  const [address, setAddress] = useState(wagmiAccount?.address);
+  const [address, setAddress] = useState(wagmiAccount?.address ?? undefined);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export function DiditProvider({
       }
     } else {
       adapter.signOut();
-      setAddress(false);
+      setAddress(undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wagmiAccount, address]);
@@ -61,7 +61,7 @@ export function DiditProvider({
       createAuthenticationAdapter({
         createMessage: async ({ address }) => {
           const parameters = walletAuthPayload(address);
-          const endpoint = `${client_url}/wallet_authorization`;
+          const endpoint = `${clientUrl}/wallet_authorization`;
           try {
             var { code, policy } = await postRequest(endpoint, parameters);
             window.localStorage.setItem(`_gamium_address`, address);
@@ -85,7 +85,7 @@ export function DiditProvider({
         },
 
         verify: async ({ code, signature }) => {
-          const endpoint = `${client_url}/token`;
+          const endpoint = `${clientUrl}/token`;
           const parameters = `code=${code}&wallet_signature=${signature}`;
           try {
             var { access_token } = await postRequest(endpoint, parameters);
