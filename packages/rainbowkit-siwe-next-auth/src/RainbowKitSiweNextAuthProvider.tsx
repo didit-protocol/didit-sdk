@@ -4,7 +4,7 @@ import {
 } from 'diditsdktest';
 import React, { ReactNode, useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { useAccount } from 'wagmi';
+import { useAccount, useDisconnect } from 'wagmi';
 
 interface DiditProviderProps {
   enabled?: boolean;
@@ -27,6 +27,7 @@ export function DiditProvider({
   const [token, setToken] = useState(tokenTemp);
   const [address, setAddress] = useState(wagmiAccount?.address ?? undefined);
   const [error, setError] = useState('');
+  const { disconnect } = useDisconnect();
 
   useEffect(() => {
     if (address && token) {
@@ -54,7 +55,7 @@ export function DiditProvider({
       setAddress(undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wagmiAccount, address]);
+  }, [wagmiAccount.address, address]);
 
   const adapter = useMemo(
     () =>
@@ -79,6 +80,7 @@ export function DiditProvider({
 
         signOut: async () => {
           setToken(false);
+          disconnect();
           setError('');
           window.localStorage.removeItem(`_gamium_token_`);
           window.localStorage.removeItem(`_gamium_address`);

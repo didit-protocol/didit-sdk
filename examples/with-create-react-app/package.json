@@ -24,7 +24,7 @@
   },
   "scripts": {
     "dev": "npm run start",
-    "start": "PORT=3030 react-scripts start",
+    "start": "PORT=3000 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!@rainbow-me)/\"",
     "eject": "react-scripts eject"
