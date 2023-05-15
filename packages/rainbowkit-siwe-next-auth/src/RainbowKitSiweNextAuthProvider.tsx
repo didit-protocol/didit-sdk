@@ -18,7 +18,6 @@ export function DiditProvider({
   enabled,
 }: DiditProviderProps) {
   const wagmiAccount = useAccount();
-  const { disconnect } = useDisconnect();
   const tokenTemp = getLocalStorage();
   const STATUS_INIT = 'loading';
 
@@ -28,6 +27,7 @@ export function DiditProvider({
   const [token, setToken] = useState(tokenTemp);
   const [address, setAddress] = useState(wagmiAccount?.address ?? undefined);
   const [error, setError] = useState('');
+  const { disconnect } = useDisconnect();
 
   useEffect(() => {
     if (address && token) {
