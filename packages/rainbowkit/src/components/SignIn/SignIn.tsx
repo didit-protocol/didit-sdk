@@ -78,7 +78,6 @@ export function SignIn({
         address,
       });
       let signature: string;
-
       try {
         const messageBody = authAdapter.getMessageBody({ message: policy });
         signature = await signMessageAsync({
@@ -107,6 +106,7 @@ export function SignIn({
           code: code,
           signature,
         });
+
         if (verified) {
           setState(x => ({ ...x, status: 'idle' }));
           onFinish();
