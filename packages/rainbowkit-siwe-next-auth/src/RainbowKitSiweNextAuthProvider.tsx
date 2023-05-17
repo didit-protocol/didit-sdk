@@ -91,12 +91,16 @@ export function DiditProvider({
           const parameters = `code=${code}&wallet_signature=${signature}`;
           try {
             var { access_token } = await postRequest(endpoint, parameters);
-            setStatus('authenticated');
             window.localStorage.setItem(`_gamium_token_`, access_token);
           } catch (tokenError) {
             throw tokenError;
           }
-          setToken(access_token);
+          if (access_token) {
+            setStatus('authenticated');
+            setToken(access_token);
+          } else {
+            throw new Error('Something went wrong, try again please!');
+          }
           return true;
         },
       }),
