@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
 
-import 'diditsdktest/styles.css';
+import 'didit-sdk/styles.css';
 import App from './App';
 
 const root = ReactDOM.createRoot(
