@@ -1,6 +1,6 @@
 {
-  "name": "diditsdktest",
-  "version": "0.0.19",
+  "name": "didit-sdk",
+  "version": "1.0.0",
   "description": "The best way to connect a wallet",
   "files": [
     "dist",

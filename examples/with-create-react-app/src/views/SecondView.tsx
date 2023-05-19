@@ -3,7 +3,7 @@ import {
   useDiditStatus,
   useAuthenticationAdapter,
   useConnectModal,
-} from 'diditsdktest';
+} from 'didit-sdk';
 
 function SecondView() {
   const { token, address, status, error } = useDiditStatus();
