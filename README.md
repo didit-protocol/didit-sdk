@@ -27,11 +27,9 @@ To integrate didit you will need 3 things:
 2. SetUp the DiditProvider
    - `npm i diditprovidertest`
    - Pass the next parameters to the provider
-     - **client_id (str)**: URL to you backend server [i.e: 'http://127.0.0.1:8000/avatar/integrations']
-     - **scopes (str)**: Requested scopes [i.e: 'openid profile']
-     - **claims (str) [optional]**: Requested claims [i.e: 'write:email']
+     - **clientUrl (str)**: URL to you backend server [i.e: 'http://127.0.0.1:8000/avatar/integrations']
      - Example:  
-       `<DiditProvider client_id='http://127.0.0.1:8000/avatar/integrations' scopes='openid' claims='write:email'>`
+       `<DiditProvider clientUrl='http://127.0.0.1:8000/avatar/integrations'>`
 3. Set up the DiditAuthProvider:
 
 - `npm i diditsdktest`
@@ -43,7 +41,7 @@ Full code Example:
 
 ```
     <WagmiConfig client={wagmiClient}>
-      <DiditProvider client_id='http://127.0.0.1:8000/avatar/integrations' scopes='openid' claims='write:email'>
+      <DiditProvider clientUrl='http://127.0.0.1:8000/avatar/integrations'>
           <DiditAuthProvider chains={chains} theme={ midnightTheme() }>
     <div
       style={{

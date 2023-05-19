@@ -16,7 +16,13 @@ import { Text } from '../Text/Text';
 
 export const signInIcon = async () => (await import('./sign.png')).default;
 
-export function SignIn({ onClose }: { onClose: () => void }) {
+export function SignIn({
+  onClose,
+  onFinish,
+}: {
+  onClose: () => void;
+  onFinish: () => void;
+}) {
   const [{ status, ...state }, setState] = React.useState<{
     status: 'idle' | 'signing' | 'verifying';
     errorMessage?: string;
@@ -50,9 +56,10 @@ export function SignIn({ onClose }: { onClose: () => void }) {
   }, [getNonce]);
 
   const mobile = isMobile();
-  const { address } = useAccount();
+  const { address, connector } = useAccount();
   const { chain: activeChain } = useNetwork();
   const { signMessageAsync } = useSignMessage();
+  const MAXLIMIT = mobile ? 10 : 20;
 
   const signIn = async () => {
     try {
@@ -71,7 +78,6 @@ export function SignIn({ onClose }: { onClose: () => void }) {
         address,
       });
       let signature: string;
-
       try {
         const messageBody = authAdapter.getMessageBody({ message: policy });
         signature = await signMessageAsync({
@@ -100,9 +106,10 @@ export function SignIn({ onClose }: { onClose: () => void }) {
           code: code,
           signature,
         });
+
         if (verified) {
           setState(x => ({ ...x, status: 'idle' }));
-          onClose();
+          onFinish();
         } else {
           throw new Error();
         }
@@ -190,7 +197,33 @@ export function SignIn({ onClose }: { onClose: () => void }) {
             ) : null}
           </Box>
         </Box>
-
+        <Box
+          alignItems="center"
+          display="flex"
+          flexDirection="row"
+          gap={mobile ? '16' : '12'}
+        >
+          <AsyncImage
+            background={connector._wallets[0].iconBackground}
+            borderColor="actionButtonBorder"
+            borderRadius="10"
+            height="48"
+            src={connector._wallets[0].iconUrl}
+            width="48"
+          />
+          <Text
+            color="modalTextSecondary"
+            size={mobile ? '16' : '14'}
+            textAlign="center"
+            weight="bold"
+          >
+            {address.length > MAXLIMIT
+              ? address.substring(0, 6) +
+                '...' +
+                address.substring(MAXLIMIT - 4, MAXLIMIT)
+              : address}
+          </Text>
+        </Box>
         <Box
           alignItems={!mobile ? 'center' : undefined}
           display="flex"

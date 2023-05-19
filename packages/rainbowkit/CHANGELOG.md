@@ -175,7 +175,6 @@
   +import { connectorsForWallets } from '@rainbow-me/rainbowkit';
   +import {
   +  injectedWallet,
-  +  rainbowWallet,
   +  metaMaskWallet,
   +  coinbaseWallet,
   +  walletConnectWallet,
@@ -188,7 +187,6 @@
   -  wallet.coinbase({ chains, appName: 'My App' }),
   -  wallet.walletConnect({ chains }),
   +  injectedWallet({ chains }),
-  +  rainbowWallet({ chains }),
   +  metaMaskWallet({ chains }),
   +  coinbaseWallet({ chains, appName: 'My App' }),
   +  walletConnectWallet({ chains }),

@@ -4,22 +4,18 @@ import {
 } from 'diditsdktest';
 import React, { ReactNode, useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { useAccount } from 'wagmi';
+import { useAccount, useDisconnect } from 'wagmi';
 
 interface DiditProviderProps {
   enabled?: boolean;
   children: ReactNode;
-  claims?: string;
-  client_id: string;
-  scopes: string;
+  clientUrl: string;
 }
 
 export function DiditProvider({
   children,
-  claims,
-  client_id,
+  clientUrl,
   enabled,
-  scopes,
 }: DiditProviderProps) {
   const wagmiAccount = useAccount();
   const tokenTemp = getLocalStorage();
@@ -29,8 +25,9 @@ export function DiditProvider({
     'loading' | 'authenticated' | 'unauthenticated'
   >(STATUS_INIT);
   const [token, setToken] = useState(tokenTemp);
-  const [address, setAddress] = useState(wagmiAccount?.address);
+  const [address, setAddress] = useState(wagmiAccount?.address ?? undefined);
   const [error, setError] = useState('');
+  const { disconnect } = useDisconnect();
 
   useEffect(() => {
     if (address && token) {
@@ -55,17 +52,17 @@ export function DiditProvider({
       }
     } else {
       adapter.signOut();
-      setAddress(false);
+      setAddress(undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wagmiAccount, address]);
+  }, [wagmiAccount.address, address]);
 
   const adapter = useMemo(
     () =>
       createAuthenticationAdapter({
         createMessage: async ({ address }) => {
           const parameters = walletAuthPayload(address);
-          const endpoint = `${client_id}/wallet_authorization`;
+          const endpoint = `${clientUrl}/wallet_authorization`;
           try {
             var { code, policy } = await postRequest(endpoint, parameters);
             window.localStorage.setItem(`_gamium_address`, address);
@@ -83,22 +80,27 @@ export function DiditProvider({
 
         signOut: async () => {
           setToken(false);
+          disconnect();
           setError('');
           window.localStorage.removeItem(`_gamium_token_`);
           window.localStorage.removeItem(`_gamium_address`);
         },
 
         verify: async ({ code, signature }) => {
-          const endpoint = `${client_id}/token`;
+          const endpoint = `${clientUrl}/token`;
           const parameters = `code=${code}&wallet_signature=${signature}`;
           try {
             var { access_token } = await postRequest(endpoint, parameters);
-            setStatus('authenticated');
             window.localStorage.setItem(`_gamium_token_`, access_token);
           } catch (tokenError) {
             throw tokenError;
           }
-          setToken(access_token);
+          if (access_token) {
+            setStatus('authenticated');
+            setToken(access_token);
+          } else {
+            throw new Error('Something went wrong, try again please!');
+          }
           return true;
         },
       }),
@@ -110,8 +112,6 @@ export function DiditProvider({
     var encodedKey;
     var encodedValue;
     const data: { [key: string]: any } = {
-      claims,
-      scope: scopes,
       wallet_address: address,
     };
     var formBody: string[] = Object.entries(data).map(([key, val]) => {
