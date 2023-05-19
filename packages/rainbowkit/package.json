@@ -1,6 +1,6 @@
 {
   "name": "didit-sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "The best way to connect a wallet",
   "files": [
     "dist",
