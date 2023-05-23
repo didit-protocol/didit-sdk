@@ -218,9 +218,9 @@ export function SignIn({
             weight="bold"
           >
             {address.length > MAXLIMIT
-              ? address.substring(0, 6) +
+              ? address.substring(0, 5) +
                 '...' +
-                address.substring(MAXLIMIT - 4, MAXLIMIT)
+                address.substring(address.length - 4, address.length)
               : address}
           </Text>
         </Box>
