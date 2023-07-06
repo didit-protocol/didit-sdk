@@ -16,11 +16,13 @@ If you haven't already, first set up your [Next.js](https://nextjs.org) project 
 
 ### Install
 
-Install the `@rainbow-me/rainbowkit-siwe-next-auth` package.
+Install the `@rainbow-me/rainbowkit-siwe-next-auth` package and its peer dependency, [ethers](https://docs.ethers.org/v5/).
 
 ```bash
-npm install @rainbow-me/rainbowkit-siwe-next-auth
+npm install @rainbow-me/rainbowkit-siwe-next-auth siwe@^2 ethers@^5
 ```
+
+> Note: `siwe` requires the [ethers](https://docs.ethers.org/v5/) peer dependency, while [wagmi](https://wagmi.sh/) now relies on the alternative [viem](https://viem.sh).
 
 ### Set up the provider
 
@@ -36,18 +38,24 @@ Wrap `DiditAuthProvider` with `DiditAuthProvider`, ensuring it's nested within N
 import { DiditAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
 import { DiditAuthProvider } from '@rainbow-me/rainbowkit';
 import { SessionProvider } from 'next-auth/react';
+import type { Session } from 'next-auth';
 import { AppProps } from 'next/app';
 import { WagmiConfig } from 'wagmi';
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({
+  Component,
+  pageProps,
+}: AppProps<{
+  session: Session;
+}>) {
   return (
     <WagmiConfig {...etc}>
       <SessionProvider refetchInterval={0} session={pageProps.session}>
         <DiditAuthProvider>
           <DiditAuthProvider {...etc}>
             <Component {...pageProps} />
-          </RainbowKitProvider>
-        </RainbowKitProvider>
+          </DiditAuthProvider>
+        </DiditAuthProvider>
       </SessionProvider>
     </WagmiConfig>
   );
@@ -74,7 +82,7 @@ const getSiweMessageOptions: GetSiweMessageOptions = () => ({
 
 <DiditAuthProvider getSiweMessageOptions={getSiweMessageOptions}>
   ...
-</RainbowKitProvider>;
+</DiditAuthProvider>;
 ```
 
 ### Access the session server-side

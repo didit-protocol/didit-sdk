@@ -1,11 +1,11 @@
-import { providers } from 'ethers';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useAccount, useProvider } from 'wagmi';
+import { PublicClient } from 'viem';
+import { useAccount, usePublicClient } from 'wagmi';
 import { useChainId } from '../hooks/useChainId';
 import { createTransactionStore, TransactionStore } from './transactionStore';
 
 // Only allow a single instance of the store to exist at once
-// so that multiple DiditAuthProvider instances can share the same store.
+// so that multiple RainbowKitProvider instances can share the same store.
 // We delay the creation of the store until the first time it is used
 // so that it always has access to a provider.
 let storeSingleton: ReturnType<typeof createTransactionStore> | undefined;
@@ -17,7 +17,7 @@ export function TransactionStoreProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const provider = useProvider<providers.BaseProvider>();
+  const provider = usePublicClient() as PublicClient;
   const { address } = useAccount();
   const chainId = useChainId();
 

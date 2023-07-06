@@ -1,10 +1,6 @@
 import React, { useCallback, useRef } from 'react';
-import {
-  useAccount,
-  useNetwork,
-  UserRejectedRequestError,
-  useSignMessage,
-} from 'wagmi';
+import { UserRejectedRequestError } from 'viem';
+import { useAccount, useDisconnect, useNetwork, useSignMessage } from 'wagmi';
 import { touchableStyles } from '../../css/touchableStyles';
 import { isMobile } from '../../utils/isMobile';
 import { AsyncImage } from '../AsyncImage/AsyncImage';
@@ -60,6 +56,8 @@ export function SignIn({
   const { chain: activeChain } = useNetwork();
   const { signMessageAsync } = useSignMessage();
   const MAXLIMIT = mobile ? 10 : 20;
+  const { disconnect } = useDisconnect();
+  const cancel = () => disconnect();
 
   const signIn = async () => {
     try {
@@ -251,7 +249,7 @@ export function SignIn({
           {mobile ? (
             <ActionButton
               label="Cancel"
-              onClick={onClose}
+              onClick={cancel}
               size="large"
               type="secondary"
             />
@@ -261,7 +259,7 @@ export function SignIn({
               borderRadius="full"
               className={touchableStyles({ active: 'shrink', hover: 'grow' })}
               display="block"
-              onClick={onClose}
+              onClick={cancel}
               paddingX="10"
               paddingY="5"
               rel="noreferrer"

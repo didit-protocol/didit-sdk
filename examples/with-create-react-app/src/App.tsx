@@ -4,40 +4,45 @@ import {
   getDefaultWallets,
   DiditAuthProvider,
 } from 'diditsdktest';
-import { configureChains, createClient, WagmiConfig } from 'wagmi';
-import { mainnet, polygon, optimism, arbitrum, goerli } from 'wagmi/chains';
+import { configureChains, createConfig, WagmiConfig } from 'wagmi';
+import { mainnet, polygon, optimism, arbitrum, goerli, zora } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import SecondView from './views/SecondView';
 import ThirdView from './views/thirdView';
 import { DiditProvider } from 'diditprovidertest';
 
-const { chains, provider, webSocketProvider } = configureChains(
+const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
     mainnet,
     polygon,
     optimism,
     arbitrum,
+    zora,
     ...(process.env.REACT_APP_ENABLE_TESTNETS === 'true' ? [goerli] : []),
   ],
   [publicProvider()]
 );
 
+const projectId = 'YOUR_PROJECT_ID';
+
+
 const { connectors } = getDefaultWallets({
   appName: 'RainbowKit demo',
+  projectId,
   chains,
 });
 
-const wagmiClient = createClient({
+const wagmiClient = createConfig({
   autoConnect: true,
   connectors,
-  provider,
-  webSocketProvider,
+  publicClient,
+  webSocketPublicClient,
 });
 
 const App = () => {
   return (
-    <WagmiConfig client={wagmiClient}>
+    <WagmiConfig config={wagmiClient}>
       <DiditProvider clientUrl="https://apx.dev.gamium.world/avatar/auth">
         <DiditAuthProvider chains={chains} theme={midnightTheme()}>
           <Router>
