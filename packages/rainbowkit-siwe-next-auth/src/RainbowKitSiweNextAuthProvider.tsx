@@ -1,22 +1,22 @@
 import {
   createAuthenticationAdapter,
   RainbowKitAuthenticationProvider,
-} from 'diditsdktest';
+} from '@rainbow-me/rainbowkit';
 import React, { ReactNode, useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useAccount, useDisconnect } from 'wagmi';
 
-interface DiditProviderProps {
+interface RainbowKitSiweNextAuthProviderProps {
   enabled?: boolean;
   children: ReactNode;
   clientUrl: string;
 }
 
-export function DiditProvider({
+export function RainbowKitSiweNextAuthProvider({
   children,
   clientUrl,
   enabled,
-}: DiditProviderProps) {
+}: RainbowKitSiweNextAuthProviderProps) {
   const wagmiAccount = useAccount();
   const tokenTemp = getLocalStorage();
   const STATUS_INIT = 'loading';

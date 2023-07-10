@@ -1,90 +1,79 @@
-# Didit-SDK
+<a href="https://rainbowkit.com">
+  <img alt="rainbowkit" src="https://user-images.githubusercontent.com/372831/168174718-685980e0-391e-4621-94a1-29bf83979fa5.png" />
+</a>
 
-**The best way to connect a wallet**
+# RainbowKit
 
-Didit-SDK is a [React](https://reactjs.org/) library that makes it easy to add wallet connection to your dapp.
+**The best way to connect a wallet 🌈**
+
+RainbowKit is a [React](https://reactjs.org/) library that makes it easy to add wallet connection to your dapp.
 
 - 🔥 Out-of-the-box wallet management
 - ✅ Easily customizable
 - 🦄 Built on top of [wagmi](https://github.com/tmm/wagmi) and [ethers](https://docs.ethers.io)
 
+## Quick start
+
+You can scaffold a new RainbowKit + [wagmi](https://wagmi.sh) + [Next.js](https://nextjs.org) app with one of the following commands, using your package manager of choice:
+
+```bash
+npm init @rainbow-me/rainbowkit@latest
+# or
+pnpm create @rainbow-me/rainbowkit@latest
+# or
+yarn create @rainbow-me/rainbowkit
+```
+
+## Documentation
+
+For full documentation, visit [rainbowkit.com](https://rainbowkit.com).
+
+### Try it out
+
+You can use the CodeSandbox links below try out RainbowKit:
+
+- with [Create React App](https://codesandbox.io/s/rainbowkit-create-react-app-1vwx1r)
+- with [Create React App (TypeScript)](https://codesandbox.io/s/rainbowkit-create-typescript-app-xuxnqy)
+- with [Next.js](https://codesandbox.io/s/rainbowkit-nextjs-gz890p)
+
 ## Examples
 
-The following examples are provided in the [examples](./examples/) folder of this repo. The example contains a first view 'localhost:3030' where you can test the ConnetButton and a second view 'localhost:3030/app' where you can login, logout and check the auth status from with you own buttons and hooks!
+The following examples are provided in the [examples](./examples/) folder of this repo.
 
-- SDK for reactJS
-  - `cd lib-didit-typescript-sdk`
-  - `pnpm i`
-  - `cd examples/with-create-react-app`
-  - `pnpm dev`
-  - try it out on localhost:3030!
+- `with-create-react-app`
+- `with-next`
+- `with-next-custom-button`
+- `with-next-mint-nft`
+- `with-next-siwe-next-auth`
+- `with-next-siwe-iron-session`
+- `with-remix`
 
-## How to integrate
+### Running examples
 
-To integrate didit you will need 3 things:
+To run an example locally, install dependencies.
 
-1. [Wagmi client](https://github.com/tmm/wagmi)
-2. SetUp the DiditProvider
-   - `npm i diditprovidertest`
-   - Pass the next parameters to the provider
-     - **clientUrl (str)**: URL to you backend server [i.e: 'http://127.0.0.1:8000/avatar/integrations']
-     - Example:  
-       `<DiditProvider clientUrl='http://127.0.0.1:8000/avatar/integrations'>`
-3. Set up the DiditAuthProvider:
-
-- `npm i diditsdktest`
-- Pass the next parameters to the provider:
-  - **chains (str)**: Wagmi config of the requested chain [i.e: wagmi.chains]
-- Example: `<DiditAuthProvider chains={chains} theme={ midnightTheme() }>`
-
-Full code Example:
-
-```
-    <WagmiConfig client={wagmiClient}>
-      <DiditProvider clientUrl='http://127.0.0.1:8000/avatar/integrations'>
-          <DiditAuthProvider chains={chains} theme={ midnightTheme() }>
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'flex-end',
-        padding: 12,
-      }}
-    >
-      <ConnectButton />
-    </div>
-       </DiditAuthProvider>
-      </DiditProvider>
-    </WagmiConfig>
+```bash
+pnpm install
 ```
 
-## Retrieve the accessToken & walletAddress
+Then go into an example directory, eg: `with-next`.
 
-```
-import { useDiditStatus } from "diditsdktest";
-const {address, token, status, error} = useDiditStatus()
+```bash
+cd examples/with-next
 ```
 
-- **address:** connected address
-- **token:** provided accessToken
-- **status:** "authenthicated"/"unauthenthicated"
-- **error:** any error from within the SDK
+Then run the dev script.
 
-## Login & Logout functions
+```bash
+pnpm run dev
+```
 
-```
-  import {
-    useAuthenticationAdapter,
-    useConnectModal,
-  } from 'diditsdktest';
-  const adapter = useAuthenticationAdapter();
-  const { openConnectModal } = useConnectModal();
-  return (
-    <>
-      <button onClick={() => adapter.signOut()}>LOGOUT</button>
-      {openConnectModal && (
-        <button onClick={() => openConnectModal()}>LOGIN</button>
-      )}
-    </>
-  );
-}
-```
+## Contributing
+
+Please follow our [contributing guidelines](./.github/CONTRIBUTING.md).
+
+## License
+
+Licensed under the MIT License, Copyright © 2022-present [Rainbow](https://rainbow.me).
+
+See [LICENSE](./LICENSE) for more information.

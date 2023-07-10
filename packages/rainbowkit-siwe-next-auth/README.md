@@ -16,55 +16,63 @@ If you haven't already, first set up your [Next.js](https://nextjs.org) project 
 
 ### Install
 
-Install the `@rainbow-me/rainbowkit-siwe-next-auth` package.
+Install the `@rainbow-me/rainbowkit-siwe-next-auth` package and its peer dependency, [ethers](https://docs.ethers.org/v5/).
 
 ```bash
-npm install @rainbow-me/rainbowkit-siwe-next-auth
+npm install @rainbow-me/rainbowkit-siwe-next-auth ethers@^5
 ```
+
+> Note: `siwe` requires the [ethers](https://docs.ethers.org/v5/) peer dependency, while [wagmi](https://wagmi.sh/) now relies on the alternative [viem](https://viem.sh).
 
 ### Set up the provider
 
-In your `App` component, import `DiditAuthProvider`.
+In your `App` component, import `RainbowKitSiweNextAuthProvider`.
 
 ```tsx
-import { DiditAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
+import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
 ```
 
-Wrap `DiditAuthProvider` with `DiditAuthProvider`, ensuring it's nested within NextAuth's `SessionProvider` so that it has access to the session.
+Wrap `RainbowKitProvider` with `RainbowKitSiweNextAuthProvider`, ensuring it's nested within NextAuth's `SessionProvider` so that it has access to the session.
 
 ```tsx
-import { DiditAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
-import { DiditAuthProvider } from '@rainbow-me/rainbowkit';
+import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
+import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { SessionProvider } from 'next-auth/react';
+import type { Session } from 'next-auth';
 import { AppProps } from 'next/app';
 import { WagmiConfig } from 'wagmi';
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({
+  Component,
+  pageProps,
+}: AppProps<{
+  session: Session;
+}>) {
   return (
     <WagmiConfig {...etc}>
       <SessionProvider refetchInterval={0} session={pageProps.session}>
-        <DiditAuthProvider>
-          <DiditAuthProvider {...etc}>
+        <RainbowKitSiweNextAuthProvider>
+          <RainbowKitProvider {...etc}>
             <Component {...pageProps} />
           </RainbowKitProvider>
-        </RainbowKitProvider>
+        </RainbowKitSiweNextAuthProvider>
       </SessionProvider>
     </WagmiConfig>
   );
 }
 ```
 
-With `DiditAuthProvider` in place, your users will now be prompted to authenticate by signing a message once they've connected their wallet.
+With `RainbowKitSiweNextAuthProvider` in place, your users will now be prompted to authenticate by signing a message once they've connected their wallet.
 
 ### Customize the SIWE message options
 
-You can customize the [SIWE message options](https://github.com/spruceid/siwe/blob/v1.1.6/packages/siwe/lib/client.ts#L29) by passing a function to the `getSiweMessageOptions` prop on `DiditAuthProvider`.
+You can customize the [SIWE message options](https://github.com/spruceid/siwe/blob/v1.1.6/packages/siwe/lib/client.ts#L29) by passing a function to the `getSiweMessageOptions` prop on `RainbowKitSiweNextAuthProvider`.
 
 This function will be called whenever a new message is created. Options returned from this function will be merged with the defaults.
 
 ```tsx
 import {
-  DiditAuthProvider,
+  RainbowKitSiweNextAuthProvider,
   GetSiweMessageOptions,
 } from '@rainbow-me/rainbowkit-siwe-next-auth';
 
@@ -72,9 +80,9 @@ const getSiweMessageOptions: GetSiweMessageOptions = () => ({
   statement: 'Sign in to my RainbowKit app',
 });
 
-<DiditAuthProvider getSiweMessageOptions={getSiweMessageOptions}>
+<RainbowKitSiweNextAuthProvider getSiweMessageOptions={getSiweMessageOptions}>
   ...
-</RainbowKitProvider>;
+</RainbowKitSiweNextAuthProvider>;
 ```
 
 ### Access the session server-side

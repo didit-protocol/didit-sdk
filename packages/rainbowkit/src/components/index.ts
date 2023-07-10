@@ -1,2 +1,2 @@
 export { ConnectButton } from './ConnectButton/ConnectButton';
-export { DiditAuthProvider } from './RainbowKitProvider/RainbowKitProvider';
+export { RainbowKitProvider } from './RainbowKitProvider/RainbowKitProvider';

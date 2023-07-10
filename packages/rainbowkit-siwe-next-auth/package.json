@@ -1,7 +1,7 @@
 {
-  "name": "diditprovidertest",
-  "version": "0.0.19",
-  "description": "Gamium authentication adapter for Sign-In",
+  "name": "@rainbow-me/rainbowkit-siwe-next-auth",
+  "version": "0.1.10",
+  "description": "RainbowKit authentication adapter for Sign-In with Ethereum and NextAuth.js",
   "files": [
     "dist"
   ],
@@ -29,14 +29,14 @@
   "author": "Rainbow",
   "license": "MIT",
   "peerDependencies": {
-    "diditsdktest": "^0.0.19",
-    "react": ">=17"
-  },
-  "dependencies": {
-    "diditsdktest": "^0.0.19"
+    "@rainbow-me/rainbowkit": "0.5.x || 0.6.x || 0.7.x || 0.8.x || 0.9.x || 0.10.x || 0.11.x || 0.12.x",
+    "next-auth": ">=4.10.2 <=4.20.1",
+    "react": ">=17",
+    "siwe": "^2.1.4"
   },
   "devDependencies": {
-    "diditsdktest": "workspace:*"
+    "@rainbow-me/rainbowkit": "workspace:*",
+    "siwe": "^2.1.4"
   },
   "repository": {
     "type": "git",

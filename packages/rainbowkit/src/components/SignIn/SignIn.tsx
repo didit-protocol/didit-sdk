@@ -1,6 +1,7 @@
 import React, { useCallback, useRef } from 'react';
 import {
   useAccount,
+  useDisconnect,
   useNetwork,
   UserRejectedRequestError,
   useSignMessage,
@@ -60,6 +61,8 @@ export function SignIn({
   const { chain: activeChain } = useNetwork();
   const { signMessageAsync } = useSignMessage();
   const MAXLIMIT = mobile ? 10 : 20;
+  const { disconnect } = useDisconnect();
+  const cancel = () => disconnect();
 
   const signIn = async () => {
     try {
@@ -251,7 +254,7 @@ export function SignIn({
           {mobile ? (
             <ActionButton
               label="Cancel"
-              onClick={onClose}
+              onClick={cancel}
               size="large"
               type="secondary"
             />
@@ -261,7 +264,7 @@ export function SignIn({
               borderRadius="full"
               className={touchableStyles({ active: 'shrink', hover: 'grow' })}
               display="block"
-              onClick={onClose}
+              onClick={cancel}
               paddingX="10"
               paddingY="5"
               rel="noreferrer"

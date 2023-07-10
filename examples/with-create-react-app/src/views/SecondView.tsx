@@ -3,7 +3,7 @@ import {
   useDiditStatus,
   useAuthenticationAdapter,
   useConnectModal,
-} from 'diditsdktest';
+} from '@rainbow-me/rainbowkit';
 
 function SecondView() {
   const { token, address, status, error } = useDiditStatus();

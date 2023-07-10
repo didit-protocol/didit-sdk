@@ -1,5 +1,439 @@
 # @rainbow-me/rainbowkit
 
+## 0.12.17
+
+### Patch Changes
+
+- e1fd3df: Fixed an issue with MetaMask Mobile's connector that blocked WalletConnect pairings
+
+## 0.12.16
+
+### Patch Changes
+
+- 6af1db7: Upgraded minimum `wagmi` peer dependency to `0.12.18` for improved WalletConnect v2 support.
+
+## 0.12.15
+
+### Patch Changes
+
+- 8fe5d7a: Support for WalletConnect v2 is now standard in RainbowKit.
+
+  Every dApp that relies on WalletConnect now needs to obtain a `projectId` from [WalletConnect Cloud](https://cloud.walletconnect.com/). This is absolutely free and only takes a few minutes.
+
+  This must be completed before WalletConnect v1 bridge servers are shutdown on June 28, 2023.
+
+  Upgrade RainbowKit and provide the `projectId` to `getDefaultWallets` and individual RainbowKit wallet connectors like the following:
+
+  ```ts
+  const projectId = 'YOUR_PROJECT_ID';
+
+  const { wallets } = getDefaultWallets({
+    appName: 'My RainbowKit App',
+    projectId,
+    chains,
+  });
+
+  const connectors = connectorsForWallets([
+    ...wallets,
+    {
+      groupName: 'Other',
+      wallets: [
+        argentWallet({ projectId, chains }),
+        trustWallet({ projectId, chains }),
+        ledgerWallet({ projectId, chains }),
+      ],
+    },
+  ]);
+  ```
+
+  You can read the full migration guide [here](https://www.rainbowkit.com/guides/walletconnect-v2).
+
+  **Advanced options**
+
+  If a dApp requires supporting a legacy wallet that has not yet migrated to WalletConnect v2, the WalletConnect version can be overriden.
+
+  ```ts
+  metaMaskWallet(options: {
+    chains: Chain[];
+    walletConnectVersion: '1',
+  });
+  ```
+
+  Once the WalletConnect v1 servers are shutdown, a [custom bridge server](https://docs.walletconnect.com/1.0/bridge-server) is required.
+
+  ```ts
+  walletConnectWallet(options: {
+    chains: Chain[];
+    version: '1',
+    options: {
+      bridge: 'https://bridge.myhostedserver.com',
+    },
+  });
+
+  customWallet(options: {
+    chains: Chain[];
+    walletConnectVersion: '1',
+    walletConnectOptions: {
+      bridge: 'https://bridge.myhostedserver.com',
+    },
+  });
+  ```
+
+  Reference the [docs](https://www.rainbowkit.com/docs/custom-wallet-list#walletconnect) for additional supported options.
+
+## 0.12.14
+
+### Patch Changes
+
+- 865175f: Upgraded minimum `ethers` peer dependency to `^5.6.8`.
+
+## 0.12.13
+
+### Patch Changes
+
+- 0f8e87e: **Improved extension store support**
+
+  RainbowKit wallet connectors now support multiple browser extension download URLs, and RainbowKit will automatically direct users to the appropriate extension store.
+
+  Users will also experience an improved download flow for extensions, including support for Arc, Opera, and Safari browsers.
+
+  dApps that utilize the `Custom Wallets` API can reference the updated docs [here](https://www.rainbowkit.com/docs/custom-wallets).
+
+  ```tsx
+  {
+    downloadUrls: {
+      chrome: 'https://chrome.google.com/webstore/detail/my-wallet',
+      edge: 'https://microsoftedge.microsoft.com/addons/detail/my-wallet',
+      firefox: 'https://addons.mozilla.org/firefox/addon/my-wallet',
+      opera: 'https://addons.opera.com/extensions/details/my-wallet',
+      browserExtension: 'https://my-wallet/', */ fallback download page */
+    }
+  }
+  ```
+
+- 6eab54d: Detecting MetaMask in `window.ethereum.providers` for wallets that support the `ethereum.providers` standard.
+
+  Overriding Wagmi's `getProvider` logic for MetaMask to ensure that MetaMask is preferred when available, and RainbowKit's MetaMask button continues to act as a fallback for users that rely on wallets that override `window.ethereum`.
+
+## 0.12.12
+
+### Patch Changes
+
+- ab051b9: Support for `options` customization for `walletConnectWallet`
+
+  **Example usage**
+
+  ```tsx
+  walletConnectWallet(options: {
+    projectId: string;
+    chains: Chain[];
+    options?: {
+      qrcodeModalOptions?: {
+        desktopLinks?: string[];
+        mobileLinks?: string[];
+      };
+    }
+  });
+  ```
+
+  Reference the [docs](https://www.rainbowkit.com/docs/custom-wallet-list#walletconnect) for additional supported options.
+
+## 0.12.11
+
+## 0.12.10
+
+## 0.12.9
+
+### Patch Changes
+
+- 361bb39: Phantom Support
+
+  **Example usage**
+
+  ```ts
+  import {
+    getDefaultWallets,
+    connectorsForWallets,
+  } from '@rainbow-me/rainbowkit';
+  import { phantomWallet } from '@rainbow-me/rainbowkit/wallets';
+  const { wallets } = getDefaultWallets({ appName, projectId, chains });
+  const connectors = connectorsForWallets([
+    ...wallets,
+    {
+      groupName: 'Other',
+      wallets: [phantomWallet({ chains })],
+    },
+  ]);
+  ```
+
+- 82376f0: Rabby Support
+
+  **Example usage**
+
+  ```ts
+  import {
+    getDefaultWallets,
+    connectorsForWallets,
+  } from '@rainbow-me/rainbowkit';
+  import { rabbyWallet } from '@rainbow-me/rainbowkit/wallets';
+  const { wallets } = getDefaultWallets({ appName, chains });
+  const connectors = connectorsForWallets([
+    ...wallets,
+    {
+      groupName: 'Other',
+      wallets: [rabbyWallet({ chains })],
+    },
+  ]);
+  ```
+
+- 7c9e580: Trust Wallet Support
+
+  The `trustWallet` wallet connector now includes support for the Trust Wallet browser extension.
+
+  **Example usage**
+
+  ```ts
+  import {
+    getDefaultWallets,
+    connectorsForWallets,
+  } from '@rainbow-me/rainbowkit';
+  import { trustWallet } from '@rainbow-me/rainbowkit/wallets';
+  const { wallets } = getDefaultWallets({ appName, projectId, chains });
+  const connectors = connectorsForWallets([
+    ...wallets,
+    {
+      groupName: 'Other',
+      wallets: [trustWallet({ projectId, chains })],
+    },
+  ]);
+  ```
+
+- 0127559: XDEFI Wallet Support
+
+  **Example usage**
+
+  ```tsx
+  import {
+    getDefaultWallets,
+    connectorsForWallets,
+  } from '@rainbow-me/rainbowkit';
+  import { xdefiWallet } from '@rainbow-me/rainbowkit/wallets';
+  const { wallets } = getDefaultWallets({ appName, projectId, chains });
+  const connectors = connectorsForWallets([
+    ...wallets,
+    {
+      groupName: 'Other',
+      wallets: [xdefiWallet({ chains })],
+    },
+  ]);
+  ```
+
+## 0.12.8
+
+### Patch Changes
+
+- aef9643: **Support for WalletConnect Cloud `projectId`**
+
+  Every dApp that relies on WalletConnect now needs to obtain a `projectId` from [WalletConnect Cloud](https://cloud.walletconnect.com/). This is absolutely free and only takes a few minutes.
+
+  RainbowKit will enable WalletConnect v2 for supported wallets when `projectId` is specified. If `projectId` is unspecified, RainbowKit will quietly prefer WalletConnect v1.
+
+  This must be completed before WalletConnect v1 bridge servers are shutdown on June 28, 2023.
+
+  Provide the `projectId` to `getDefaultWallets` and individual RainbowKit wallet connectors like the following:
+
+  ```ts
+  const projectId = 'YOUR_PROJECT_ID';
+
+  const { wallets } = getDefaultWallets({
+    appName: 'My RainbowKit App',
+    projectId,
+    chains,
+  });
+
+  const connectors = connectorsForWallets([
+    ...wallets,
+    {
+      groupName: 'Other',
+      wallets: [
+        argentWallet({ projectId, chains }),
+        trustWallet({ projectId, chains }),
+        ledgerWallet({ projectId, chains }),
+      ],
+    },
+  ]);
+  ```
+
+## 0.12.7
+
+### Patch Changes
+
+- 4ef5c51: Fixed an issue that caused mobile WalletConnect redirects for signing request hooks to fail in Wagmi 0.12.x
+
+## 0.12.6
+
+### Patch Changes
+
+- d35809e: Amended `rainbowWallet` connector extension support and URLs
+
+  Improved UI flow for wallet connectors that don't specify `extension.instructions`
+
+## 0.12.5
+
+### Patch Changes
+
+- 2b4ede4: Zerion Support
+
+  **Example usage**
+
+  ```ts
+  import {
+    getDefaultWallets,
+    connectorsForWallets,
+  } from '@rainbow-me/rainbowkit';
+  import { zerionWallet } from '@rainbow-me/rainbowkit/wallets';
+  const { wallets } = getDefaultWallets({ appName, chains });
+  const connectors = connectorsForWallets([
+    ...wallets,
+    {
+      groupName: 'Other',
+      wallets: [zerionWallet({ chains })],
+    },
+  ]);
+  ```
+
+- 6a01368: Taho Support
+
+  **Example usage**
+
+  ```ts
+  import {
+    getDefaultWallets,
+    connectorsForWallets,
+  } from '@rainbow-me/rainbowkit';
+  import { tahoWallet } from '@rainbow-me/rainbowkit/wallets';
+  const { wallets } = getDefaultWallets({ appName, chains });
+  const connectors = connectorsForWallets([
+    ...wallets,
+    {
+      groupName: 'Other',
+      wallets: [tahoWallet({ chains })],
+    },
+  ]);
+  ```
+
+- 936b523: OKX Wallet Support
+
+  **Example usage**
+
+  ```ts
+  import {
+    getDefaultWallets,
+    connectorsForWallets,
+  } from '@rainbow-me/rainbowkit';
+  import { okxWallet } from '@rainbow-me/rainbowkit/wallets';
+  const { wallets } = getDefaultWallets({ appName, chains });
+  const connectors = connectorsForWallets([
+    ...wallets,
+    {
+      groupName: 'Other',
+      wallets: [okxWallet({ chains })],
+    },
+  ]);
+  ```
+
+- 7f669bd: Dawn Wallet Support
+
+  **Example usage**
+
+  ```ts
+  import {
+    getDefaultWallets,
+    connectorsForWallets,
+  } from '@rainbow-me/rainbowkit';
+  import { dawnWallet } from '@rainbow-me/rainbowkit/wallets';
+  const { wallets } = getDefaultWallets({ appName, chains });
+  const connectors = connectorsForWallets([
+    ...wallets,
+    {
+      groupName: 'Other',
+      wallets: [dawnWallet({ chains })],
+    },
+  ]);
+  ```
+
+## 0.12.4
+
+### Patch Changes
+
+- 9b93f56: Added `safeWallet` connector to support Safe Apps. dApps that rely on `getDefaultWallets` will adopt this behavior automatically. dApps that rely on the Custom Wallet List should add `safeWallet` alongside `injectedWallet`.
+
+## 0.12.3
+
+### Patch Changes
+
+- e7f1bec: `injectedWallet` now has a friendlier name and icon
+- fe4f356: RainbowKit dApps that use `getDefaultWallets` or `injectedWallet` will now more eagerly display the fallback `injectedWallet` connector to better support dApp Browsers when a branded connector is unavailable.
+
+## 0.12.2
+
+### Patch Changes
+
+- 2a1d230: Fixed `shimDisconnect` wallet connector option to maintain default Wagmi disconnect behavior when `shimDisconnect` is unspecified. RainbowKit wallet connectors now also accept all `InjectedConnectorOptions` options.
+- 429a3c7: Improvements to RainbowKit UX on iPad
+
+## 0.12.1
+
+### Patch Changes
+
+- 8f01a12: Bitski Support
+
+  **Example usage**
+
+  ```ts
+  import {
+    getDefaultWallets,
+    connectorsForWallets,
+  } from '@rainbow-me/rainbowkit';
+  import { bitskiWallet } from '@rainbow-me/rainbowkit/wallets';
+  const connectors = connectorsForWallets([
+    ...wallets,
+    {
+      groupName: 'Other',
+      wallets: [
+        argentWallet({ chains }),
+        trustWallet({ chains }),
+        bitskiWallet({ chains }),
+        ledgerWallet({ chains }),
+      ],
+    },
+  ]);
+  ```
+
+- 3399df5: MEW Wallet Support
+
+  **Example usage**
+
+  ```ts
+  import {
+    getDefaultWallets,
+    connectorsForWallets,
+  } from '@rainbow-me/rainbowkit';
+  import { mewWallet } from '@rainbow-me/rainbowkit/wallets';
+  const connectors = connectorsForWallets([
+    ...wallets,
+    {
+      groupName: 'Other',
+      wallets: [
+        argentWallet({ chains }),
+        trustWallet({ chains }),
+        mewWallet({ chains }),
+        ledgerWallet({ chains }),
+      ],
+    },
+  ]);
+  ```
+
 ## 0.12.0
 
 ### Minor Changes
@@ -175,6 +609,7 @@
   +import { connectorsForWallets } from '@rainbow-me/rainbowkit';
   +import {
   +  injectedWallet,
+  +  rainbowWallet,
   +  metaMaskWallet,
   +  coinbaseWallet,
   +  walletConnectWallet,
@@ -187,6 +622,7 @@
   -  wallet.coinbase({ chains, appName: 'My App' }),
   -  wallet.walletConnect({ chains }),
   +  injectedWallet({ chains }),
+  +  rainbowWallet({ chains }),
   +  metaMaskWallet({ chains }),
   +  coinbaseWallet({ chains, appName: 'My App' }),
   +  walletConnectWallet({ chains }),
@@ -410,7 +846,7 @@
 
 ### Patch Changes
 
-- 4333995: Support filtering chains before passing them to `DiditAuthProvider`.
+- 4333995: Support filtering chains before passing them to `RainbowKitProvider`.
 
   This is particularly useful if you're building an L2-only project and you want mainnet to be available for resolving ENS details but you don't want it to be listed in the chain selector.
 
@@ -436,7 +872,7 @@
 
 ### Patch Changes
 
-- 1a4f2f7: Add a 'compact' modal size option for developers looking to use a simpler version of RainbowKit, available by setting the `modalSize` prop to `"compact"` on `DiditAuthProvider`.
+- 1a4f2f7: Add a 'compact' modal size option for developers looking to use a simpler version of RainbowKit, available by setting the `modalSize` prop to `"compact"` on `RainbowKitProvider`.
 
 ## 0.4.6
 
@@ -462,20 +898,20 @@
 ### Patch Changes
 
 - 4857e75: Fix duplicate wallets in connect modal after hot module reloading
-- c6a1033: Added `initialChain` prop to `DiditAuthProvider`
+- c6a1033: Added `initialChain` prop to `RainbowKitProvider`
 
-  RainbowKit (as of v0.3.2) automatically connects to the first chain in the `chains` array passed to `DiditAuthProvider`. This behavior can now be customized via the `initialChain` prop.
+  RainbowKit (as of v0.3.2) automatically connects to the first chain in the `chains` array passed to `RainbowKitProvider`. This behavior can now be customized via the `initialChain` prop.
 
   The initial chain can be configured using a chain ID.
 
   ```tsx
-  <DiditAuthProvider chains={chains} initialChain={1}>
+  <RainbowKitProvider chains={chains} initialChain={1}>
   ```
 
   As a convenience, you can also pass a chain object.
 
   ```tsx
-  <DiditAuthProvider chains={chains} initialChain={chain.mainnet}>
+  <RainbowKitProvider chains={chains} initialChain={chain.mainnet}>
   ```
 
 - 396308f: Added Hooks for programmatically opening modals
@@ -678,7 +1114,7 @@
 ### Patch Changes
 
 - 0686c2f: Fix visual bug where focus outlines were out of sync with buttons/links on click when toggling between keyboard and mouse usage
-- dfc7d13: Add the `avatar` prop to `DiditAuthProvider` to allow developers to provide their own custom avatar component.
+- dfc7d13: Add the `avatar` prop to `RainbowKitProvider` to allow developers to provide their own custom avatar component.
 
 ## 0.2.2
 
@@ -699,7 +1135,7 @@
 
 ### Patch Changes
 
-- a921853: Add `disclaimer` to the `appInfo` property in `DiditAuthProvider`, which displays a custom disclaimer at the bottom of the connection modal's welcome screen
+- a921853: Add `disclaimer` to the `appInfo` property in `RainbowKitProvider`, which displays a custom disclaimer at the bottom of the connection modal's welcome screen
 
 ## 0.2.0
 
@@ -891,11 +1327,11 @@
   When using a custom accent color:
 
   ```tsx
-  import { DiditAuthProvider, darkTheme } from '@rainbow-me/rainbowkit';
+  import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 
   const App = () => {
     return (
-      <DiditAuthProvider
+      <RainbowKitProvider
         theme={darkTheme({
           accentColor: '#7b3fe4',
           accentColorForeground: 'white',
@@ -910,11 +1346,11 @@
   When using a built-in accent color preset:
 
   ```tsx
-  import { DiditAuthProvider, darkTheme } from '@rainbow-me/rainbowkit';
+  import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 
   const App = () => {
     return (
-      <DiditAuthProvider
+      <RainbowKitProvider
         theme={darkTheme({
           ...darkTheme.accentColors.purple,
         })}
@@ -925,7 +1361,7 @@
   };
   ```
 
-- e9a374e: You now pass the `learnMoreUrl` as a property to the new `appInfo` property instead of directly to `DiditAuthProvider`. This `appInfo` also exposes `appName` to display your app's name in Rainbowkit.
+- e9a374e: You now pass the `learnMoreUrl` as a property to the new `appInfo` property instead of directly to `RainbowkitProvider`. This `appInfo` also exposes `appName` to display your app's name in Rainbowkit.
 - 2c79870: Reserve height of `ConnectButton` during server/static render
 
   In order to reduce layout shift during page load, the `ConnectButton` component now renders its content in an invisible and inert state before mount.
@@ -1011,7 +1447,7 @@
   const App = () => {
     return (
       <WagmiProvider autoConnect connectors={connectors} provider={provider}>
-        <DiditAuthProvider chains={chains}>
+        <RainbowKitProvider chains={chains}>
           <YourApp />
         </RainbowKitProvider>
       </WagmiProvider>
@@ -1033,7 +1469,7 @@
   const App = () => {
     return (
       <WagmiProvider client={wagmiClient}>
-        <DiditAuthProvider chains={chains}>
+        <RainbowKitProvider chains={chains}>
           <YourApp />
         </RainbowKitProvider>
       </WagmiProvider>
@@ -1068,14 +1504,14 @@
 
   You can now opt in to displaying recent transactions within RainbowKit’s account modal. Note that all transactions must be manually registered with RainbowKit in order to be displayed.
 
-  First enable the `showRecentTransactions` option on `DiditAuthProvider`.
+  First enable the `showRecentTransactions` option on `RainbowKitProvider`.
 
   ```tsx
-  import { DiditAuthProvider } from '@rainbow-me/rainbowkit';
+  import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 
   const App = () => {
     return (
-      <DiditAuthProvider showRecentTransactions={true} {...etc}>
+      <RainbowKitProvider showRecentTransactions={true} {...etc}>
         {/* ... */}
       </RainbowKitProvider>
     );
@@ -1157,7 +1593,7 @@
 
   ```tsx
   import {
-    DiditAuthProvider,
+    RainbowKitProvider,
     Chain,
     getDefaultWallets,
   } from '@rainbow-me/rainbowkit';
@@ -1198,7 +1634,7 @@
   const App = () => {
     return (
       <WagmiProvider client={wagmiClient}>
-        <DiditAuthProvider chains={chains}>
+        <RainbowKitProvider chains={chains}>
           <YourApp />
         </RainbowKitProvider>
       </WagmiProvider>
@@ -1214,7 +1650,7 @@
     Chain,
     configureChains,
     getDefaultWallets,
-    DiditAuthProvider,
+    RainbowKitProvider,
   } from '@rainbow-me/rainbowkit';
   import { createClient, WagmiProvider, chain } from 'wagmi';
   import { providers } from 'ethers';
@@ -1238,7 +1674,7 @@
   const App = () => {
     return (
       <WagmiProvider client={wagmiClient}>
-        <DiditAuthProvider chains={chains}>
+        <RainbowKitProvider chains={chains}>
           <YourApp />
         </RainbowKitProvider>
       </WagmiProvider>
@@ -1270,7 +1706,7 @@
   - The `iconUrl` property now optionally accepts an async function that returns a string (`() => Promise<string>`). This is to support bundling lazy-loadable Base64 images in JavaScript when publishing to npm. All built-in chains are now using this feature to delay loading of images until after app hydration.
   - The `iconBackground` property has been added to improve the visual appearance of chain icons while loading.
 
-- 13fa857: `DiditAuthProvider` must now be nested inside `WagmiProvider` since it now makes use of wagmi hooks internally.
+- 13fa857: `RainbowKitProvider` must now be nested inside `WagmiProvider` since it now makes use of wagmi hooks internally.
 
 ## 0.0.2
 
@@ -1318,7 +1754,7 @@
 - a696f2c: Add Hardhat chain (chainId: 31337) icon
 - e33d34b: Add support for custom “Learn more” URLs
 
-  - To customize the URL for the “Learn more” link within the “What is a wallet?” section, you can provide the optional `learnMoreUrl` prop to `DiditAuthProvider`.
+  - To customize the URL for the “Learn more” link within the “What is a wallet?” section, you can provide the optional `learnMoreUrl` prop to `RainbowKitProvider`.
   - If you‘ve created a custom wallet with QR code instructions, you must now provide the `qrCode.instructions.learnMoreUrl` property.
 
 - 96e78b3: Add `fontStack` option to built-in themes, supporting `"rounded"` and `"system"` variants.

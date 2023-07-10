@@ -1,1 +1,1 @@
-export { DiditProvider } from './RainbowKitSiweNextAuthProvider';
+export { RainbowKitSiweNextAuthProvider } from './RainbowKitSiweNextAuthProvider';

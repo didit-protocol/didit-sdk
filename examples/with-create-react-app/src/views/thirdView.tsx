@@ -1,4 +1,4 @@
-import { ConnectButton } from 'diditsdktest';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useSignMessage } from 'wagmi';
 import { useState } from 'react';
 import React from 'react';
