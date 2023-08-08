@@ -68,16 +68,16 @@ export interface DiditAuthProviderProps {
 const defaultTheme = lightTheme();
 
 export function DiditAuthProvider({
-  chains,
-  initialChain,
-  id,
-  theme = defaultTheme,
-  children,
   appInfo,
-  showRecentTransactions = false,
-  coolMode = false,
   avatar,
+  chains,
+  children,
+  coolMode = false,
+  id,
+  initialChain,
   modalSize = ModalSizeOptions.WIDE,
+  showRecentTransactions = false,
+  theme = defaultTheme,
 }: DiditAuthProviderProps) {
   usePreloadImages();
 

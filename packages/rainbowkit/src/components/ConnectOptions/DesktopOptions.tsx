@@ -1,4 +1,6 @@
+import { GoogleLogin } from '@react-oauth/google';
 import React, { Fragment, useContext, useEffect, useState } from 'react';
+import AppleLogin from 'react-apple-login';
 import { touchableStyles } from '../../css/touchableStyles';
 import { isSafari } from '../../utils/browsers';
 import { groupBy } from '../../utils/groupBy';
@@ -339,6 +341,19 @@ export function DesktopOptions({ onClose }: { onClose: () => void }) {
             )}
           </Box>
           <Box className={ScrollClassName} paddingBottom="18">
+            <GoogleLogin
+              onError={() => {
+                throw new Error('Wrong Login');
+              }}
+              onSuccess={(response: { credential: any }) =>
+                // eslint-disable-next-line no-console
+                console.log('tokenId', response.credential)
+              }
+            />
+            <AppleLogin
+              clientId="org.gamium.mobile"
+              redirectURI="http://localhost:3000"
+            />
             {Object.entries(groupedWallets).map(
               ([groupName, wallets], index) =>
                 wallets.length > 0 && (
