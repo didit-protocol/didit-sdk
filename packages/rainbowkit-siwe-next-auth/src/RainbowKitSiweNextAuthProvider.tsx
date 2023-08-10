@@ -1,7 +1,7 @@
 import {
   createAuthenticationAdapter,
   RainbowKitAuthenticationProvider,
-} from 'diditsdktest';
+} from 'didit-sdk';
 import React, { ReactNode, useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useAccount, useDisconnect } from 'wagmi';

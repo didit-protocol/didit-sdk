@@ -11,6 +11,7 @@ import { AsyncImage } from '../AsyncImage/AsyncImage';
 import { Box } from '../Box/Box';
 import { ActionButton } from '../Button/ActionButton';
 import { CloseButton } from '../CloseButton/CloseButton';
+import { DiditLoginIcon } from '../Icons/DiditLoginIcon';
 import { useAuthenticationAdapter } from '../RainbowKitProvider/AuthenticationContext';
 import { Text } from '../Text/Text';
 
@@ -56,7 +57,7 @@ export function SignIn({
   }, [getNonce]);
 
   const mobile = isMobile();
-  const { address, connector } = useAccount();
+  const { address } = useAccount();
   const { chain: activeChain } = useNetwork();
   const { signMessageAsync } = useSignMessage();
   const MAXLIMIT = mobile ? 10 : 20;
@@ -203,14 +204,7 @@ export function SignIn({
           flexDirection="row"
           gap={mobile ? '16' : '12'}
         >
-          <AsyncImage
-            background={connector._wallets[0].iconBackground}
-            borderColor="actionButtonBorder"
-            borderRadius="10"
-            height="48"
-            src={connector._wallets[0].iconUrl}
-            width="48"
-          />
+          <DiditLoginIcon />
           <Text
             color="modalTextSecondary"
             size={mobile ? '16' : '14'}
