@@ -48,7 +48,7 @@ export type Theme =
       darkMode: ThemeVars;
     };
 
-export interface DiditAuthProviderProps {
+export interface RainbowKitProviderProps {
   chains: RainbowKitChain[];
   initialChain?: RainbowKitChain | number;
   id?: string;
@@ -68,17 +68,17 @@ export interface DiditAuthProviderProps {
 const defaultTheme = lightTheme();
 
 export function DiditAuthProvider({
-  chains,
-  initialChain,
-  id,
-  theme = defaultTheme,
-  children,
   appInfo,
-  showRecentTransactions = false,
-  coolMode = false,
   avatar,
+  chains,
+  children,
+  coolMode = false,
+  id,
+  initialChain,
   modalSize = ModalSizeOptions.WIDE,
-}: DiditAuthProviderProps) {
+  showRecentTransactions = false,
+  theme = defaultTheme,
+}: RainbowKitProviderProps) {
   usePreloadImages();
 
   useAccount({ onDisconnect: clearWalletConnectDeepLink });

@@ -29,11 +29,7 @@
   "author": "Rainbow",
   "license": "MIT",
   "peerDependencies": {
-    "diditsdktest": "^0.0.19",
     "react": ">=17"
-  },
-  "dependencies": {
-    "diditsdktest": "^0.0.19"
   },
   "devDependencies": {
     "diditsdktest": "workspace:*"
