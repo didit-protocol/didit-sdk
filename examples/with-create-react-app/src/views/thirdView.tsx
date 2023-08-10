@@ -1,4 +1,4 @@
-import { ConnectButton } from 'diditsdktest';
+import { ConnectButton } from 'didit-sdk';
 import { useSignMessage } from 'wagmi';
 import { useState } from 'react';
 import React from 'react';

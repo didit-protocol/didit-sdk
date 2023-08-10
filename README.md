@@ -25,14 +25,14 @@ To integrate didit you will need 3 things:
 
 1. [Wagmi client](https://github.com/tmm/wagmi)
 2. SetUp the DiditProvider
-   - `npm i diditprovidertest`
+   - `npm i didit-provider`
    - Pass the next parameters to the provider
      - **clientUrl (str)**: URL to you backend server [i.e: 'http://127.0.0.1:8000/avatar/integrations']
      - Example:  
        `<DiditProvider clientUrl='http://127.0.0.1:8000/avatar/integrations'>`
 3. Set up the DiditAuthProvider:
 
-- `npm i diditsdktest`
+- `npm i didit-sdk`
 - Pass the next parameters to the provider:
   - **chains (str)**: Wagmi config of the requested chain [i.e: wagmi.chains]
 - Example: `<DiditAuthProvider chains={chains} theme={ midnightTheme() }>`
@@ -60,7 +60,7 @@ Full code Example:
 ## Retrieve the accessToken & walletAddress
 
 ```
-import { useDiditStatus } from "diditsdktest";
+import { useDiditStatus } from "didit-sdk";
 const {address, token, status, error} = useDiditStatus()
 ```
 
@@ -75,7 +75,7 @@ const {address, token, status, error} = useDiditStatus()
   import {
     useAuthenticationAdapter,
     useConnectModal,
-  } from 'diditsdktest';
+  } from 'didit-sdk';
   const adapter = useAuthenticationAdapter();
   const { openConnectModal } = useConnectModal();
   return (

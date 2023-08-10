@@ -1,6 +1,6 @@
 {
-  "name": "diditprovidertest",
-  "version": "0.0.19",
+  "name": "didit-provider",
+  "version": "1.0.1",
   "description": "Gamium authentication adapter for Sign-In",
   "files": [
     "dist"
@@ -32,7 +32,7 @@
     "react": ">=17"
   },
   "devDependencies": {
-    "diditsdktest": "workspace:*"
+    "didit-sdk": "workspace:*"
   },
   "repository": {
     "type": "git",

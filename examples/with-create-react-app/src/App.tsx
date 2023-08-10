@@ -1,16 +1,12 @@
-import { ConnectButton } from 'diditsdktest';
-import {
-  midnightTheme,
-  getDefaultWallets,
-  DiditAuthProvider,
-} from 'diditsdktest';
+import { ConnectButton } from 'didit-sdk';
+import { midnightTheme, getDefaultWallets, DiditAuthProvider } from 'didit-sdk';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum, goerli } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import SecondView from './views/SecondView';
 import ThirdView from './views/thirdView';
-import { DiditProvider } from 'diditprovidertest';
+import { DiditProvider } from 'didit-provider';
 
 const { chains, provider, webSocketProvider } = configureChains(
   [
