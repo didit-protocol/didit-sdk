@@ -5,13 +5,16 @@ import { braveWallet } from './walletConnectors/braveWallet/braveWallet';
 import { coinbaseWallet } from './walletConnectors/coinbaseWallet/coinbaseWallet';
 import { injectedWallet } from './walletConnectors/injectedWallet/injectedWallet';
 import { metaMaskWallet } from './walletConnectors/metaMaskWallet/metaMaskWallet';
+import { safeWallet } from './walletConnectors/safeWallet/safeWallet';
 import { walletConnectWallet } from './walletConnectors/walletConnectWallet/walletConnectWallet';
 
 export const getDefaultWallets = ({
   appName,
   chains,
+  projectId,
 }: {
   appName: string;
+  projectId: string;
   chains: Chain[];
 }): {
   connectors: ReturnType<typeof connectorsForWallets>;
@@ -22,9 +25,10 @@ export const getDefaultWallets = ({
       groupName: 'Popular',
       wallets: [
         injectedWallet({ chains }),
+        safeWallet({ chains }),
         coinbaseWallet({ appName, chains }),
-        metaMaskWallet({ chains }),
-        walletConnectWallet({ chains }),
+        metaMaskWallet({ chains, projectId }),
+        walletConnectWallet({ chains, projectId }),
         braveWallet({ chains }),
       ],
     },
