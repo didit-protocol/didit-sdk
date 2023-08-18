@@ -7,6 +7,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import SecondView from './views/SecondView';
 import ThirdView from './views/thirdView';
 import { DiditProvider } from 'didit-provider';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
 
 const { chains, provider, webSocketProvider } = configureChains(
   [
@@ -35,17 +37,19 @@ const wagmiClient = createClient({
 const App = () => {
   return (
     <WagmiConfig client={wagmiClient}>
-      <DiditProvider clientUrl="https://apx.dev.gamium.world/avatar/auth">
-        <DiditAuthProvider chains={chains} theme={midnightTheme()}>
-          <Router>
-            <Routes>
-              <Route path="/app" element={<SecondView />} />
-              <Route path="/js" element={<ThirdView />} />
-              <Route path="" element={<ConnectButton />} />
-            </Routes>
-          </Router>
-        </DiditAuthProvider>
-      </DiditProvider>
+      <GoogleOAuthProvider clientId={"55269255886-5pk8sc27q5othqcgtrbor6fldsnu2psg.apps.googleusercontent.com"}>
+        <DiditProvider clientUrl="https://apx.dev.gamium.world/avatar/auth">
+          <DiditAuthProvider chains={chains} theme={midnightTheme()}>
+            <Router>
+              <Routes>
+                <Route path="/app" element={<SecondView />} />
+                <Route path="/js" element={<ThirdView />} />
+                <Route path="" element={<ConnectButton />} />
+              </Routes>
+            </Router>
+          </DiditAuthProvider>
+        </DiditProvider>
+      </GoogleOAuthProvider>
     </WagmiConfig>
   );
 };

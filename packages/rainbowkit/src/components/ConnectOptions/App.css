@@ -1,0 +1,112 @@
+/* src/App.css */
+.App {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+  }
+  
+  .popup {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .popup-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .popup-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .permissions-content {
+    text-align: center;
+  }
+  
+  .permissions-content ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .permissions-content li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .toggle-container {
+    display: inline-block;
+    position: relative;
+  }
+  
+  .toggle-container input {
+    display: none;
+  }
+  
+  .toggle {
+    display: block;
+    width: 30px;
+    height: 15px;
+    background-color: #ccc;
+    border-radius: 15px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: background-color 0.3s, transform 0.3s;
+  }
+  
+  .toggle:before {
+    content: '';
+    width: 15px;
+    height: 15px;
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translateX(0);
+    transition: transform 0.3s;
+  }
+  
+  .toggle-container input:checked + .toggle {
+    background-color: #66bb6a;
+  }
+  
+  .toggle-container input:checked + .toggle:before {
+    transform: translateX(15px);
+  }
+  
+  
+  .email-registration-content {
+    text-align: center;
+  }
+  
+  .input-container {
+    margin-top: 20px;
+  }
+  
+  .input-container input {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }

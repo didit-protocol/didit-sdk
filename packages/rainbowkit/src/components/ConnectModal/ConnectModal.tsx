@@ -11,6 +11,7 @@ export interface ConnectModalProps {
 }
 
 export function ConnectModal({ onClose, open }: ConnectModalProps) {
+  const [step, setStep] = React.useState('showWelcomeScreen');
   const titleId = 'rk_connect_title';
   const connectionStatus = useConnectionStatus();
   const { disconnect } = useDisconnect();
@@ -18,12 +19,13 @@ export function ConnectModal({ onClose, open }: ConnectModalProps) {
     onClose();
     disconnect();
   };
+  
 
   if (connectionStatus === 'disconnected') {
     return (
       <Dialog onClose={closeDisconnect} open={open} titleId={titleId}>
         <DialogContent bottomSheetOnMobile padding="0" wide>
-          <ConnectOptions onClose={closeDisconnect} />
+          <ConnectOptions onClose={closeDisconnect} setStep={setStep} step={step}/>
         </DialogContent>
       </Dialog>
     );

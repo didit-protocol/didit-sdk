@@ -1,26 +1,18 @@
-import React, { Fragment, useContext, useEffect, useState } from 'react';
-import { touchableStyles } from '../../css/touchableStyles';
+import React, { useContext, useEffect, useState } from 'react';
 import { isSafari } from '../../utils/browsers';
 import { groupBy } from '../../utils/groupBy';
 import {
   useWalletConnectors,
   WalletConnector,
 } from '../../wallets/useWalletConnectors';
-import { Box } from '../Box/Box';
-import { CloseButton } from '../CloseButton/CloseButton';
 import { ConnectModalIntro } from '../ConnectModal/ConnectModalIntro';
-import { DisclaimerLink } from '../Disclaimer/DisclaimerLink';
-import { DisclaimerText } from '../Disclaimer/DisclaimerText';
-import { BackIcon } from '../Icons/Back';
-import { InfoButton } from '../InfoButton/InfoButton';
-import { ModalSelection } from '../ModalSelection/ModalSelection';
 import { AppContext } from '../RainbowKitProvider/AppContext';
 import {
   ModalSizeContext,
   ModalSizeOptions,
 } from '../RainbowKitProvider/ModalSizeContext';
-import { Text } from '../Text/Text';
-
+import WelcomeScreen from "./screens/WelcomeScreen";
+import EmailRegistrationComponent from "./screens/EmailRegistration";
 import {
   ConnectDetail,
   DownloadDetail,
@@ -29,12 +21,11 @@ import {
   InstructionExtensionDetail,
   InstructionMobileDetail,
 } from './ConnectDetails';
-import {
-  ScrollClassName,
-  sidebar,
-  sidebarCompactMode,
-} from './DesktopOptions.css';
-
+import './App.css';
+import PermissionListComponent from './screens/Permissions';
+import SuccessComponent from './screens/SuccessComponent';
+import SocialLoginComponent from './screens/SocialLogin';
+import { WalletConnectComponent } from './screens/WalletConnect';
 export enum WalletStep {
   None = 'NONE',
   LearnCompact = 'LEARN_COMPACT',
@@ -46,8 +37,41 @@ export enum WalletStep {
   InstructionsExtension = 'INSTRUCTIONS_EXTENSION',
 }
 
-export function DesktopOptions({ onClose }: { onClose: () => void }) {
-  const titleId = 'rk_connect_title';
+export function DesktopOptions({ onClose, setStep, step}: 
+  { onClose: () => void, 
+    setStep: (step: string) => void,
+    step: string,
+  }) {
+
+  const permissionsData = [
+    { id: 1, text: 'Email', authorized: false },
+    { id: 2, text: 'Profile Information', authorized: false },
+    { id: 3, text: 'Contacts', authorized: false },
+    // Add more items as needed
+  ];
+
+  const [permissions, setPermissions] = React.useState(permissionsData);
+
+  const handleAccountCreation = () => {
+    setStep('showAccountSuccess');
+  };
+  
+  const handleContinue = () => {
+    setStep('showPermissions');
+  }
+  
+
+
+  const togglePermission = (permissionId: any) => {
+    const updatedPermissions = permissions.map((permission: { id: any; authorized: any; }) =>
+      permission.id === permissionId
+        ? { ...permission, authorized: !permission.authorized }
+        : permission
+    );
+    setPermissions(updatedPermissions);
+  };
+
+
   const safari = isSafari();
   const [selectedOptionId, setSelectedOptionId] = useState<
     string | undefined
@@ -298,221 +322,50 @@ export function DesktopOptions({ onClose }: { onClose: () => void }) {
     default:
       break;
   }
+
+  const walletComponentProps = {
+    compactModeEnabled,
+    walletStep,
+    WalletStep,
+    disclaimer: Disclaimer, // Replace with the actual disclaimer
+    onClose,
+    changeWalletStep,
+    selectedOptionId,
+    selectWallet,
+    groupedWallets,
+    headerBackButtonLink,
+    headerBackButtonCallback,
+    headerLabel,
+    walletContent,
+  };
+
   return (
-    <Box
-      display="flex"
-      flexDirection="row"
-      style={{ maxHeight: compactModeEnabled ? 468 : 504 }}
-    >
-      {(compactModeEnabled ? walletStep === WalletStep.None : true) && (
-        <Box
-          className={compactModeEnabled ? sidebarCompactMode : sidebar}
-          display="flex"
-          flexDirection="column"
-          marginTop="16"
-        >
-          <Box display="flex" justifyContent="space-between">
-            {compactModeEnabled && Disclaimer && (
-              <Box marginLeft="16" width="28">
-                <InfoButton
-                  onClick={() => changeWalletStep(WalletStep.LearnCompact)}
-                />
-              </Box>
-            )}
-            {compactModeEnabled && !Disclaimer && (
-              <Box marginLeft="16" width="28" />
-            )}
-            <Box
-              marginLeft={compactModeEnabled ? '0' : '6'}
-              paddingBottom="8"
-              paddingTop="2"
-              paddingX="18"
-            >
-              <Text
-                as="h1"
-                color="modalText"
-                id={titleId}
-                size="18"
-                weight="heavy"
-              >
-                Connect a Wallet
-              </Text>
-            </Box>
-            {compactModeEnabled && (
-              <Box marginRight="16">
-                <CloseButton onClose={onClose} />
-              </Box>
-            )}
-          </Box>
-          <Box className={ScrollClassName} paddingBottom="18">
-            {Object.entries(groupedWallets).map(
-              ([groupName, wallets], index) =>
-                wallets.length > 0 && (
-                  <Fragment key={index}>
-                    {groupName ? (
-                      <Box marginBottom="8" marginTop="16" marginX="6">
-                        <Text
-                          color="modalTextSecondary"
-                          size="14"
-                          weight="bold"
-                        >
-                          {groupName}
-                        </Text>
-                      </Box>
-                    ) : null}
-                    <Box display="flex" flexDirection="column" gap="4">
-                      {wallets.map(wallet => {
-                        return (
-                          <ModalSelection
-                            currentlySelected={wallet.id === selectedOptionId}
-                            iconBackground={wallet.iconBackground}
-                            iconUrl={wallet.iconUrl}
-                            key={wallet.id}
-                            name={wallet.name}
-                            onClick={() => selectWallet(wallet)}
-                            ready={wallet.ready}
-                            recent={wallet.recent}
-                            testId={`wallet-option-${wallet.id}`}
-                          />
-                        );
-                      })}
-                    </Box>
-                  </Fragment>
-                )
-            )}
-          </Box>
-          {compactModeEnabled && (
-            <>
-              <Box background="generalBorder" height="1" marginTop="-1" />
-              {Disclaimer ? (
-                <Box paddingX="24" paddingY="16" textAlign="center">
-                  <Disclaimer Link={DisclaimerLink} Text={DisclaimerText} />
-                </Box>
-              ) : (
-                <Box
-                  alignItems="center"
-                  display="flex"
-                  justifyContent="space-between"
-                  paddingX="24"
-                  paddingY="16"
-                >
-                  <Box paddingY="4">
-                    <Text color="modalTextSecondary" size="14" weight="medium">
-                      New to Ethereum wallets?
-                    </Text>
-                  </Box>
-                  <Box
-                    alignItems="center"
-                    display="flex"
-                    flexDirection="row"
-                    gap="4"
-                    justifyContent="center"
-                  >
-                    <Box
-                      className={touchableStyles({
-                        active: 'shrink',
-                        hover: 'grow',
-                      })}
-                      cursor="pointer"
-                      onClick={() => changeWalletStep(WalletStep.LearnCompact)}
-                      paddingY="4"
-                      style={{ willChange: 'transform' }}
-                      transition="default"
-                    >
-                      <Text color="accentColor" size="14" weight="bold">
-                        Learn More
-                      </Text>
-                    </Box>
-                  </Box>
-                </Box>
-              )}
-            </>
-          )}
-        </Box>
-      )}
-      {(compactModeEnabled ? walletStep !== WalletStep.None : true) && (
-        <>
-          {!compactModeEnabled && (
-            <Box background="generalBorder" minWidth="1" width="1" />
-          )}
-          <Box
-            display="flex"
-            flexDirection="column"
-            margin="16"
-            style={{ flexGrow: 1 }}
-          >
-            <Box
-              alignItems="center"
-              display="flex"
-              justifyContent="space-between"
-              marginBottom="12"
-            >
-              <Box width="28">
-                {headerBackButtonLink && (
-                  <Box
-                    as="button"
-                    className={touchableStyles({
-                      active: 'shrinkSm',
-                      hover: 'growLg',
-                    })}
-                    color="accentColor"
-                    onClick={() => {
-                      headerBackButtonLink &&
-                        changeWalletStep(headerBackButtonLink, true);
-                      headerBackButtonCallback?.();
-                    }}
-                    paddingX="8"
-                    paddingY="4"
-                    style={{
-                      boxSizing: 'content-box',
-                      height: 17,
-                      willChange: 'transform',
-                    }}
-                    transition="default"
-                    type="button"
-                  >
-                    <BackIcon />
-                  </Box>
-                )}
-              </Box>
-              <Box
-                display="flex"
-                justifyContent="center"
-                style={{ flexGrow: 1 }}
-              >
-                {headerLabel && (
-                  <Text
-                    color="modalText"
-                    size="18"
-                    textAlign="center"
-                    weight="heavy"
-                  >
-                    {headerLabel}
-                  </Text>
-                )}
-              </Box>
-              <CloseButton onClose={onClose} />
-            </Box>
-            <Box
-              display="flex"
-              flexDirection="column"
-              style={{ minHeight: compactModeEnabled ? 396 : 432 }}
-            >
-              <Box
-                alignItems="center"
-                display="flex"
-                flexDirection="column"
-                gap="6"
-                height="full"
-                justifyContent="center"
-                marginX="8"
-              >
-                {walletContent}
-              </Box>
-            </Box>
-          </Box>
-        </>
-      )}
-    </Box>
+    <>
+    <div className="popup">
+      {step === "showSocialLogin" ? (
+          <SocialLoginComponent handleAccountCreation={handleAccountCreation} />
+        )  : step === "showAccountSuccess" ? (
+          <SuccessComponent handleContinue={handleContinue} />
+        ) : step === "showPermissions" ? (
+          <PermissionListComponent 
+            permissions={permissions}
+            togglePermission={togglePermission}                
+            />
+        ) 
+          : step === "showEmailRegistration" ? (
+            <EmailRegistrationComponent
+              handleAccountCreation={handleAccountCreation}
+            />
+        )
+          : 
+          (
+            step === "showWelcomeScreen" && <WelcomeScreen 
+              setStep={setStep}
+            />
+    )
+  }
+  </div>
+  {step === "showWalletLogin" && <WalletConnectComponent {...walletComponentProps} />}
+  </>
   );
 }

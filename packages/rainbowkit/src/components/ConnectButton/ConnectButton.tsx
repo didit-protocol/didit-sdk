@@ -13,6 +13,15 @@ import { Box } from '../Box/Box';
 import { DropdownIcon } from '../Icons/Dropdown';
 import { useRainbowKitChains } from '../RainbowKitProvider/RainbowKitChainContext';
 import { ConnectButtonRenderer } from './ConnectButtonRenderer';
+import SuccessComponent from '../ConnectOptions/screens/SuccessComponent';
+import PermissionListComponent from '../ConnectOptions/screens/Permissions';
+
+const permissionsData = [
+  { id: 1, text: 'Email', authorized: false },
+  { id: 2, text: 'Profile Information', authorized: false },
+  { id: 3, text: 'Contacts', authorized: false },
+  // Add more items as needed
+];
 
 type AccountStatus = 'full' | 'avatar' | 'address';
 type ChainStatus = 'full' | 'icon' | 'name' | 'none';
@@ -52,6 +61,27 @@ export function ConnectButton({
       }) => {
         const ready = mounted && connectionStatus !== 'loading';
         const unsupportedChain = chain?.unsupported ?? false;
+        // FETCH API BACKEND FOR terms and conditions  useEffect
+        const [step, setStep] = React.useState('showTerms');
+        const [permissions, setPermissions] = React.useState(permissionsData);
+
+    
+
+
+        const handleContinue = () => {
+          setStep('showPermissions');
+        }
+
+        const togglePermission = (permissionId: any) => {
+          const updatedPermissions = permissions.map((permission: { id: any; authorized: any; }) =>
+            permission.id === permissionId
+              ? { ...permission, authorized: !permission.authorized }
+              : permission
+          );
+          setPermissions(updatedPermissions);
+        };
+
+
 
         return (
           <Box
@@ -69,181 +99,13 @@ export function ConnectButton({
             {ready && account && connectionStatus === 'connected' ? (
               <>
                 {chain && (chains.length > 1 || unsupportedChain) && (
-                  <Box
-                    alignItems="center"
-                    aria-label="Chain Selector"
-                    as="button"
-                    background={
-                      unsupportedChain
-                        ? 'connectButtonBackgroundError'
-                        : 'connectButtonBackground'
-                    }
-                    borderRadius="connectButton"
-                    boxShadow="connectButton"
-                    className={touchableStyles({
-                      active: 'shrink',
-                      hover: 'grow',
-                    })}
-                    color={
-                      unsupportedChain
-                        ? 'connectButtonTextError'
-                        : 'connectButtonText'
-                    }
-                    display={mapResponsiveValue(chainStatus, value =>
-                      value === 'none' ? 'none' : 'flex'
-                    )}
-                    fontFamily="body"
-                    fontWeight="bold"
-                    gap="6"
-                    key={
-                      // Force re-mount to prevent CSS transition
-                      unsupportedChain ? 'unsupported' : 'supported'
-                    }
-                    onClick={openChainModal}
-                    paddingX="10"
-                    paddingY="8"
-                    testId={
-                      unsupportedChain ? 'wrong-network-button' : 'chain-button'
-                    }
-                    transition="default"
-                    type="button"
-                  >
-                    {unsupportedChain ? (
-                      <Box
-                        alignItems="center"
-                        display="flex"
-                        height="24"
-                        paddingX="4"
-                      >
-                        Wrong network
-                      </Box>
-                    ) : (
-                      <Box alignItems="center" display="flex" gap="6">
-                        {chain.hasIcon ? (
-                          <Box
-                            display={mapResponsiveValue(chainStatus, value =>
-                              value === 'full' || value === 'icon'
-                                ? 'block'
-                                : 'none'
-                            )}
-                            height="24"
-                            width="24"
-                          >
-                            <AsyncImage
-                              alt={chain.name ?? 'Chain icon'}
-                              background={chain.iconBackground}
-                              borderRadius="full"
-                              height="24"
-                              src={chain.iconUrl}
-                              width="24"
-                            />
-                          </Box>
-                        ) : null}
-                        <Box
-                          display={mapResponsiveValue(chainStatus, value => {
-                            if (value === 'icon' && !chain.iconUrl) {
-                              return 'block'; // Show the chain name if there is no iconUrl
-                            }
-
-                            return value === 'full' || value === 'name'
-                              ? 'block'
-                              : 'none';
-                          })}
-                        >
-                          {chain.name ?? chain.id}
-                        </Box>
-                      </Box>
-                    )}
-                    <DropdownIcon />
-                  </Box>
-                )}
-
-                {!unsupportedChain && (
-                  <Box
-                    alignItems="center"
-                    as="button"
-                    background="connectButtonBackground"
-                    borderRadius="connectButton"
-                    boxShadow="connectButton"
-                    className={touchableStyles({
-                      active: 'shrink',
-                      hover: 'grow',
-                    })}
-                    color="connectButtonText"
-                    display="flex"
-                    fontFamily="body"
-                    fontWeight="bold"
-                    onClick={openAccountModal}
-                    testId="account-button"
-                    transition="default"
-                    type="button"
-                  >
-                    {account.displayBalance && (
-                      <Box
-                        display={mapResponsiveValue(showBalance, value =>
-                          value ? 'block' : 'none'
-                        )}
-                        padding="8"
-                        paddingLeft="12"
-                      >
-                        {account.displayBalance}
-                      </Box>
-                    )}
-                    <Box
-                      background={
-                        normalizeResponsiveValue(showBalance)[
-                          isMobile() ? 'smallScreen' : 'largeScreen'
-                        ]
-                          ? 'connectButtonInnerBackground'
-                          : 'connectButtonBackground'
-                      }
-                      borderColor="connectButtonBackground"
-                      borderRadius="connectButton"
-                      borderStyle="solid"
-                      borderWidth="2"
-                      color="connectButtonText"
-                      fontFamily="body"
-                      fontWeight="bold"
-                      paddingX="8"
-                      paddingY="6"
-                      transition="default"
-                    >
-                      <Box
-                        alignItems="center"
-                        display="flex"
-                        gap="6"
-                        height="24"
-                      >
-                        <Box
-                          display={mapResponsiveValue(accountStatus, value =>
-                            value === 'full' || value === 'avatar'
-                              ? 'block'
-                              : 'none'
-                          )}
-                        >
-                          <Avatar
-                            address={account.address}
-                            imageUrl={account.ensAvatar}
-                            loading={account.hasPendingTransactions}
-                            size={24}
-                          />
-                        </Box>
-
-                        <Box alignItems="center" display="flex" gap="6">
-                          <Box
-                            display={mapResponsiveValue(accountStatus, value =>
-                              value === 'full' || value === 'address'
-                                ? 'block'
-                                : 'none'
-                            )}
-                          >
-                            {account.displayName}
-                          </Box>
-                          <DropdownIcon />
-                        </Box>
-                      </Box>
-                    </Box>
-                  </Box>
+                    <div className="popup">
+                      {step ===  "showTerms" ? <SuccessComponent handleContinue={handleContinue} />
+                      : <PermissionListComponent 
+                      permissions={permissions}
+                      togglePermission={togglePermission}                
+                      />}
+                    </div>
                 )}
               </>
             ) : (
