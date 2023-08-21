@@ -1,14 +1,20 @@
 import React from 'react';
 import { GoogleLogin } from '@react-oauth/google';
+import AppleLogin from 'react-apple-login';
+import { useAuthenticationAdapter } from '../../RainbowKitProvider/AuthenticationContext';
+
 
 
 interface SocialLoginProps {
-  handleAccountCreation: () => void;
+  onClose: () => void;
 }
 
 const SocialLoginComponent: React.FC<SocialLoginProps> = ({
-  handleAccountCreation,
+  onClose,
 }) => {
+  const authAdapter = useAuthenticationAdapter();
+
+
   return (
     <div className="social-login-content">
       <h2>Connect with Social Login</h2>
@@ -20,15 +26,16 @@ const SocialLoginComponent: React.FC<SocialLoginProps> = ({
               }}
               onSuccess={(response: { credential: any }) =>
               {
-                // eslint-disable-next-line no-console
-                console.log('tokenId', response.credential)
-                handleAccountCreation()
-                console.log("RUN")
+                authAdapter.exchangeToken(response.credential)
+                onClose()
               }}
             />
-        <button className="popup-button" onClick={handleAccountCreation}>
-          Connect with Apple
-        </button>
+      <AppleLogin
+        clientId="me.didit.app"
+        redirectURI="https://example-app.com/redirect"
+        responseType="code id_token"
+        responseMode="form_post"
+      />
       </div>
     </div>
   );

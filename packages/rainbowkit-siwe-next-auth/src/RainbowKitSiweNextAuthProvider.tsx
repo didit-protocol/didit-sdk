@@ -86,6 +86,25 @@ export function DiditProvider({
           window.localStorage.removeItem(`_gamium_address`);
         },
 
+        exchangeToken: async(id_token) => {
+          const endpoint = `${clientUrl}/token`;
+          const GRANT_TYPE = 'token-exchange'
+          const parameters = `grant_type=${GRANT_TYPE}&id_token=${id_token}`;
+          try {
+            var { access_token } = await postRequest(endpoint, parameters);
+            window.localStorage.setItem(`_gamium_token_`, access_token);
+          } catch (tokenError) {
+            throw tokenError;
+          }
+          if (access_token) {
+            setStatus('authenticated');
+            setToken(access_token);
+          } else {
+            throw new Error('Something went wrong, try again please!');
+          }
+          return true;         
+        },
+
         verify: async ({ code, signature }) => {
           const endpoint = `${clientUrl}/token`;
           const parameters = `code=${code}&wallet_signature=${signature}`;

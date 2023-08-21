@@ -51,7 +51,7 @@ export function DesktopOptions({ onClose, setStep, step}:
   ];
 
   const [permissions, setPermissions] = React.useState(permissionsData);
-
+  
   const handleAccountCreation = () => {
     setStep('showAccountSuccess');
   };
@@ -343,15 +343,8 @@ export function DesktopOptions({ onClose, setStep, step}:
     <>
     <div className="popup">
       {step === "showSocialLogin" ? (
-          <SocialLoginComponent handleAccountCreation={handleAccountCreation} />
-        )  : step === "showAccountSuccess" ? (
-          <SuccessComponent handleContinue={handleContinue} />
-        ) : step === "showPermissions" ? (
-          <PermissionListComponent 
-            permissions={permissions}
-            togglePermission={togglePermission}                
-            />
-        ) 
+          <SocialLoginComponent onClose={onClose} />
+        )   
           : step === "showEmailRegistration" ? (
             <EmailRegistrationComponent
               handleAccountCreation={handleAccountCreation}

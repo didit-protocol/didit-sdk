@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   mapResponsiveValue,
   normalizeResponsiveValue,
@@ -15,6 +15,7 @@ import { useRainbowKitChains } from '../RainbowKitProvider/RainbowKitChainContex
 import { ConnectButtonRenderer } from './ConnectButtonRenderer';
 import SuccessComponent from '../ConnectOptions/screens/SuccessComponent';
 import PermissionListComponent from '../ConnectOptions/screens/Permissions';
+import { useAuthenticationStatus } from '../RainbowKitProvider/AuthenticationContext';
 
 const permissionsData = [
   { id: 1, text: 'Email', authorized: false },
@@ -48,6 +49,7 @@ export function ConnectButton({
 }: ConnectButtonProps) {
   const chains = useRainbowKitChains();
   const connectionStatus = useConnectionStatus();
+  const authenticationStatus = useAuthenticationStatus();
 
   return (
     <ConnectButtonRenderer>
@@ -64,7 +66,7 @@ export function ConnectButton({
         // FETCH API BACKEND FOR terms and conditions  useEffect
         const [step, setStep] = React.useState('showTerms');
         const [permissions, setPermissions] = React.useState(permissionsData);
-
+        
     
 
 
@@ -96,17 +98,17 @@ export function ConnectButton({
               },
             })}
           >
-            {ready && account && connectionStatus === 'connected' ? (
+            {authenticationStatus === 'authenticated' ? (
               <>
-                {chain && (chains.length > 1 || unsupportedChain) && (
-                    <div className="popup">
-                      {step ===  "showTerms" ? <SuccessComponent handleContinue={handleContinue} />
-                      : <PermissionListComponent 
-                      permissions={permissions}
-                      togglePermission={togglePermission}                
-                      />}
-                    </div>
-                )}
+              (
+                  <div className="popup">
+                    {step ===  "showTerms" ? <SuccessComponent handleContinue={handleContinue} />
+                    : <PermissionListComponent 
+                    permissions={permissions}
+                    togglePermission={togglePermission}                
+                    />}
+                  </div>
+              )
               </>
             ) : (
               <Box
