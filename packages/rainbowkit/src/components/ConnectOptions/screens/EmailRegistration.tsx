@@ -7,19 +7,16 @@ interface EmailRegistrationProps {
 const EmailRegistrationComponent: React.FC<EmailRegistrationProps> = ({
   handleAccountCreation,
 }) => {
-  {console.log("ACCOUNT", handleAccountCreation)}
   return (
-    <div className="email-registration-content">
-      <h1>Register to didit</h1>
-      <div className="input-container">
-        <input type="text" placeholder="Username" />
-        <input type="password" placeholder="Password" />
-        <input type="password" placeholder="Repeat Password" />
-      </div>
-      <button className="popup-button" onClick={handleAccountCreation}>
-        Create Account
-      </button>
-    </div>
+    <iframe
+          sandbox="allow-scripts allow-same-origin allow-modals allow-forms"
+          allow="camera 'src'; magnetometer 'none'; microphone 'none';
+          geolocation 'none'; display-capture 'none'; forms"
+           src={`${process.env.REACT_APP_EMAIL_AUTH_URL}/accounts/login`}
+           width="800px"
+           height="600px"
+       >
+       </iframe>
   );
 };
 
