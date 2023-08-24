@@ -88,7 +88,7 @@ export function DiditProvider({
 
         exchangeToken: async(id_token) => {
           const endpoint = `${clientUrl}/token`;
-          const GRANT_TYPE = 'token-exchange'
+          const GRANT_TYPE = 'token_exchange'
           const parameters = `grant_type=${GRANT_TYPE}&id_token=${id_token}`;
           try {
             var { access_token } = await postRequest(endpoint, parameters);
