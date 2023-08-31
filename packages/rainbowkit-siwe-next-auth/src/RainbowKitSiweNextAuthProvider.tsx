@@ -12,6 +12,9 @@ interface DiditProviderProps {
   clientUrl: string;
 }
 
+const GOOGLE = "GOOGLE"
+const APPLE = "APPLE"
+
 export function DiditProvider({
   children,
   clientUrl,
@@ -86,10 +89,15 @@ export function DiditProvider({
           window.localStorage.removeItem(`_gamium_address`);
         },
 
-        exchangeToken: async(id_token) => {
-          const endpoint = `${clientUrl}/token`;
-          const GRANT_TYPE = 'token_exchange'
-          const parameters = `grant_type=${GRANT_TYPE}&id_token=${id_token}`;
+        callbackGoogle: async(code: string, provider: string) => {
+          let endpoint,  parameters;
+          if (provider == GOOGLE) {
+            endpoint = `${process.env.REACT_APP_TOKEN_EXCHANGE_URL}/callback/google/`;
+            parameters = `code=${code}`;
+          } else if (provider == APPLE) {
+            endpoint = `${process.env.REACT_APP_TOKEN_EXCHANGE_URL}/callback/apple/`;
+            parameters = `subject_token=${code}`;
+          }
           try {
             var { access_token } = await postRequest(endpoint, parameters);
             window.localStorage.setItem(`_gamium_token_`, access_token);

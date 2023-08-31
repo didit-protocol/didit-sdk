@@ -20,7 +20,7 @@ export interface AuthenticationAdapter {
     policy: string;
   }>;
   getMessageBody: (args: { message: string }) => string;
-  exchangeToken: (args: { id_token: string }) => Promise<boolean>;
+  callbackGoogle: (args: string ) => Promise<boolean>;
   verify: (args: { code: string; signature: string }) => Promise<boolean>;
   signOut: () => Promise<void>;
 }

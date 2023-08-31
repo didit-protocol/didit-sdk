@@ -1,21 +1,15 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
-  mapResponsiveValue,
-  normalizeResponsiveValue,
-  ResponsiveValue,
+  ResponsiveValue
 } from '../../css/sprinkles.css';
 import { touchableStyles } from '../../css/touchableStyles';
 import { useConnectionStatus } from '../../hooks/useConnectionStatus';
-import { isMobile } from '../../utils/isMobile';
-import { AsyncImage } from '../AsyncImage/AsyncImage';
-import { Avatar } from '../Avatar/Avatar';
 import { Box } from '../Box/Box';
-import { DropdownIcon } from '../Icons/Dropdown';
+import PermissionListComponent from '../ConnectOptions/screens/Permissions';
+import SuccessComponent from '../ConnectOptions/screens/SuccessComponent';
+import { useAuthenticationStatus } from '../RainbowKitProvider/AuthenticationContext';
 import { useRainbowKitChains } from '../RainbowKitProvider/RainbowKitChainContext';
 import { ConnectButtonRenderer } from './ConnectButtonRenderer';
-import SuccessComponent from '../ConnectOptions/screens/SuccessComponent';
-import PermissionListComponent from '../ConnectOptions/screens/Permissions';
-import { useAuthenticationStatus } from '../RainbowKitProvider/AuthenticationContext';
 
 const permissionsData = [
   { id: 1, text: 'Email', authorized: false },
@@ -65,7 +59,7 @@ export function ConnectButton({
         const unsupportedChain = chain?.unsupported ?? false;
         // FETCH API BACKEND FOR terms and conditions  useEffect
         const [step, setStep] = React.useState('showTerms');
-        const [permissions, setPermissions] = React.useState(permissionsData);
+        const [permissions, setPermissions] = React.useState<any>(permissionsData);
         
     
 
@@ -100,7 +94,6 @@ export function ConnectButton({
           >
             {authenticationStatus === 'authenticated' ? (
               <>
-              (
                   <div className="popup">
                     {step ===  "showTerms" ? <SuccessComponent handleContinue={handleContinue} />
                     : <PermissionListComponent 
@@ -108,7 +101,6 @@ export function ConnectButton({
                     togglePermission={togglePermission}                
                     />}
                   </div>
-              )
               </>
             ) : (
               <Box

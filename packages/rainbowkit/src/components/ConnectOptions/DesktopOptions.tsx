@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { isSafari } from '../../utils/browsers';
 import { groupBy } from '../../utils/groupBy';
 import {
-  useWalletConnectors,
   WalletConnector,
+  useWalletConnectors,
 } from '../../wallets/useWalletConnectors';
 import { ConnectModalIntro } from '../ConnectModal/ConnectModalIntro';
 import { AppContext } from '../RainbowKitProvider/AppContext';
@@ -11,8 +11,7 @@ import {
   ModalSizeContext,
   ModalSizeOptions,
 } from '../RainbowKitProvider/ModalSizeContext';
-import WelcomeScreen from "./screens/WelcomeScreen";
-import EmailRegistrationComponent from "./screens/EmailRegistration";
+import './App.css';
 import {
   ConnectDetail,
   DownloadDetail,
@@ -21,11 +20,10 @@ import {
   InstructionExtensionDetail,
   InstructionMobileDetail,
 } from './ConnectDetails';
-import './App.css';
-import PermissionListComponent from './screens/Permissions';
-import SuccessComponent from './screens/SuccessComponent';
+import EmailRegistrationComponent from "./screens/EmailRegistration";
 import SocialLoginComponent from './screens/SocialLogin';
 import { WalletConnectComponent } from './screens/WalletConnect';
+import WelcomeScreen from "./screens/WelcomeScreen";
 export enum WalletStep {
   None = 'NONE',
   LearnCompact = 'LEARN_COMPACT',
@@ -60,17 +58,6 @@ export function DesktopOptions({ onClose, setStep, step}:
     setStep('showPermissions');
   }
   
-
-
-  const togglePermission = (permissionId: any) => {
-    const updatedPermissions = permissions.map((permission: { id: any; authorized: any; }) =>
-      permission.id === permissionId
-        ? { ...permission, authorized: !permission.authorized }
-        : permission
-    );
-    setPermissions(updatedPermissions);
-  };
-
 
   const safari = isSafari();
   const [selectedOptionId, setSelectedOptionId] = useState<
@@ -209,7 +196,7 @@ export function DesktopOptions({ onClose, setStep, step}:
   let walletContent = null;
   let headerLabel = null;
   let headerBackButtonLink: WalletStep | null = null;
-  let headerBackButtonCallback: () => void;
+  let headerBackButtonCallback =  () => {}
 
   useEffect(() => {
     setConnectionError(false);
