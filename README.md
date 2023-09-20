@@ -14,9 +14,9 @@ The following examples are provided in the [examples](./examples/) folder of thi
 
 - SDK for reactJS
   - `cd examples/with-create-react-app`
-  - `yarn install`
+  - `pnpm install`
   - Copy the .env.example file to .env and fill in the required variables
-  - `yarn dev`
+  - `pnpm dev`
   - try it out on localhost:3000!
 
 ## How to integrate

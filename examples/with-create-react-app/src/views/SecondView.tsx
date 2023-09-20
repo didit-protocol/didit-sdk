@@ -17,7 +17,7 @@ function SecondView() {
   }, [error]);
 
   return (
-    <>
+    <div style={{ padding: '20px' }}>
       <h1>
         This is the second view token: {token} address: {address} status:{' '}
         {status}
@@ -26,7 +26,7 @@ function SecondView() {
       {openConnectModal && (
         <button onClick={() => openConnectModal()}>LOGIN</button>
       )}
-    </>
+    </div>
   );
 }
 

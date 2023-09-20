@@ -8,7 +8,7 @@ function ThirdView() {
   const { signMessageAsync } = useSignMessage({});
 
   return (
-    <>
+    <div style={{ padding: '20px' }}>
       <ConnectButton
         label="Connect Wallet"
         accountStatus="address"
@@ -47,7 +47,7 @@ function ThirdView() {
       <button onClick={() => signMessageAsync({ message: 'hola' })}>
         sign
       </button>
-    </>
+    </div>
   );
 }
 
