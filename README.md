@@ -1,8 +1,8 @@
 # Didit-SDK
 
-**The best way to connect a wallet**
+**The best way to connect to Didit protocol**
 
-Didit-SDK is a [React](https://reactjs.org/) library that makes it easy to add wallet connection to your dapp.
+Didit-SDK is a [React](https://reactjs.org/) library that makes it easy connect your app/dapp to Didit.
 
 - 🔥 Out-of-the-box wallet management
 - ✅ Easily customizable
@@ -13,11 +13,11 @@ Didit-SDK is a [React](https://reactjs.org/) library that makes it easy to add w
 The following examples are provided in the [examples](./examples/) folder of this repo. The example contains a first view 'localhost:3030' where you can test the ConnetButton and a second view 'localhost:3030/app' where you can login, logout and check the auth status from with you own buttons and hooks!
 
 - SDK for reactJS
-  - `cd lib-didit-typescript-sdk`
-  - `pnpm i`
   - `cd examples/with-create-react-app`
-  - `pnpm dev`
-  - try it out on localhost:3030!
+  - `yarn install`
+  - Copy the .env.example file to .env and fill in the required variables
+  - `yarn dev`
+  - try it out on localhost:3000!
 
 ## How to integrate
 
