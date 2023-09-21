@@ -22,6 +22,7 @@ The following examples are provided in the [examples](./examples/) folder of thi
 ## Packages
 
 The Didit-SDK is composed of 2 packages:
+
 - [didit-sdk (rainbowkit)](./packages/rainbowkit/package.json): The main package that contains all the components and hooks to connect to Didit.
 - [didit-provider (rainbowkit-siwe-next-auth)](./packages/rainbowkit-siwe-next-auth/package.json): A provider that allows you to connect to Didit.
 
@@ -35,7 +36,7 @@ To run and develop in a package:
 - Run the local dev server: `pnpm dev`
 - Try it out on [localhost:3000](http://localhost:3000)!
 
-⚠️  Now you can start developing in the package. To check the changes in the example app, you need to run `pnpm build` in the package and `pnpm i && pnpm run dev` in the example app.
+⚠️ Now you can start developing in the package. To check the changes in the example app, you need to run `pnpm build` in the package and `pnpm i && pnpm run dev` in the example app.
 
 ## How to integrate
 
