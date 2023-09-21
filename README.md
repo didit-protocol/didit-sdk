@@ -10,14 +10,32 @@ Didit-SDK is a [React](https://reactjs.org/) library that makes it easy connect 
 
 ## Examples
 
-The following examples are provided in the [examples](./examples/) folder of this repo. The example contains a first view 'localhost:3030' where you can test the ConnetButton and a second view 'localhost:3030/app' where you can login, logout and check the auth status from with you own buttons and hooks!
+The following examples are provided in the [examples](./examples/) folder of this repo. The example contains a first view 'localhost:3000' where you can test the `ConnetButton``, login components, logout and check the auth status from with you own buttons and hooks!
 
-- SDK for reactJS
-  - `cd examples/with-create-react-app`
-  - `pnpm install`
+- To run and develop in the example app:
+  - Move to the example app: `cd examples/with-create-react-app`
+  - Install dependencies: `pnpm install`
   - Copy the .env.example file to .env and fill in the required variables
-  - `pnpm dev`
-  - try it out on localhost:3000!
+  - Run the local dev server: `pnpm dev`
+  - Try it out on [localhost:3000](http://localhost:3000)!
+
+## Packages
+
+The Didit-SDK is composed of 2 packages:
+- [didit-sdk (rainbowkit)](./packages/rainbowkit/package.json): The main package that contains all the components and hooks to connect to Didit.
+- [didit-provider (rainbowkit-siwe-next-auth)](./packages/rainbowkit-siwe-next-auth/package.json): A provider that allows you to connect to Didit.
+
+To run and develop in a package:
+
+- Install dependencies: `pnpm install`
+- Move to the package: `cd packages/rainbowkit`
+- Build the package: `pnpm build`
+- Move to the example app: `cd examples/with-create-react-app`
+- Install dependencies: `pnpm install`
+- Run the local dev server: `pnpm dev`
+- Try it out on [localhost:3000](http://localhost:3000)!
+
+⚠️  Now you can start developing in the package. To check the changes in the example app, you need to run `pnpm build` in the package and `pnpm i && pnpm run dev` in the example app.
 
 ## How to integrate
 
