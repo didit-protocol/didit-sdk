@@ -3,7 +3,7 @@ name: CI
 on: [pull_request, push]
 
 env:
-  pnpm: 7
+  pnpm: 8
 
 jobs:
   tests:
