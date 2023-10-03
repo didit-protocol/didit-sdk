@@ -29,12 +29,12 @@ describe('abbreviateETHBalance', () => {
 
   it('truncates to 1 decimal place and adds commas for numbers under 10k', () => {
     expect(abbreviateETHBalance(123)).toEqual('123');
-    expect(abbreviateETHBalance(1234)).toEqual('1234');
-    expect(abbreviateETHBalance(1234.22)).toEqual('1234,2');
-    expect(abbreviateETHBalance(1234.02)).toEqual('1234');
-    expect(abbreviateETHBalance(9999)).toEqual('9999');
-    expect(abbreviateETHBalance(9999.1)).toEqual('9999,1');
-    expect(abbreviateETHBalance(9999.99)).toEqual('9999,9'); // no round
+    expect(abbreviateETHBalance(1234)).toEqual('1,234');
+    expect(abbreviateETHBalance(1234.22)).toEqual('1,234.2');
+    expect(abbreviateETHBalance(1234.02)).toEqual('1,234');
+    expect(abbreviateETHBalance(9999)).toEqual('9,999');
+    expect(abbreviateETHBalance(9999.1)).toEqual('9,999.1');
+    expect(abbreviateETHBalance(9999.99)).toEqual('9,999.9'); // no round
   });
 
   it('abbreviates past 10k', () => {
