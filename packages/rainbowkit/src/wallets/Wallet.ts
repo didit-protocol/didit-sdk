@@ -23,6 +23,7 @@ type RainbowKitConnector<C extends Connector = Connector> = {
   };
   extension?: {
     instructions?: {
+      learnMoreUrl: string;
       steps: {
         step: InstructionStepName;
         title: string;
@@ -57,6 +58,7 @@ export type Wallet<C extends Connector = Connector> = {
       id: string;
       connector: Connector;
       installed?: boolean;
+      name: string;
     }[];
   }) => boolean;
   createConnector: () => RainbowKitConnector<C>;

@@ -62,7 +62,7 @@ export function DiditProvider({
       createAuthenticationAdapter({
         createMessage: async ({ address }) => {
           const parameters = walletAuthPayload(address);
-          const endpoint = `${clientUrl}/wallet_authorization`;
+          const endpoint = `${clientUrl}/wallet-authorization`;
           try {
             var { code, policy } = await postRequest(endpoint, parameters);
             window.localStorage.setItem(`_gamium_address`, address);
