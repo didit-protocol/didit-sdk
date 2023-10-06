@@ -33,7 +33,8 @@
     "release:build": "pnpm clean && pnpm lint && pnpm test && MINIFY_CSS=true pnpm --recursive --parallel --filter \"!*-app\" build && cp README.md packages/rainbowkit/README.md",
     "release:test": "pnpm release:build && pnpm --filter example dev",
     "ci:example": "pnpm --filter @rainbow-me/rainbowkit* prepare && pnpm --filter example build",
-    "ci:site": "pnpm --filter @rainbow-me/rainbowkit* prepare && pnpm --filter site build"
+    "ci:site": "pnpm --filter @rainbow-me/rainbowkit* prepare && pnpm --filter site build",
+    "commit": "git-cz"
   },
   "repository": {
     "type": "git",
@@ -66,6 +67,8 @@
     "@vanilla-extract/vite-plugin": "^3.9.0",
     "@wagmi/core": "~1.4.2",
     "autoprefixer": "^10.4.15",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
     "esbuild": "^0.14.39",
     "esbuild-plugin-replace": "^1.4.0",
     "eslint": "7.32.0",
@@ -94,5 +97,10 @@
     "onlyBuiltDependencies": [
       "esbuild"
     ]
-  }
+  },
+  "config": {
+     "commitizen": {
+       "path": "./node_modules/cz-conventional-changelog"
+     }
+   }
 }
