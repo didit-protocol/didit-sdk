@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import {
   useDiditStatus,
   useAuthenticationAdapter,
   useConnectModal,
 } from 'didit-sdk';
 
-function SecondView() {
+function AuthStatus() {
   const { token, address, status, error } = useDiditStatus();
   const adapter = useAuthenticationAdapter();
   const { openConnectModal } = useConnectModal();
@@ -30,4 +30,4 @@ function SecondView() {
   );
 }
 
-export default SecondView;
+export default AuthStatus;
