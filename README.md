@@ -18,14 +18,17 @@ Didit-SDK is a [React](https://reactjs.org/) library that makes it easy to add w
 You can use the CodeSandbox links below try out Didit Sdk:
 
 - with [Vite-React](https://codesandbox.io/p/sandbox/github/rainbow-me/rainbowkit/tree/main/examples/with-vite) // TODO: setup example on codesandbox
+- with [Create-React-Appp](https://codesandbox.io/p/sandbox/github/rainbow-me/rainbowkit/tree/main/examples/with-vite) // TODO: setup example on codesandbox
 
 ### Examples
 
 The following examples are provided in the [examples](./examples/) folder of this repo.
 
 - `with-vite-react`
+  The example contains a first view 'localhost:3030' where you can test the ConnetButton and a second view 'localhost:3030/status' where you can login, logout and check the auth status from with you own buttons and hooks!
 
-The example contains a first view 'localhost:3030' where you can test the ConnetButton and a second view 'localhost:3030/status' where you can login, logout and check the auth status from with you own buttons and hooks!
+- `with-create-react-app`
+  this one contains only connection button on home page
 
 ### Running examples
 
