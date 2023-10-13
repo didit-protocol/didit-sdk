@@ -154,6 +154,7 @@ export function DiditProvider({
   );
 }
 function getLocalStorage() {
+  if (!window) return false;
   const token = window.localStorage.getItem(`_gamium_token_`);
   if (token) {
     const token_info = parseJwt(token);
