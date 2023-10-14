@@ -102,7 +102,7 @@ export function DiditProvider({
 
         verify: async ({ code, signature }) => {
           const endpoint = `${clientUrl}/token`;
-          const parameters = `code=${code}&wallet_signature=${signature}`;
+          const parameters = `code=${code}&wallet_signature=${signature}&grant_type=connect_wallet`;
           try {
             var { access_token } = await postRequest(endpoint, parameters);
             setToken(access_token);
