@@ -49,6 +49,7 @@ module.exports = {
           },
         ],
         'import/no-unresolved': 'off',
+        'no-unused-vars': [2, { argsIgnorePattern: '^_' }],
       },
     },
   ],
