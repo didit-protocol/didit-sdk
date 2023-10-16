@@ -1,17 +1,17 @@
 {
   "$schema": "https://codesandbox.io/schemas/tasks.json",
   "setupTasks": [
-    "yarn add @rainbow-me/rainbowkit@latest @rainbow-me/rainbowkit-siwe-next-auth@latest",
-    "yarn build"
+    "pnpm install didit-sdk@latest didit-provider@latest",
+    "pnpm build"
   ],
   "tasks": {
     "install-dependencies": {
       "name": "Install Dependencies",
-      "command": "yarn add @rainbow-me/rainbowkit@latest"
+      "command": "pnpm install didit-provider@latest didit-sdk@latest"
     },
     "start-app": {
       "name": "Run Dev Server",
-      "command": "yarn dev",
+      "command": "pnpm dev",
       "runAtStart": true
     }
   }

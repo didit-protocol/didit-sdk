@@ -3,6 +3,7 @@ import {
   RainbowKitAuthenticationProvider,
 } from 'didit-sdk';
 import React, { ReactNode, useEffect, useMemo, useState } from 'react';
+import { useLocalStorage } from 'usehooks-ts';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useAccount, useDisconnect } from 'wagmi';
 
@@ -18,16 +19,31 @@ export function DiditProvider({
   enabled,
 }: DiditProviderProps) {
   const wagmiAccount = useAccount();
-  const tokenTemp = getLocalStorage();
+  const [token, setToken] = useLocalStorage<string>('_gamium_token_', '');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [gmmAddress, setGmmAddress] = useLocalStorage<string>(
+    '_gamium_address',
+    ''
+  );
   const STATUS_INIT = 'loading';
 
   const [status, setStatus] = useState<
     'loading' | 'authenticated' | 'unauthenticated'
   >(STATUS_INIT);
-  const [token, setToken] = useState(tokenTemp);
   const [address, setAddress] = useState(wagmiAccount?.address ?? undefined);
   const [error, setError] = useState('');
   const { disconnect } = useDisconnect();
+
+  useEffect(() => {
+    if (token) {
+      const token_info = parseJwt(token);
+      if (token_info.exp * 1000 < Date.now()) {
+        setToken('');
+      }
+    } else {
+      setToken('');
+    }
+  }, [token, setToken]);
 
   useEffect(() => {
     if (address && token) {
@@ -38,10 +54,9 @@ export function DiditProvider({
   }, [address, token]);
   useEffect(() => {
     if (status === 'unauthenticated') {
-      window.localStorage.removeItem(`_gamium_token_`);
-      setToken(false);
+      setToken('');
     }
-  }, [status]);
+  }, [status, setToken]);
   useEffect(() => {
     if (!address && wagmiAccount.address) {
       setAddress(wagmiAccount.address);
@@ -65,7 +80,7 @@ export function DiditProvider({
           const endpoint = `${clientUrl}/wallet-authorization`;
           try {
             var { code, policy } = await postRequest(endpoint, parameters);
-            window.localStorage.setItem(`_gamium_address`, address);
+            setGmmAddress(address);
           } catch (walletAuthError) {
             throw walletAuthError;
           }
@@ -79,19 +94,18 @@ export function DiditProvider({
         },
 
         signOut: async () => {
-          setToken(false);
+          setToken('');
           disconnect();
           setError('');
-          window.localStorage.removeItem(`_gamium_token_`);
-          window.localStorage.removeItem(`_gamium_address`);
+          setAddress(undefined);
         },
 
         verify: async ({ code, signature }) => {
           const endpoint = `${clientUrl}/token`;
-          const parameters = `code=${code}&wallet_signature=${signature}`;
+          const parameters = `code=${code}&wallet_signature=${signature}&grant_type=connect_wallet`;
           try {
             var { access_token } = await postRequest(endpoint, parameters);
-            window.localStorage.setItem(`_gamium_token_`, access_token);
+            setToken(access_token);
           } catch (tokenError) {
             throw tokenError;
           }
@@ -152,18 +166,6 @@ export function DiditProvider({
       {children}
     </RainbowKitAuthenticationProvider>
   );
-}
-function getLocalStorage() {
-  const token = window.localStorage.getItem(`_gamium_token_`);
-  if (token) {
-    const token_info = parseJwt(token);
-    if (token_info.exp * 1000 < Date.now()) {
-      return false;
-    }
-    return token;
-  } else {
-    return false;
-  }
 }
 
 function parseJwt(token: string) {
