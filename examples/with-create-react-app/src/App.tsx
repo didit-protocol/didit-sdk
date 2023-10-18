@@ -1,6 +1,6 @@
 import 'didit-sdk/styles.css';
 import { getDefaultWallets, lightTheme, DiditAuthProvider } from 'didit-sdk';
-import { DiditEmailAuthProvider } from 'didit-provider';
+import { DiditEmailAuthProvider, DiditProvider } from 'didit-provider';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import {
   mainnet,
@@ -13,7 +13,6 @@ import {
 } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import Home from './pages/Home';
-import { DiditProvider } from 'didit-provider';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
