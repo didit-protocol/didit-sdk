@@ -24,9 +24,8 @@ const DiditEmailAuthProvider = ({
 }: DiditEmailAuthProviderProps) => {
   // Create the Didit auth popup and broadcast channel to communicate with auth popup
   const [diditAuthPopup, setDiditAuthPopup] = useState<Window | null>(null);
-  const [diditAuthChannel] = useState<BroadcastChannel>(
-    new BroadcastChannel(DIDIT.EMAIL_AUTH_CHANNEL_NAME)
-  );
+  const [initMessageInterval, setInitMessageInterval] =
+    useState<NodeJS.Timeout | null>(null);
 
   // Store the Didit token in local storage
   const [token, setToken] = useLocalStorage<string>(
@@ -36,31 +35,33 @@ const DiditEmailAuthProvider = ({
 
   const handleTokenSuccess = useCallback(
     (tokenData: DiditTokenData) => {
-      debugger;
-      console.log('tokenData', tokenData);
       setToken(tokenData?.access_token);
     },
     [setToken]
   );
 
   const handleTokenError = useCallback(
-    (error: string, errorDescription: string) => {
+    (_error: string, _errorDescription: string) => {
       diditAuthPopup?.close();
-      console.log('error', error, errorDescription);
     },
     [diditAuthPopup]
   );
 
   const handleReceiveMessage = useCallback(
     (event: MessageEvent) => {
-      console.log('event', event);
       const diditOrigin = new URL(baseUrl).origin;
-      debugger;
+
       if (event.origin.replace(/\/$/, '') !== diditOrigin.replace(/\/$/, ''))
         return;
 
       // Access the data sent in the message
       const messageData = event?.data;
+
+      // Check if the message is an init response message
+      if (messageData?.type === DIDIT.EMAIL_AUTH_INIT_POST_MESSAGE_TYPE) {
+        // Clear the init message interval
+        if (initMessageInterval) clearInterval(initMessageInterval);
+      }
 
       // Check if the message is a Didit token
       if (
@@ -81,7 +82,24 @@ const DiditEmailAuthProvider = ({
           );
       }
     },
-    [handleTokenSuccess, handleTokenError, baseUrl]
+    [baseUrl, initMessageInterval, handleTokenSuccess, handleTokenError]
+  );
+
+  // Init communication with Didit popup window
+  const startInitMessageInterval = useCallback(
+    (_popup: Window) => {
+      const diditOrigin = new URL(baseUrl).origin;
+      const _initMessageInterval = setInterval(() => {
+        _popup?.postMessage(
+          {
+            type: DIDIT.EMAIL_AUTH_INIT_POST_MESSAGE_TYPE,
+          },
+          diditOrigin
+        );
+      }, 1000);
+      setInitMessageInterval(_initMessageInterval);
+    },
+    [baseUrl, setInitMessageInterval]
   );
 
   const socialLogin = useCallback(
@@ -117,21 +135,26 @@ const DiditEmailAuthProvider = ({
         `width=${width},height=${height},left=${left},top=${top}`
       );
       setDiditAuthPopup(_diditPopup);
+
+      if (_diditPopup) startInitMessageInterval(_diditPopup);
     },
-    [baseUrl, clientId, claims]
+    [baseUrl, clientId, claims, startInitMessageInterval]
   );
 
   useEffect(() => {
-    // Add a listener to the window message event to handle the token (if accessing opener method fails)
-    diditAuthChannel.addEventListener('message', handleReceiveMessage);
-    diditAuthChannel.onmessage = console.log;
-    diditAuthChannel.onmessageerror = console.error;
+    window.addEventListener('message', handleReceiveMessage, false);
 
-    console.log(diditAuthChannel);
+    // Clean up the window function when the component unmounts
     return () => {
-      diditAuthChannel.removeEventListener('message', handleReceiveMessage);
+      window.removeEventListener('message', handleReceiveMessage);
+      if (initMessageInterval) clearInterval(initMessageInterval);
     };
-  }, [diditAuthChannel, handleReceiveMessage]);
+  }, [
+    initMessageInterval,
+    handleTokenSuccess,
+    handleTokenError,
+    handleReceiveMessage,
+  ]);
 
   const logout = useCallback(() => {
     setToken('');

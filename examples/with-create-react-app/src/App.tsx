@@ -65,7 +65,10 @@ function App() {
           >
             <div>
               <h1>Didit Protocol</h1>
-              <DiditLogin />
+              <div>
+                <ConnectButton label="Connect with wallet" />
+                <DiditLogin />
+              </div>
             </div>
           </div>
         </DiditAuthProvider>

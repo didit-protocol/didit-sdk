@@ -25,7 +25,7 @@ export function DiditProvider({
     ''
   );
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [gmmAddress, setGmmAddress] = useLocalStorage<string>(
+  const [_walletAddress, setWalletddress] = useLocalStorage<string>(
     DIDIT.WALLET_ADDRESS_COOKIE_NAME,
     ''
   );
@@ -84,7 +84,7 @@ export function DiditProvider({
           const endpoint = `${clientUrl}${DIDIT.AUTH_WALLET_AUTHORIZATION_PATH}`;
           try {
             var { code, policy } = await postRequest(endpoint, parameters);
-            setGmmAddress(address);
+            setWalletddress(address);
           } catch (walletAuthError) {
             throw walletAuthError;
           }

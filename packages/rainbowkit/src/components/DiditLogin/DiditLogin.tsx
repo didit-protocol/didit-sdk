@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { SocialAuthProvider, useDiditEmailAuthContext } from 'didit-provider';
 import React, { FC } from 'react';
+import { Box } from '../Box/Box';
 
 interface DiditLoginProps {
   className?: string;
@@ -19,9 +20,25 @@ const DiditLogin: FC<DiditLoginProps> = ({
 
   return (
     <div className={diditLoginClassName} data-testid={dataTestId}>
-      <button onClick={connectWithGoogle} type="button">
+      <Box
+        alignItems="center"
+        aria-label="Chain Selector"
+        as="button"
+        background="connectButtonBackground"
+        borderRadius="connectButton"
+        boxShadow="connectButton"
+        color="connectButtonText"
+        fontFamily="body"
+        fontWeight="bold"
+        gap="6"
+        onClick={connectWithGoogle}
+        paddingX="10"
+        paddingY="8"
+        transition="default"
+        type="button"
+      >
         Connect with Google
-      </button>
+      </Box>
     </div>
   );
 };
