@@ -3,7 +3,7 @@ const AUTH_WALLET_AUTHORIZATION_PATH = '/wallet-authorization';
 const AUTH_TOKEN_PATH = '/token';
 
 // Email auth login
-const EMAIL_AUTH_DEFAULT_BASE_URL = 'https://apx.dev.didit.me/email-auth';
+const EMAIL_AUTH_DEFAULT_BASE_URL = 'https://apx.didit.me/email-auth';
 const EMAIL_AUTH_AUTHORIZATION_PATH = '/oidc/authorize/';
 const EMAIL_AUTH_REDIRECT_URI_PATH = '/oidc/callback/';
 const EMAIL_AUTH_CODE_CHALLENGE_METHOD = 'S256';
