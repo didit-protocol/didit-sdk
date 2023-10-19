@@ -10,7 +10,6 @@
     "@types/node": "^18.16.12",
     "@types/react": "^18.2.21",
     "buffer": "npm:buffer@6.0.3",
-    "didit-provider": "workspace:*",
     "didit-sdk": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

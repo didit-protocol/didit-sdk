@@ -7,11 +7,7 @@ import React, {
   useRef,
 } from 'react';
 import { useAccount } from 'wagmi';
-
-export type AuthenticationStatus =
-  | 'loading'
-  | 'unauthenticated'
-  | 'authenticated';
+import { AuthenticationStatus } from '../../types';
 
 export interface AuthenticationAdapter {
   getNonce: () => Promise<string>;
@@ -24,7 +20,7 @@ export interface AuthenticationAdapter {
   signOut: () => Promise<void>;
 }
 
-export interface AuthenticationConfig {
+export interface RainbowKitAuthenticationConfig {
   adapter: AuthenticationAdapter;
   status: AuthenticationStatus;
   token: string | boolean;
@@ -37,9 +33,11 @@ export function createAuthenticationAdapter(adapter: AuthenticationAdapter) {
   return adapter;
 }
 
-const AuthenticationContext = createContext<AuthenticationConfig | null>(null);
+export const RainbowKitAuthenticationContext =
+  createContext<RainbowKitAuthenticationConfig | null>(null);
 
-interface RainbowKitAuthenticationProviderProps extends AuthenticationConfig {
+interface RainbowKitAuthenticationProviderProps
+  extends RainbowKitAuthenticationConfig {
   enabled?: boolean;
   children: ReactNode;
 }
@@ -72,41 +70,29 @@ export function RainbowKitAuthenticationProvider({
     if (onceRef.current) return;
     onceRef.current = true;
 
-    if (isDisconnected && status === 'authenticated') {
+    if (isDisconnected && status === AuthenticationStatus.AUTHENTICATED) {
       adapter.signOut();
     }
   }, [status, adapter, isDisconnected, token, address]);
 
   return (
-    <AuthenticationContext.Provider
+    <RainbowKitAuthenticationContext.Provider
       value={useMemo(
         () => (enabled ? { adapter, address, error, status, token } : null),
         [enabled, adapter, status, token, address, error]
       )}
     >
       {children}
-    </AuthenticationContext.Provider>
+    </RainbowKitAuthenticationContext.Provider>
   );
 }
 
 export function useAuthenticationAdapter() {
-  const { adapter } = useContext(AuthenticationContext) ?? {};
+  const { adapter } = useContext(RainbowKitAuthenticationContext) ?? {};
 
   if (!adapter) {
     throw new Error('No authentication adapter found');
   }
 
   return adapter;
-}
-
-export function useAuthenticationStatus() {
-  const contextValue = useContext(AuthenticationContext);
-
-  return contextValue?.status ?? null;
-}
-
-export function useDiditStatus() {
-  const { address, error, status, token } =
-    useContext(AuthenticationContext) ?? {};
-  return { address, error, status, token };
 }

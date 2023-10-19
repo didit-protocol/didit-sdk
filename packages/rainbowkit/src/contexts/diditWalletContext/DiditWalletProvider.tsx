@@ -1,66 +1,51 @@
+import React, { ReactNode, useEffect, useMemo, useState } from 'react';
+import { useLocalStorage } from 'usehooks-ts';
+import { useAccount, useDisconnect } from 'wagmi';
 import {
   createAuthenticationAdapter,
   RainbowKitAuthenticationProvider,
-} from 'didit-sdk';
-import React, { ReactNode, useEffect, useMemo, useState } from 'react';
-import { useLocalStorage } from 'usehooks-ts';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { useAccount, useDisconnect } from 'wagmi';
-import { DIDIT } from './config';
+} from '../../components/RainbowKitProvider/AuthenticationContext';
+import { DIDIT } from '../../config';
+import { AuthenticationStatus, DiditAuthMethod } from '../../types';
 
-interface DiditProviderProps {
+interface DiditWalletProviderProps {
+  authMethod?: DiditAuthMethod;
   enabled?: boolean;
   children: ReactNode;
-  clientUrl: string;
+  baseUrl: string;
+  status?: AuthenticationStatus;
+  token?: string;
+  error?: string;
+  onAuthenticate?: (_authMethod: DiditAuthMethod) => void;
+  onDeauthenticate?: () => void;
+  onError?: (error: string) => void;
+  onUpdateToken?: (token: string) => void;
 }
 
-export function DiditProvider({
+export function DiditWalletProvider({
+  authMethod = undefined,
+  baseUrl,
   children,
-  clientUrl,
   enabled,
-}: DiditProviderProps) {
+  error = '',
+  onAuthenticate = () => {},
+  onDeauthenticate = () => {},
+  onError = () => {},
+  onUpdateToken = () => {},
+  status = AuthenticationStatus.LOADING,
+  token = '',
+}: DiditWalletProviderProps) {
   const wagmiAccount = useAccount();
-  const [token, setToken] = useLocalStorage<string>(
-    DIDIT.TOKEN_COOKIE_NAME,
-    ''
-  );
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_walletAddress, setWalletddress] = useLocalStorage<string>(
     DIDIT.WALLET_ADDRESS_COOKIE_NAME,
     ''
   );
-  const STATUS_INIT = 'loading';
 
-  const [status, setStatus] = useState<
-    'loading' | 'authenticated' | 'unauthenticated'
-  >(STATUS_INIT);
   const [address, setAddress] = useState(wagmiAccount?.address ?? undefined);
-  const [error, setError] = useState('');
   const { disconnect } = useDisconnect();
 
-  useEffect(() => {
-    if (token) {
-      const token_info = parseJwt(token);
-      if (token_info.exp * 1000 < Date.now()) {
-        setToken('');
-      }
-    } else {
-      setToken('');
-    }
-  }, [token, setToken]);
-
-  useEffect(() => {
-    if (address && token) {
-      setStatus('authenticated');
-    } else {
-      setStatus('unauthenticated');
-    }
-  }, [address, token]);
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      setToken('');
-    }
-  }, [status, setToken]);
   useEffect(() => {
     if (!address && wagmiAccount.address) {
       setAddress(wagmiAccount.address);
@@ -80,8 +65,14 @@ export function DiditProvider({
     () =>
       createAuthenticationAdapter({
         createMessage: async ({ address }) => {
+          // Force login when trying to login with a different method
+          if (authMethod !== DiditAuthMethod.WALLET) {
+            onDeauthenticate();
+          }
+          // TODO: Do the same in connect button when already connected, it's jsut checking the wallet address but not triggering a new login
+
           const parameters = walletAuthPayload(address);
-          const endpoint = `${clientUrl}${DIDIT.AUTH_WALLET_AUTHORIZATION_PATH}`;
+          const endpoint = `${baseUrl}${DIDIT.AUTH_WALLET_AUTHORIZATION_PATH}`;
           try {
             var { code, policy } = await postRequest(endpoint, parameters);
             setWalletddress(address);
@@ -98,24 +89,24 @@ export function DiditProvider({
         },
 
         signOut: async () => {
-          setToken('');
+          onDeauthenticate();
           disconnect();
-          setError('');
+          onError('');
           setAddress(undefined);
         },
 
         verify: async ({ code, signature }) => {
-          const endpoint = `${clientUrl}${DIDIT.AUTH_TOKEN_PATH}`;
+          const endpoint = `${baseUrl}${DIDIT.AUTH_TOKEN_PATH}`;
           const parameters = `code=${code}&wallet_signature=${signature}&grant_type=connect_wallet`;
           try {
             var { access_token } = await postRequest(endpoint, parameters);
-            setToken(access_token);
+            onUpdateToken(access_token);
           } catch (tokenError) {
             throw tokenError;
           }
           if (access_token) {
-            setStatus('authenticated');
-            setToken(access_token);
+            onAuthenticate(DiditAuthMethod.WALLET);
+            onUpdateToken(access_token);
           } else {
             throw new Error('Something went wrong, try again please!');
           }
@@ -153,7 +144,7 @@ export function DiditProvider({
       return response.json();
     } else {
       const responseObj = await response.json();
-      setError(responseObj);
+      onError(responseObj);
       throw new Error(responseObj);
     }
   }
@@ -170,20 +161,4 @@ export function DiditProvider({
       {children}
     </RainbowKitAuthenticationProvider>
   );
-}
-
-function parseJwt(token: string) {
-  var base64Url = token.split('.')[1];
-  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  var jsonPayload = decodeURIComponent(
-    window
-      .atob(base64)
-      .split('')
-      .map(function (c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      })
-      .join('')
-  );
-
-  return JSON.parse(jsonPayload);
 }

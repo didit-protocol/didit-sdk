@@ -8,7 +8,7 @@ import {
 } from 'didit-sdk';
 
 const Home = () => {
-  const { token, status, error } = useDiditStatus(); // TODO: Status is now torking ATM with Google. We need a rework on Didit providers
+  const { authMethod, token, status, error } = useDiditStatus();
   const adapter = useAuthenticationAdapter();
   const accessToken = String(token);
 
@@ -49,6 +49,20 @@ const Home = () => {
           {isAuthenticated && (
             <button onClick={() => adapter.signOut()}>LOGOUT</button>
           )}
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            gap: 12,
+          }}
+        >
+          <p>
+            <span>Didit auth method: </span>
+            <span>
+              <b>{authMethod}</b>
+            </span>
+          </p>
         </div>
         <div
           style={{

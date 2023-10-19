@@ -1,6 +1,6 @@
 import clsx from 'clsx';
-import { SocialAuthProvider, useDiditEmailAuthContext } from 'didit-provider';
 import React, { FC } from 'react';
+import { useDiditEmailAuthContext } from '../../contexts/diditEmailAuthContext';
 import { Box } from '../Box/Box';
 
 interface DiditLoginProps {
@@ -12,9 +12,7 @@ const DiditLogin: FC<DiditLoginProps> = ({
   className = '',
   dataTestId = '',
 }) => {
-  const { login } = useDiditEmailAuthContext();
-
-  const connectWithGoogle = () => login(SocialAuthProvider.GOOGLE);
+  const { loginWithGoogle } = useDiditEmailAuthContext();
 
   const diditLoginClassName = clsx(className);
 
@@ -31,7 +29,7 @@ const DiditLogin: FC<DiditLoginProps> = ({
         fontFamily="body"
         fontWeight="bold"
         gap="6"
-        onClick={connectWithGoogle}
+        onClick={loginWithGoogle}
         paddingX="10"
         paddingY="8"
         transition="default"

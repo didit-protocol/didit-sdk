@@ -1,6 +1,10 @@
 import 'didit-sdk/styles.css';
-import { getDefaultWallets, lightTheme, DiditAuthProvider } from 'didit-sdk';
-import { DiditEmailAuthProvider, DiditProvider } from 'didit-provider';
+import {
+  getDefaultWallets,
+  lightTheme,
+  DiditAuthProvider,
+  DiditRainbowkitProvider,
+} from 'didit-sdk';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import {
   mainnet,
@@ -43,16 +47,15 @@ const wagmiConfig = createConfig({
 function App() {
   return (
     <WagmiConfig config={wagmiConfig}>
-      <DiditProvider clientUrl="https://apx.dev.didit.me/profile/authorizations/v1">
-        <DiditEmailAuthProvider
-          baseUrl="http://127.0.0.1:8000/email-auth"
-          clientId="676573"
-        >
-          <DiditAuthProvider chains={chains} theme={lightTheme()}>
-            <Home />
-          </DiditAuthProvider>
-        </DiditEmailAuthProvider>
-      </DiditProvider>
+      <DiditAuthProvider
+        baseUrl="http://127.0.0.1:8000/email-auth"
+        clientId="676573"
+        claims="read:email write:email"
+      >
+        <DiditRainbowkitProvider chains={chains} theme={lightTheme()}>
+          <Home />
+        </DiditRainbowkitProvider>
+      </DiditAuthProvider>
     </WagmiConfig>
   );
 }

@@ -7,11 +7,11 @@ import React, {
   useState,
 } from 'react';
 import { useAccount, useNetwork } from 'wagmi';
+import { useDiditAuthenticationStatus } from '../../hooks';
 import { useConnectionStatus } from '../../hooks/useConnectionStatus';
 import { AccountModal } from '../AccountModal/AccountModal';
 import { ChainModal } from '../ChainModal/ChainModal';
 import { ConnectModal } from '../ConnectModal/ConnectModal';
-import { useAuthenticationStatus } from './AuthenticationContext';
 
 function useModalStateValue() {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -79,7 +79,8 @@ export function ModalProvider({ children }: ModalProviderProps) {
     closeChainModal();
   }
 
-  const isUnauthenticated = useAuthenticationStatus() === 'unauthenticated';
+  const isUnauthenticated =
+    useDiditAuthenticationStatus() === 'unauthenticated';
   useAccount({
     onConnect: () => closeModals({ keepConnectModalOpen: isUnauthenticated }),
     onDisconnect: () => closeModals(),

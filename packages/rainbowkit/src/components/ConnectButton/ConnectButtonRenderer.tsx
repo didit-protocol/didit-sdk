@@ -1,14 +1,12 @@
 import React, { ReactNode, useContext } from 'react';
 import { useAccount, useBalance, useNetwork } from 'wagmi';
+import { useDiditAuthenticationStatus } from '../../hooks';
 import { useIsMounted } from '../../hooks/useIsMounted';
 import { useMainnetEnsAvatar } from '../../hooks/useMainnetEnsAvatar';
 import { useMainnetEnsName } from '../../hooks/useMainnetEnsName';
 import { useRecentTransactions } from '../../transactions/useRecentTransactions';
+import { AuthenticationStatus } from '../../types';
 import { useAsyncImage } from '../AsyncImage/useAsyncImage';
-import {
-  AuthenticationStatus,
-  useAuthenticationStatus,
-} from '../RainbowKitProvider/AuthenticationContext';
 import {
   useAccountModal,
   useChainModal,
@@ -65,7 +63,7 @@ export function ConnectButtonRenderer({
   const { data: balanceData } = useBalance({ address });
   const { chain: activeChain } = useNetwork();
   const rainbowkitChainsById = useRainbowKitChainsById();
-  const authenticationStatus = useAuthenticationStatus() ?? undefined;
+  const authenticationStatus = useDiditAuthenticationStatus() ?? undefined;
 
   const rainbowKitChain = activeChain
     ? rainbowkitChainsById[activeChain.id]

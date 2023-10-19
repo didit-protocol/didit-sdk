@@ -9,8 +9,8 @@ import { arbitrum, mainnet, optimism, polygon, zora } from 'wagmi/chains';
 import { MockConnector } from 'wagmi/connectors/mock';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
-import { DiditAuthProvider } from '../src/components/RainbowKitProvider/RainbowKitProvider';
-import type { RainbowKitProviderProps } from '../src/components/RainbowKitProvider/RainbowKitProvider';
+import { DiditAuthProvider } from '../src/components/RainbowKitProvider/DiditRainbowkitProvider';
+import type { RainbowKitProviderProps } from '../src/components/RainbowKitProvider/DiditRainbowkitProvider';
 import { getDefaultWallets } from '../src/wallets/getDefaultWallets';
 
 const defaultChains = [mainnet, polygon, optimism, arbitrum, zora];

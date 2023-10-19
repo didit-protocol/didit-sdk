@@ -67,7 +67,7 @@ export interface RainbowKitProviderProps {
 
 const defaultTheme = lightTheme();
 
-export function DiditAuthProvider({
+export function DiditRainbowkitProvider({
   appInfo,
   avatar,
   chains,

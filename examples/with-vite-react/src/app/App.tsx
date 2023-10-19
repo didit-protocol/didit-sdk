@@ -21,6 +21,7 @@ function App() {
   return (
     <Providers>
       <RouterProvider router={router} />
+      <Home />
     </Providers>
   );
 }

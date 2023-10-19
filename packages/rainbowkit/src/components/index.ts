@@ -1,5 +1,5 @@
 import { ConnectButton } from './ConnectButton/ConnectButton';
 import DiditLogin from './DiditLogin/DiditLogin';
-import { DiditAuthProvider } from './RainbowKitProvider/RainbowKitProvider';
+import { DiditRainbowkitProvider } from './RainbowKitProvider/DiditRainbowkitProvider';
 
-export { ConnectButton, DiditAuthProvider, DiditLogin };
+export { ConnectButton, DiditRainbowkitProvider, DiditLogin };

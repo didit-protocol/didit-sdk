@@ -1,7 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocalStorage } from 'usehooks-ts';
 import { DIDIT } from '../../config';
-import { SocialAuthProvider } from '../../types';
+import {
+  AuthenticationStatus,
+  DiditAuthMethod,
+  SocialAuthProvider,
+} from '../../types';
 import { generateCodeChallenge, generateCodeVerifier } from '../../utils';
 import { DiditEmailAuthContext } from './diditEmailAuthContext';
 
@@ -10,41 +13,60 @@ interface DiditTokenData {
 }
 
 interface DiditEmailAuthProviderProps {
+  authMethod?: DiditAuthMethod;
   baseUrl?: string;
   children: React.ReactNode;
   clientId: string;
   claims?: string;
+  error?: string;
+  onAuthenticate?: (_authMethod: DiditAuthMethod) => void;
+  onDeauthenticate?: () => void;
+  onError?: (error: string) => void;
+  onUpdateToken?: (token: string) => void;
+  status: AuthenticationStatus;
+  token?: string;
 }
 
 const DiditEmailAuthProvider = ({
+  authMethod = undefined,
   baseUrl = DIDIT.EMAIL_AUTH_DEFAULT_BASE_URL,
   children,
   claims = '',
   clientId,
+  error,
+  onAuthenticate = () => {},
+  onDeauthenticate = () => {},
+  onError = () => {},
+  onUpdateToken = () => {},
+  status,
+  token,
 }: DiditEmailAuthProviderProps) => {
   // Create the Didit auth popup and broadcast channel to communicate with auth popup
-  const [diditAuthPopup, setDiditAuthPopup] = useState<Window | null>(null);
+  const [diditAuthPopup, setDiditEmailAuthPopup] = useState<Window | null>(
+    null
+  );
   const [initMessageInterval, setInitMessageInterval] =
     useState<NodeJS.Timeout | null>(null);
-
-  // Store the Didit token in local storage
-  const [token, setToken] = useLocalStorage<string>(
-    DIDIT.TOKEN_COOKIE_NAME,
-    ''
-  );
+  const [socialAuthProvider, setSocialAuthProvider] =
+    useState<SocialAuthProvider>();
 
   const handleTokenSuccess = useCallback(
     (tokenData: DiditTokenData) => {
-      setToken(tokenData?.access_token);
+      onUpdateToken(tokenData?.access_token);
+      onAuthenticate(socialAuthProvider as unknown as DiditAuthMethod);
     },
-    [setToken]
+    [onUpdateToken, onAuthenticate, socialAuthProvider]
   );
 
   const handleTokenError = useCallback(
     (_error: string, _errorDescription: string) => {
       diditAuthPopup?.close();
+      console.error(_error, _errorDescription);
+      onError(_error);
+      onDeauthenticate();
+      setSocialAuthProvider(undefined);
     },
-    [diditAuthPopup]
+    [diditAuthPopup, onError, onDeauthenticate]
   );
 
   const handleReceiveMessage = useCallback(
@@ -102,8 +124,13 @@ const DiditEmailAuthProvider = ({
     [baseUrl, setInitMessageInterval]
   );
 
-  const socialLogin = useCallback(
+  const loginWithSocial = useCallback(
     async (socialAuthProvider: SocialAuthProvider) => {
+      // Force login when trying to login with a different method
+      if (authMethod !== (socialAuthProvider as unknown as DiditAuthMethod)) {
+        onDeauthenticate();
+      }
+
       // Configure the Didit auth popup
       const authorizationUrl = `${baseUrl}${DIDIT.EMAIL_AUTH_AUTHORIZATION_PATH}`;
       const redirectUri = `${baseUrl}${DIDIT.EMAIL_AUTH_REDIRECT_URI_PATH}`;
@@ -112,6 +139,7 @@ const DiditEmailAuthProvider = ({
       const scope = DIDIT.EMAIL_AUTH_SCOPE;
       const idp = socialAuthProvider;
       const encodedRedirectUrl = encodeURIComponent(redirectUri);
+      setSocialAuthProvider(socialAuthProvider);
 
       // Generate a random string as code_verifier and code_challenge, and store the code_verifier in local storage
       const codeVerifier = generateCodeVerifier();
@@ -134,11 +162,26 @@ const DiditEmailAuthProvider = ({
         'Authentication',
         `width=${width},height=${height},left=${left},top=${top}`
       );
-      setDiditAuthPopup(_diditPopup);
+      setDiditEmailAuthPopup(_diditPopup);
 
       if (_diditPopup) startInitMessageInterval(_diditPopup);
     },
     [baseUrl, clientId, claims, startInitMessageInterval]
+  );
+
+  const loginWithGoogle = useCallback(
+    () => loginWithSocial(SocialAuthProvider.GOOGLE),
+    [loginWithSocial]
+  );
+
+  const loginWithApple = useCallback(
+    () => console.warn("NotImplementedError: Apple login isn't supported yet"),
+    []
+  );
+
+  const loginWithEmail = useCallback(
+    () => console.warn("NotImplementedError: Email login isn't supported yet"),
+    []
   );
 
   useEffect(() => {
@@ -156,17 +199,25 @@ const DiditEmailAuthProvider = ({
     handleReceiveMessage,
   ]);
 
-  const logout = useCallback(() => {
-    setToken('');
-  }, [setToken]);
-
   const contextValue = useMemo(
     () => ({
-      login: socialLogin,
-      logout,
+      error,
+      loginWithApple,
+      loginWithEmail,
+      loginWithGoogle,
+      loginWithSocial,
+      status,
       token,
     }),
-    [token, socialLogin, logout]
+    [
+      token,
+      status,
+      error,
+      loginWithSocial,
+      loginWithGoogle,
+      loginWithApple,
+      loginWithEmail,
+    ]
   );
 
   return (

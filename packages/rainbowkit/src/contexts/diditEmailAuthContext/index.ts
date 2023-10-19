@@ -3,5 +3,8 @@ import useDiditEmailAuthContext, {
   DiditEmailAuthContext,
 } from './diditEmailAuthContext';
 
-export default useDiditEmailAuthContext;
-export { DiditEmailAuthContext, DiditEmailAuthProvider };
+export {
+  useDiditEmailAuthContext,
+  DiditEmailAuthContext,
+  DiditEmailAuthProvider,
+};
