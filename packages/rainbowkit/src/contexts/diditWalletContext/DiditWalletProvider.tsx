@@ -73,7 +73,6 @@ export function DiditWalletProvider({
           if (authMethod !== DiditAuthMethod.WALLET) {
             onDeauthenticate();
           }
-          // TODO: Do the same in connect button when already connected, it's jsut checking the wallet address but not triggering a new login
 
           const parameters = walletAuthPayload(address, claims, scope);
           const endpoint = `${baseUrl}${DIDIT.AUTH_WALLET_AUTHORIZATION_PATH}`;

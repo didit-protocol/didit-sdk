@@ -1,4 +1,6 @@
 import { Connector, useConnect } from 'wagmi';
+import { useDiditAuthContext } from '../contexts/diditAuthContext';
+import { AuthenticationStatus, DiditAuthMethod } from '../types';
 import { flatten } from '../utils/flatten';
 import { indexBy } from '../utils/indexBy';
 import { isNotNullish } from '../utils/isNotNullish';
@@ -25,9 +27,18 @@ export function useWalletConnectors(): WalletConnector[] {
   const intialChainId = useInitialChainId();
   const { connectAsync, connectors: defaultConnectors_untyped } = useConnect();
   const defaultConnectors = defaultConnectors_untyped as Connector[];
+  const { authMethod, logout, status } = useDiditAuthContext();
 
   async function connectWallet(walletId: string, connector: Connector) {
     const walletChainId = await connector.getChainId();
+
+    // Force logout if the user is authenticated with a non-wallet method before connecting a wallet
+    if (
+      status === AuthenticationStatus.AUTHENTICATED &&
+      authMethod !== DiditAuthMethod.WALLET
+    )
+      logout();
+
     const result = await connectAsync({
       chainId:
         // The goal here is to ensure users are always on a supported chain when connecting.

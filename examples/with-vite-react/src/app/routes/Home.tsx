@@ -8,7 +8,7 @@ import {
 } from 'didit-sdk';
 
 const Home = () => {
-  const { token, status, error } = useDiditStatus(); // TODO: Status is now torking ATM with Google. We need a rework on Didit providers
+  const { token, status, error } = useDiditStatus();
   const adapter = useAuthenticationAdapter();
   const accessToken = String(token);
 

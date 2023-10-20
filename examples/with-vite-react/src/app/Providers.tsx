@@ -18,6 +18,11 @@ const Providers = ({ children }: ProvidersProps) => {
         clientId="676573"
         claims="read:emails write:emails"
         scope="openid profile"
+        onLogin={(_authMethod: string) =>
+          console.log('Logged in Didit with', _authMethod)
+        }
+        onLogout={() => console.log('Logged out Didit')}
+        onError={(_error: string) => console.error('Didit error: ', _error)}
       >
         <DiditRainbowkitProvider chains={chains} theme={lightTheme()}>
           {children}

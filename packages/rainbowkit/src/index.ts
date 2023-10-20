@@ -41,4 +41,8 @@ export {
   DiditAuthMethod,
   AuthenticationStatus,
 } from './types';
-export { useDiditStatus, useDiditAuthenticationStatus } from './hooks';
+export {
+  useDiditStatus,
+  useDiditAuthenticationStatus,
+  useDiditAuth,
+} from './hooks';

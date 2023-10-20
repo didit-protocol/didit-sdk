@@ -15,6 +15,9 @@ interface DiditAuthProviderProps {
   clientId: string;
   claims?: string;
   authMethods: DiditAuthMethod[];
+  onError?: (error: string) => void;
+  onLogin: (authMethod: DiditAuthMethod) => void;
+  onLogout?: () => void;
   scope?: string;
 }
 
@@ -29,6 +32,9 @@ const DiditAuthProvider = ({
   children,
   claims = DIDIT.DEFAULT_CLAIMS,
   clientId,
+  onError = () => {},
+  onLogin = () => {},
+  onLogout = () => {},
   scope = DIDIT.DEFAULT_SCOPE,
 }: DiditAuthProviderProps) => {
   const [token, setToken] = useLocalStorage<string>(
@@ -44,22 +50,34 @@ const DiditAuthProvider = ({
 
   const authenticate = useCallback(
     (_authMethod: DiditAuthMethod) => {
-      setStatus(AuthenticationStatus.AUTHENTICATED);
       setAuthMethod(_authMethod);
+
+      if (status !== AuthenticationStatus.AUTHENTICATED) {
+        setStatus(AuthenticationStatus.AUTHENTICATED);
+        onLogin(_authMethod);
+      }
     },
-    [setStatus]
+    [status, setStatus, onLogin]
   );
 
   const deauthenticate = useCallback(() => {
-    setStatus(AuthenticationStatus.UNAUTHENTICATED);
     setAuthMethod(undefined);
-  }, [setStatus]);
 
-  const logout = useCallback(() => {
-    deauthenticate();
-    setToken('');
-    setError('');
-  }, [deauthenticate, setToken, setError]);
+    if (status !== AuthenticationStatus.UNAUTHENTICATED) {
+      setStatus(AuthenticationStatus.UNAUTHENTICATED);
+      setToken('');
+      setError('');
+      onLogout();
+    }
+  }, [status, setStatus, onLogout, setToken, setError]);
+
+  const handleError = useCallback(
+    (error: string) => {
+      setError(error);
+      if (error) onError(error);
+    },
+    [setError, onError]
+  );
 
   // Check token expiration
   useEffect(() => {
@@ -91,11 +109,11 @@ const DiditAuthProvider = ({
       loginWithGoogle: () => {},
       loginWithSocial: () => {},
       loginWithWallet: () => {},
-      logout: logout,
+      logout: deauthenticate,
       status,
       token,
     }),
-    [authMethod, authMethods, error, logout, status, token]
+    [authMethod, authMethods, deauthenticate, error, status, token]
   );
 
   return (
@@ -108,7 +126,7 @@ const DiditAuthProvider = ({
         error={error}
         onAuthenticate={authenticate}
         onDeauthenticate={deauthenticate}
-        onError={setError}
+        onError={handleError}
         onUpdateToken={setToken}
         scope={scope}
         status={status}
@@ -121,7 +139,7 @@ const DiditAuthProvider = ({
           error={error}
           onAuthenticate={authenticate}
           onDeauthenticate={deauthenticate}
-          onError={setError}
+          onError={handleError}
           onUpdateToken={setToken}
           scope={scope}
           status={status}
