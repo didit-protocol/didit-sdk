@@ -1,9 +1,5 @@
 import { createContext, useContext } from 'react';
-import {
-  AuthenticationStatus,
-  DiditAuthMethod,
-  SocialAuthProvider,
-} from '../../types';
+import { AuthenticationStatus, DiditAuthMethod } from '../../types';
 
 const CONTEXT_NAME = 'DiditAuth';
 
@@ -11,12 +7,6 @@ interface DiditAuthContextState {
   authMethod?: DiditAuthMethod;
   availableAuthMethods: DiditAuthMethod[];
   error?: string;
-  login: (authMethod: DiditAuthMethod) => void;
-  loginWithApple: () => void;
-  loginWithEmail: () => void;
-  loginWithGoogle: () => void;
-  loginWithSocial: (socialAuthProvider: SocialAuthProvider) => void;
-  loginWithWallet: () => void;
   logout: () => void;
   status: AuthenticationStatus;
   token?: string;
@@ -26,12 +16,6 @@ const defaultState: DiditAuthContextState = {
   authMethod: undefined,
   availableAuthMethods: [],
   error: undefined,
-  login: () => {},
-  loginWithApple: () => {},
-  loginWithEmail: () => {},
-  loginWithGoogle: () => {},
-  loginWithSocial: () => {},
-  loginWithWallet: () => {},
   logout: () => {},
   status: AuthenticationStatus.LOADING,
   token: undefined,

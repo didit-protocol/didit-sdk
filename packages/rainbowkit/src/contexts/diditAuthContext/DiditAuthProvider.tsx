@@ -14,7 +14,7 @@ interface DiditAuthProviderProps {
   children: React.ReactNode;
   clientId: string;
   claims?: string;
-  authMethods: DiditAuthMethod[];
+  authMethods?: DiditAuthMethod[];
   onError?: (error: string) => void;
   onLogin: (authMethod: DiditAuthMethod) => void;
   onLogout?: () => void;
@@ -103,12 +103,6 @@ const DiditAuthProvider = ({
       authMethod,
       availableAuthMethods: authMethods,
       error,
-      login: () => {},
-      loginWithApple: () => {},
-      loginWithEmail: () => {},
-      loginWithGoogle: () => {},
-      loginWithSocial: () => {},
-      loginWithWallet: () => {},
       logout: deauthenticate,
       status,
       token,

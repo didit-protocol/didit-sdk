@@ -6,7 +6,7 @@ enum SocialAuthProvider {
 enum DiditAuthMethod {
   GOOGLE = 'google',
   // APPLE = 'apple',
-  EMAIL = 'email',
+  // EMAIL = 'email',
   WALLET = 'wallet',
 }
 

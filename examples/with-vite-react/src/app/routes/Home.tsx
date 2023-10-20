@@ -5,12 +5,16 @@ import {
   ConnectButton,
   useDiditStatus,
   useAuthenticationAdapter,
+  useDiditAuth,
 } from 'didit-sdk';
 
 const Home = () => {
-  const { token, status, error } = useDiditStatus();
+  const { token, status, error } = useDiditStatus(); // TODO: Status is now torking ATM with Google. We need a rework on Didit providers
   const adapter = useAuthenticationAdapter();
   const accessToken = String(token);
+
+  const diditAuth = useDiditAuth();
+  console.log('diditAuth', diditAuth);
 
   const isAuthenticated = status === 'authenticated';
 

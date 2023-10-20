@@ -7,11 +7,11 @@ const useDiditStatus = () => {
   const { address } = useContext(RainbowKitAuthenticationContext) ?? {};
 
   return {
-    address,
     authMethod,
     error,
     status,
     token,
+    walletAddress: address,
   };
 };
 
