@@ -14,9 +14,10 @@ const Providers = ({ children }: ProvidersProps) => {
   return (
     <WagmiConfig config={config}>
       <DiditAuthProvider
-        baseUrl="https://apx.dev.didit.me/profile"
+        baseUrl="http://127.0.0.1:8000/email-auth"
         clientId="676573"
-        claims="read:email write:email"
+        claims="read:emails write:emails"
+        scope="openid profile"
       >
         <DiditRainbowkitProvider chains={chains} theme={lightTheme()}>
           {children}

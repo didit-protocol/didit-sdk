@@ -14,6 +14,7 @@ interface DiditAuthProviderProps {
   children: React.ReactNode;
   clientId: string;
   claims?: string;
+  scope?: string;
 }
 
 /*
@@ -22,10 +23,11 @@ It is a wrapper around the DiditEmailAuthProvider (email and social) and the Did
 It is used to authenticate users with their email address, social media accounts or wallet address.
 */
 const DiditAuthProvider = ({
-  baseUrl = DIDIT.EMAIL_AUTH_DEFAULT_BASE_URL,
+  baseUrl = DIDIT.DEFAULT_BASE_URL,
   children,
-  claims = '',
+  claims = DIDIT.DEFAULT_CLAIMS,
   clientId,
+  scope = DIDIT.DEFAULT_SCOPE,
 }: DiditAuthProviderProps) => {
   const [token, setToken] = useLocalStorage<string>(
     DIDIT.TOKEN_COOKIE_NAME,
@@ -105,17 +107,20 @@ const DiditAuthProvider = ({
         onDeauthenticate={deauthenticate}
         onError={setError}
         onUpdateToken={setToken}
+        scope={scope}
         status={status}
         token={token}
       >
         <DiditWalletProvider
           authMethod={authMethod}
           baseUrl={baseUrl}
+          claims={claims}
           error={error}
           onAuthenticate={authenticate}
           onDeauthenticate={deauthenticate}
           onError={setError}
           onUpdateToken={setToken}
+          scope={scope}
           status={status}
           token={token}
         >

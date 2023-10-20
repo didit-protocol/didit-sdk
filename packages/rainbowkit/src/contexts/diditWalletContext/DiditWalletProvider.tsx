@@ -10,28 +10,32 @@ import { AuthenticationStatus, DiditAuthMethod } from '../../types';
 
 interface DiditWalletProviderProps {
   authMethod?: DiditAuthMethod;
-  enabled?: boolean;
-  children: ReactNode;
   baseUrl: string;
-  status?: AuthenticationStatus;
-  token?: string;
+  children: ReactNode;
+  claims: string;
+  enabled?: boolean;
   error?: string;
   onAuthenticate?: (_authMethod: DiditAuthMethod) => void;
   onDeauthenticate?: () => void;
   onError?: (error: string) => void;
   onUpdateToken?: (token: string) => void;
+  scope: string;
+  status?: AuthenticationStatus;
+  token?: string;
 }
 
 export function DiditWalletProvider({
   authMethod = undefined,
   baseUrl,
   children,
+  claims,
   enabled,
   error = '',
   onAuthenticate = () => {},
   onDeauthenticate = () => {},
   onError = () => {},
   onUpdateToken = () => {},
+  scope,
   status = AuthenticationStatus.LOADING,
   token = '',
 }: DiditWalletProviderProps) {
@@ -71,7 +75,7 @@ export function DiditWalletProvider({
           }
           // TODO: Do the same in connect button when already connected, it's jsut checking the wallet address but not triggering a new login
 
-          const parameters = walletAuthPayload(address);
+          const parameters = walletAuthPayload(address, claims, scope);
           const endpoint = `${baseUrl}${DIDIT.AUTH_WALLET_AUTHORIZATION_PATH}`;
           try {
             var { code, policy } = await postRequest(endpoint, parameters);
@@ -117,10 +121,12 @@ export function DiditWalletProvider({
     []
   );
 
-  function walletAuthPayload(address: string) {
+  function walletAuthPayload(address: string, claims = '', scope = '') {
     var encodedKey;
     var encodedValue;
     const data: { [key: string]: any } = {
+      claims,
+      scope,
       wallet_address: address,
     };
     var formBody: string[] = Object.entries(data).map(([key, val]) => {

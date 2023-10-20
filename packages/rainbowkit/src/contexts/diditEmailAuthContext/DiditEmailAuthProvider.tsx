@@ -14,22 +14,23 @@ interface DiditTokenData {
 
 interface DiditEmailAuthProviderProps {
   authMethod?: DiditAuthMethod;
-  baseUrl?: string;
+  baseUrl: string;
   children: React.ReactNode;
   clientId: string;
-  claims?: string;
+  claims: string;
   error?: string;
   onAuthenticate?: (_authMethod: DiditAuthMethod) => void;
   onDeauthenticate?: () => void;
   onError?: (error: string) => void;
   onUpdateToken?: (token: string) => void;
+  scope: string;
   status: AuthenticationStatus;
   token?: string;
 }
 
 const DiditEmailAuthProvider = ({
   authMethod = undefined,
-  baseUrl = DIDIT.EMAIL_AUTH_DEFAULT_BASE_URL,
+  baseUrl,
   children,
   claims = '',
   clientId,
@@ -38,6 +39,7 @@ const DiditEmailAuthProvider = ({
   onDeauthenticate = () => {},
   onError = () => {},
   onUpdateToken = () => {},
+  scope,
   status,
   token,
 }: DiditEmailAuthProviderProps) => {
@@ -136,7 +138,6 @@ const DiditEmailAuthProvider = ({
       const redirectUri = `${baseUrl}${DIDIT.EMAIL_AUTH_REDIRECT_URI_PATH}`;
       const codeChallengeMethod = DIDIT.EMAIL_AUTH_CODE_CHALLENGE_METHOD;
       const responseType = DIDIT.EMAIL_AUTH_RESPONSE_TYPE;
-      const scope = DIDIT.EMAIL_AUTH_SCOPE;
       const idp = socialAuthProvider;
       const encodedRedirectUrl = encodeURIComponent(redirectUri);
       setSocialAuthProvider(socialAuthProvider);
@@ -166,7 +167,15 @@ const DiditEmailAuthProvider = ({
 
       if (_diditPopup) startInitMessageInterval(_diditPopup);
     },
-    [baseUrl, clientId, claims, startInitMessageInterval]
+    [
+      authMethod,
+      baseUrl,
+      clientId,
+      scope,
+      claims,
+      startInitMessageInterval,
+      onDeauthenticate,
+    ]
   );
 
   const loginWithGoogle = useCallback(

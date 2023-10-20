@@ -9,7 +9,7 @@ import { arbitrum, mainnet, optimism, polygon, zora } from 'wagmi/chains';
 import { MockConnector } from 'wagmi/connectors/mock';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
-import { DiditAuthProvider } from '../src/components/RainbowKitProvider/DiditRainbowkitProvider';
+import { DiditRainbowkitProvider } from '../src/components/RainbowKitProvider/DiditRainbowkitProvider';
 import type { RainbowKitProviderProps } from '../src/components/RainbowKitProvider/DiditRainbowkitProvider';
 import { getDefaultWallets } from '../src/wallets/getDefaultWallets';
 
@@ -70,7 +70,7 @@ export function renderWithProviders(
   return render(component, {
     wrapper: ({ children }) => (
       <WagmiConfig config={wagmiConfig}>
-        <DiditAuthProvider
+        <DiditRainbowkitProvider
           chains={chains}
           children={children}
           {...options?.props}

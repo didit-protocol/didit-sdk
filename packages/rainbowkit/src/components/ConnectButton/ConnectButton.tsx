@@ -6,6 +6,7 @@ import {
 } from '../../css/sprinkles.css';
 import { touchableStyles } from '../../css/touchableStyles';
 import { useConnectionStatus } from '../../hooks/useConnectionStatus';
+import { AuthenticationStatus } from '../../types';
 import { isMobile } from '../../utils/isMobile';
 import { AsyncImage } from '../AsyncImage/AsyncImage';
 import { Avatar } from '../Avatar/Avatar';
@@ -50,7 +51,8 @@ export function ConnectButton({
         openChainModal,
         openConnectModal,
       }) => {
-        const ready = mounted && connectionStatus !== 'loading';
+        const ready =
+          mounted && connectionStatus !== AuthenticationStatus.LOADING;
         const unsupportedChain = chain?.unsupported ?? false;
 
         return (
