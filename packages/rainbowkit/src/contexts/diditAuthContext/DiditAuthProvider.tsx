@@ -14,6 +14,7 @@ interface DiditAuthProviderProps {
   children: React.ReactNode;
   clientId: string;
   claims?: string;
+  authMethods: DiditAuthMethod[];
   scope?: string;
 }
 
@@ -23,6 +24,7 @@ It is a wrapper around the DiditEmailAuthProvider (email and social) and the Did
 It is used to authenticate users with their email address, social media accounts or wallet address.
 */
 const DiditAuthProvider = ({
+  authMethods = DIDIT.DEFAULT_AUTH_METHODS,
   baseUrl = DIDIT.DEFAULT_BASE_URL,
   children,
   claims = DIDIT.DEFAULT_CLAIMS,
@@ -81,6 +83,7 @@ const DiditAuthProvider = ({
   const contextValue = useMemo(
     () => ({
       authMethod,
+      availableAuthMethods: authMethods,
       error,
       login: () => {},
       loginWithApple: () => {},
@@ -92,7 +95,7 @@ const DiditAuthProvider = ({
       status,
       token,
     }),
-    [authMethod, error, logout, status, token]
+    [authMethod, authMethods, error, logout, status, token]
   );
 
   return (

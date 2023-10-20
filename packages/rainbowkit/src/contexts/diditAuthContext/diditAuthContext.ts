@@ -9,6 +9,7 @@ const CONTEXT_NAME = 'DiditAuth';
 
 interface DiditAuthContextState {
   authMethod?: DiditAuthMethod;
+  availableAuthMethods: DiditAuthMethod[];
   error?: string;
   login: (authMethod: DiditAuthMethod) => void;
   loginWithApple: () => void;
@@ -23,6 +24,7 @@ interface DiditAuthContextState {
 
 const defaultState: DiditAuthContextState = {
   authMethod: undefined,
+  availableAuthMethods: [],
   error: undefined,
   login: () => {},
   loginWithApple: () => {},
