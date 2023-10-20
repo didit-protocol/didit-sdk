@@ -8,7 +8,7 @@ export const preloadLoginIcon = () => loadImages(src);
 
 export const DiditLoginIcon = () => (
   <AsyncImage
-    background="black"
+    background="transparent"
     borderColor="actionButtonBorder"
     borderRadius="10"
     height="60"
