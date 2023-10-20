@@ -1,10 +1,9 @@
 import clsx from 'clsx';
 import React, { FC } from 'react';
+import { useDiditAuth } from '../../hooks';
+import { DiditAuthMethod } from '../../types';
 import { DiditButton } from '../DiditButton';
-import AppleIcon from '../Icons/AppleIcon';
-import FacebookIcon from '../Icons/FacebookIcon';
 import GoogleIcon from '../Icons/GoogleIcon';
-import TwitterIcon from '../Icons/TwitterIcon';
 import './Dialog.css';
 import LeftArrowButton from '../LeftArrowButton/LeftArrowButton';
 
@@ -19,6 +18,15 @@ const SocialOptionsDialog: FC<SocialOptionsDialogProps> = ({
   dataTestId = '',
   onBackClick = () => {},
 }) => {
+  const { availableAuthMethods } = useDiditAuth();
+
+  const isGoogleAuthAvailable = availableAuthMethods.includes(
+    DiditAuthMethod.GOOGLE
+  );
+  // const isAppleAuthAvailable = availableAuthMethods.includes(
+  //   DiditAuthMethod.APPLE
+  // );
+
   const LoginClassName = clsx('dialog-wrapper', className);
 
   return (
@@ -34,26 +42,23 @@ const SocialOptionsDialog: FC<SocialOptionsDialogProps> = ({
         </p>
       </div>
       <div className="dialog-buttons">
-        <DiditButton
-          icon={<GoogleIcon />}
-          label="Continue with Email"
-          onClick={() => {}}
-        />
-        <DiditButton
-          icon={<AppleIcon />}
-          label="Continue with Social"
-          onClick={() => {}}
-        />
-        <DiditButton
-          icon={<TwitterIcon />}
-          label="Continue with Social"
-          onClick={() => {}}
-        />
-        <DiditButton
-          icon={<FacebookIcon />}
-          label="Continue with Social"
-          onClick={() => {}}
-        />
+        {isGoogleAuthAvailable && (
+          <DiditButton
+            icon={<GoogleIcon />}
+            label="Continue with Google"
+            onClick={() => {}}
+          />
+        )}
+        {/*
+        { isAppleAuthAvailable && (
+          <DiditButton
+            icon={<GoogleIcon />}
+            label="Continue with Google"
+            onClick={() => {}}
+          />
+        )}
+        } 
+        */}
       </div>
     </div>
   );

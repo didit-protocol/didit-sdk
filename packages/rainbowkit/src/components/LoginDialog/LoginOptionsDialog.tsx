@@ -1,8 +1,9 @@
 import clsx from 'clsx';
 import React, { FC } from 'react';
+import { useDiditAuth } from '../../hooks';
+import { DiditAuthMethod, SocialAuthProvider } from '../../types';
 import { DiditButton } from '../DiditButton';
 import { DiditWalletConnect } from '../DiditWalletConnect';
-import { EmailIcon } from '../Icons/Email';
 import './Dialog.css';
 import SocialIcon from '../Icons/SocialIcon';
 
@@ -17,6 +18,21 @@ const LoginOptionsDialog: FC<LoginOptionsDialogProps> = ({
   dataTestId = '',
   onLoginWithSocials = () => {},
 }) => {
+  const { availableAuthMethods } = useDiditAuth();
+
+  // const isEmailAuthAvailable = availableAuthMethods.includes(
+  //   DiditAuthMethod.EMAIL
+  // );
+  const isAnySocialAuthAvailable = Object.values(SocialAuthProvider).some(
+    _socialAuthMethod =>
+      availableAuthMethods.includes(
+        _socialAuthMethod as unknown as DiditAuthMethod
+      )
+  );
+  const isWalletAuthAvailable = availableAuthMethods.includes(
+    DiditAuthMethod.WALLET
+  );
+
   const LoginClassName = clsx('dialog-wrapper', className);
 
   return (
@@ -29,13 +45,22 @@ const LoginOptionsDialog: FC<LoginOptionsDialogProps> = ({
         </p>
       </div>
       <div className="dialog-buttons">
-        <DiditButton icon={<EmailIcon />} label="Continue with Email" />
-        <DiditButton
-          icon={<SocialIcon />}
-          label="Continue with Social"
-          onClick={onLoginWithSocials}
-        />
-        <DiditWalletConnect />
+        {/*
+        { isEmailAuthAvailable && (
+          <DiditButton 
+            icon={<EmailIcon />} 
+            label="Continue with Email" 
+          />
+        } 
+                */}
+        {isAnySocialAuthAvailable && (
+          <DiditButton
+            icon={<SocialIcon />}
+            label="Continue with a social account"
+            onClick={onLoginWithSocials}
+          />
+        )}
+        {isWalletAuthAvailable && <DiditWalletConnect />}
       </div>
     </div>
   );

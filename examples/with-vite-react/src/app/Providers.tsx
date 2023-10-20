@@ -2,6 +2,7 @@ import {
   lightTheme,
   DiditAuthProvider,
   DiditRainbowkitProvider,
+  DiditAuthMethod,
 } from 'didit-sdk';
 import { WagmiConfig } from 'wagmi';
 import { config, chains } from './config/wagmi';
@@ -14,6 +15,7 @@ const Providers = ({ children }: ProvidersProps) => {
   return (
     <WagmiConfig config={config}>
       <DiditAuthProvider
+        authMethods={[DiditAuthMethod.WALLET, DiditAuthMethod.GOOGLE]}
         baseUrl="http://127.0.0.1:8000/email-auth"
         clientId="676573"
         claims="read:emails write:emails"
