@@ -18,7 +18,7 @@ const SocialOptionsDialog: FC<SocialOptionsDialogProps> = ({
   dataTestId = '',
   onBackClick = () => {},
 }) => {
-  const { availableAuthMethods } = useDiditAuth();
+  const { availableAuthMethods, loginWithGoogle } = useDiditAuth();
 
   const isGoogleAuthAvailable = availableAuthMethods.includes(
     DiditAuthMethod.GOOGLE
@@ -46,7 +46,7 @@ const SocialOptionsDialog: FC<SocialOptionsDialogProps> = ({
           <DiditButton
             icon={<GoogleIcon />}
             label="Continue with Google"
-            onClick={() => {}}
+            onClick={loginWithGoogle}
           />
         )}
         {/*
@@ -54,7 +54,7 @@ const SocialOptionsDialog: FC<SocialOptionsDialogProps> = ({
           <DiditButton
             icon={<GoogleIcon />}
             label="Continue with Google"
-            onClick={() => {}}
+            onClick={loginWithApple}
           />
         )}
         } 

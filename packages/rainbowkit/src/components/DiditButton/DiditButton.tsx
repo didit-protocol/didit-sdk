@@ -23,9 +23,8 @@ export function DiditButton({
       onClick={onClick}
       type="button"
     >
-      <span className="didit-button-icon">{icon}</span>
+      {!!icon && <span className="didit-button-icon">{icon}</span>}
       <span className="didit-button-text">{label}</span>
-      <span style={{ hieght: '16px', width: '16px' }} />
     </button>
   );
 }

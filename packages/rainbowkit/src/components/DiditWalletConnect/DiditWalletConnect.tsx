@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
+import { useDiditAuth } from '../../hooks';
 import { DiditButton } from '../DiditButton';
 import CoinbaseIcon from '../Icons/CoinbaseIcon';
-import { useConnectModal } from '../RainbowKitProvider/ModalContext';
 
 interface DiditWalletConnectProps {
   className?: string;
@@ -12,14 +12,15 @@ const DiditWalletConnect: FC<DiditWalletConnectProps> = ({
   className = '',
   dataTestId = '',
 }) => {
-  const { openConnectModal } = useConnectModal();
+  const { loginWithWallet } = useDiditAuth();
+
   return (
     <DiditButton
       className={className}
       dataTestId={dataTestId}
       icon={<CoinbaseIcon />}
       label="Continue with wallet"
-      onClick={openConnectModal}
+      onClick={loginWithWallet}
     />
   );
 };

@@ -96,14 +96,10 @@ const DiditEmailAuthProvider = ({
         handleTokenSuccess(messageData?.data);
       } else if (
         messageData?.type === DIDIT.EMAIL_AUTH_TOKEN_POST_MESSAGE_ERROR_TYPE &&
-        messageData?.data
+        messageData?.error
       ) {
         // Handle error message
-        if (messageData?.data)
-          handleTokenError(
-            messageData?.data?.error,
-            messageData?.data?.error_description
-          );
+        handleTokenError(messageData?.error, messageData?.error_description);
       }
     },
     [baseUrl, initMessageInterval, handleTokenSuccess, handleTokenError]

@@ -2,6 +2,7 @@
   width: 100%;
   display: flex;
   max-width: 342px;
+  max-height: 44px;
   padding: 14px 24px;
   align-items: center;
   border-radius: 8px;
@@ -9,6 +10,7 @@
   background: var(--surfaces-grey-lighter, #fbfcff);
   text-align: center;
   transition: color 0.2s ease-in-out, background 0.2s ease-in-out;
+  cursor: pointer;
 }
 .didit-button:hover {
   border: 1px solid transparent;

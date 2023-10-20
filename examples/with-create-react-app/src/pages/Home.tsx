@@ -1,26 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import {
   DiditLogin,
-  ConnectButton,
-  useDiditStatus,
+  DiditLogoutButton,
   useAuthenticationAdapter,
+  useDiditAuth,
 } from 'didit-sdk';
 
 const Home = () => {
-  const { authMethod, token, status, error } = useDiditStatus();
+  const { authMethod, status, token, isAuthenticated, error } = useDiditAuth({
+    onError: (_error: string) =>
+      console.error('useDiditAuth: Didit error: ', _error),
+    onLogin: (_authMethod?: string) =>
+      console.log('useDiditAuth: Logged in Didit with', _authMethod),
+    onLogout: () => console.log('useDiditAuth: Logged out from Didit'),
+  });
   const adapter = useAuthenticationAdapter();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   const accessToken = String(token);
-
-  const isAuthenticated = status === 'authenticated';
-
-  useEffect(() => {
-    if (error) {
-      console.error(error);
-    }
-  }, [error]);
 
   return (
     <div
@@ -48,9 +46,7 @@ const Home = () => {
               <b>{status}</b>
             </span>
           </p>
-          {isAuthenticated && (
-            <button onClick={() => adapter.signOut()}>LOGOUT</button>
-          )}
+          <DiditLogoutButton />
         </div>
         <div
           style={{

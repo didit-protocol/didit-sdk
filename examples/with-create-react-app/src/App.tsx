@@ -49,16 +49,18 @@ function App() {
   return (
     <WagmiConfig config={wagmiConfig}>
       <DiditAuthProvider
-        authMethods={[DiditAuthMethod.GOOGLE]}
+        authMethods={[DiditAuthMethod.GOOGLE, DiditAuthMethod.WALLET]}
         baseUrl="http://127.0.0.1:8000/email-auth"
         clientId="676573"
         claims="read:emails write:emails"
         scope="openid profile"
         onLogin={(_authMethod: string) =>
-          console.log('Logged in Didit with', _authMethod)
+          console.log('DiditAuthProvider: Logged in Didit with', _authMethod)
         }
-        onLogout={() => console.log('Logged out Didit')}
-        onError={(_error: string) => console.error('Didit error: ', _error)}
+        onLogout={() => console.log('DiditAuthProvider: Logged out from Didit')}
+        onError={(_error: string) =>
+          console.error('DiditAuthProvider: Didit error: ', _error)
+        }
       >
         <DiditRainbowkitProvider chains={chains} theme={lightTheme()}>
           <Home />

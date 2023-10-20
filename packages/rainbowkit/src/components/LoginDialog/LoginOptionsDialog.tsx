@@ -50,6 +50,7 @@ const LoginOptionsDialog: FC<LoginOptionsDialogProps> = ({
           <DiditButton 
             icon={<EmailIcon />} 
             label="Continue with Email" 
+            onClick={loginWithEmail}
           />
         } 
                 */}

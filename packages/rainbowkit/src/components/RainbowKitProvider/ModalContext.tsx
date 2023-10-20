@@ -148,5 +148,6 @@ export function useChainModal() {
 
 export function useConnectModal() {
   const { connectModalOpen, openConnectModal } = useContext(ModalContext);
+
   return { connectModalOpen, openConnectModal };
 }

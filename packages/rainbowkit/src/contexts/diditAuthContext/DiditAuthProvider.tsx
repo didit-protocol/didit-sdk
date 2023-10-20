@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
 import { DIDIT } from '../../config';
+import usePreviousState from '../../hooks/usePreviousState';
 import { AuthenticationStatus, DiditAuthMethod } from '../../types';
 import { parseJwt } from '../../utils';
 import { DiditEmailAuthProvider } from '../diditEmailAuthContext';
@@ -16,7 +17,7 @@ interface DiditAuthProviderProps {
   claims?: string;
   authMethods?: DiditAuthMethod[];
   onError?: (error: string) => void;
-  onLogin: (authMethod: DiditAuthMethod) => void;
+  onLogin: (authMethod?: DiditAuthMethod) => void;
   onLogout?: () => void;
   scope?: string;
 }
@@ -44,6 +45,7 @@ const DiditAuthProvider = ({
 
   const [status, setStatus] =
     useState<AuthenticationStatus>(INITIAL_AUTH_STATUS);
+  const prevStatus = usePreviousState(status);
   const [error, setError] = useState('');
 
   const [authMethod, setAuthMethod] = useState<DiditAuthMethod>();
@@ -54,10 +56,9 @@ const DiditAuthProvider = ({
 
       if (status !== AuthenticationStatus.AUTHENTICATED) {
         setStatus(AuthenticationStatus.AUTHENTICATED);
-        onLogin(_authMethod);
       }
     },
-    [status, setStatus, onLogin]
+    [status, setStatus]
   );
 
   const deauthenticate = useCallback(() => {
@@ -67,9 +68,8 @@ const DiditAuthProvider = ({
       setStatus(AuthenticationStatus.UNAUTHENTICATED);
       setToken('');
       setError('');
-      onLogout();
     }
-  }, [status, setStatus, onLogout, setToken, setError]);
+  }, [status, setStatus, setToken, setError]);
 
   const handleError = useCallback(
     (error: string) => {
@@ -119,6 +119,21 @@ const DiditAuthProvider = ({
       setToken('');
     }
   }, [status, setToken]);
+
+  // Login and logout event callbacks
+  useEffect(() => {
+    if (
+      prevStatus === AuthenticationStatus.UNAUTHENTICATED &&
+      status === AuthenticationStatus.AUTHENTICATED
+    ) {
+      onLogin(authMethod);
+    } else if (
+      prevStatus === AuthenticationStatus.AUTHENTICATED &&
+      status === AuthenticationStatus.UNAUTHENTICATED
+    ) {
+      onLogout();
+    }
+  }, [prevStatus, status, authMethod, onLogin, onLogout]);
 
   // Validate configurable props
   useEffect(() => {

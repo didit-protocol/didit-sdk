@@ -94,7 +94,6 @@ export function DiditWalletProvider({
         signOut: async () => {
           onDeauthenticate();
           disconnect();
-          onError('');
           setAddress(undefined);
         },
 
