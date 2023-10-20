@@ -1,0 +1,29 @@
+.didit-button {
+  width: 100%;
+  display: flex;
+  max-width: 342px;
+  padding: 14px 24px;
+  align-items: center;
+  border-radius: 8px;
+  border: 1px solid var(--brand-accent-light, #d4e1ff);
+  background: var(--surfaces-grey-lighter, #fbfcff);
+  text-align: center;
+  transition: color 0.2s ease-in-out, background 0.2s ease-in-out;
+}
+.didit-button:hover {
+  border: 1px solid transparent;
+  background: var(--brand-accent-light, #d4e1ff);
+}
+.didit-button-icon {
+  width: 16px;
+  height: 16px;
+}
+.didit-button-text {
+  flex-grow: 1;
+  color: var(--text-ui-grey, #6d758e);
+  font-variant-numeric: lining-nums proportional-nums;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px; /* 133.333% */
+}

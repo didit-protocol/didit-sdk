@@ -1,43 +1,38 @@
 import clsx from 'clsx';
 import React, { FC } from 'react';
-import { useDiditEmailAuthContext } from '../../contexts/diditEmailAuthContext';
-import { Box } from '../Box/Box';
+import { LoginDialog } from '../LoginDialog';
+import LoginModal from './LoginModal';
+
+const mode_map = {
+  embedded: LoginDialog,
+  modal: LoginModal,
+};
 
 interface DiditLoginProps {
   className?: string;
   dataTestId?: string;
+  mode?: 'modal' | 'embedded';
+  isModalOpen?: boolean;
+  onModalClose?: () => void;
 }
 
 const DiditLogin: FC<DiditLoginProps> = ({
   className = '',
   dataTestId = '',
+  isModalOpen = false,
+  mode = 'modal',
+  onModalClose = () => {},
 }) => {
-  const { loginWithGoogle } = useDiditEmailAuthContext();
-
   const diditLoginClassName = clsx(className);
+  const Login = mode_map[mode] || LoginModal;
 
   return (
-    <div className={diditLoginClassName} data-testid={dataTestId}>
-      <Box
-        alignItems="center"
-        aria-label="Chain Selector"
-        as="button"
-        background="connectButtonBackground"
-        borderRadius="connectButton"
-        boxShadow="connectButton"
-        color="connectButtonText"
-        fontFamily="body"
-        fontWeight="bold"
-        gap="6"
-        onClick={loginWithGoogle}
-        paddingX="10"
-        paddingY="8"
-        transition="default"
-        type="button"
-      >
-        Connect with Google
-      </Box>
-    </div>
+    <Login
+      className={diditLoginClassName}
+      dataTestId={dataTestId}
+      isOpen={isModalOpen}
+      onClose={onModalClose}
+    />
   );
 };
 

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   DiditLogin,
@@ -10,6 +10,8 @@ import {
 const Home = () => {
   const { authMethod, token, status, error } = useDiditStatus();
   const adapter = useAuthenticationAdapter();
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
   const accessToken = String(token);
 
   const isAuthenticated = status === 'authenticated';
@@ -87,8 +89,15 @@ const Home = () => {
             gap: 12,
           }}
         >
-          <ConnectButton label="Connect with wallet" />
-          <DiditLogin />
+          <DiditLogin mode="embedded" />
+          <button onClick={() => setIsLoginModalOpen(true)}>
+            open login modal
+          </button>
+          <DiditLogin
+            mode="modal"
+            isModalOpen={isLoginModalOpen}
+            onModalClose={() => setIsLoginModalOpen(false)}
+          />
         </div>
       </div>
     </div>

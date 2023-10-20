@@ -5,6 +5,7 @@ import Providers from './Providers';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import AuthStatus from './routes/AuthStatus.tsx';
 import Home from './routes/Home.tsx';
+import DiditLoginPage from './routes/Login.tsx';
 
 const router = createBrowserRouter([
   {
@@ -15,13 +16,16 @@ const router = createBrowserRouter([
     path: '/status',
     element: <AuthStatus />,
   },
+  {
+    path: '/login',
+    element: <DiditLoginPage />,
+  },
 ]);
 
 function App() {
   return (
     <Providers>
       <RouterProvider router={router} />
-      <Home />
     </Providers>
   );
 }
