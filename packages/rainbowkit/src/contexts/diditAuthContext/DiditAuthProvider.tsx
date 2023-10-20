@@ -79,6 +79,28 @@ const DiditAuthProvider = ({
     [setError, onError]
   );
 
+  const validateClaims = useCallback(() => {
+    // Check if claims is a valid string with one or more claims separated by spaces
+    const claimsRegex = /^(\w+:\w+)(\s\w+:\w+)*$/;
+    if (!claimsRegex.test(claims)) {
+      throw new Error(
+        "Invalid claims. Claims must be a string of the form 'read:claim write:claim'."
+      );
+    }
+    return true;
+  }, [claims]);
+
+  const validateScope = useCallback(() => {
+    // Check if scope is a valid string with one or more scopes separated by spaces
+    const scopeRegex = /^(\w+)(\s\w+)*$/;
+    if (!scopeRegex.test(scope)) {
+      throw new Error(
+        "Invalid scope. Scope must be a string of the form 'openid profile'."
+      );
+    }
+    return true;
+  }, [scope]);
+
   // Check token expiration
   useEffect(() => {
     if (token) {
@@ -97,6 +119,12 @@ const DiditAuthProvider = ({
       setToken('');
     }
   }, [status, setToken]);
+
+  // Validate configurable props
+  useEffect(() => {
+    validateClaims();
+    validateScope();
+  }, [validateClaims, validateScope]);
 
   const contextValue = useMemo(
     () => ({
