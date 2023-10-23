@@ -6,17 +6,19 @@ import { DialogContent } from '../Dialog/DialogContent';
 import { LoginDialog } from '../LoginDialog';
 
 interface LoginModalProps {
-  className?: string;
+  wrapperClassName?: string;
+  buttonClassName?: string;
   dataTestId?: string;
   isOpen: boolean;
   onClose: () => void;
 }
 
 const LoginModal: FC<LoginModalProps> = ({
-  className = '',
+  buttonClassName = '',
   dataTestId = '',
   isOpen = false,
   onClose = () => {},
+  wrapperClassName = '',
 }) => {
   return (
     <Dialog onClose={onClose} open={isOpen} titleId="login-modal">
@@ -37,7 +39,11 @@ const LoginModal: FC<LoginModalProps> = ({
           >
             <CloseButton onClose={onClose} />
           </Box>
-          <LoginDialog className={className} dataTestId={dataTestId} />
+          <LoginDialog
+            buttonClassName={buttonClassName}
+            dataTestId={dataTestId}
+            wrapperClassName={wrapperClassName}
+          />
         </Box>
       </DialogContent>
     </Dialog>
