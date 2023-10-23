@@ -3,26 +3,27 @@ import { useDiditAuth } from '../../hooks';
 import { DiditButton } from '../DiditButton';
 import CoinbaseIcon from '../Icons/CoinbaseIcon';
 
-interface DiditWalletConnectProps {
+interface DiditConnectWalletButtonProps {
   className?: string;
   dataTestId?: string;
 }
 
-const DiditWalletConnect: FC<DiditWalletConnectProps> = ({
+const DiditConnectWalletButton: FC<DiditConnectWalletButtonProps> = ({
   className = '',
   dataTestId = '',
 }) => {
-  const { loginWithWallet } = useDiditAuth();
+  const { isAuthenticated, loginWithWallet } = useDiditAuth();
 
   return (
     <DiditButton
       className={className}
       dataTestId={dataTestId}
       icon={<CoinbaseIcon />}
+      isDisabled={isAuthenticated}
       label="Continue with wallet"
       onClick={loginWithWallet}
     />
   );
 };
 
-export default DiditWalletConnect;
+export default DiditConnectWalletButton;

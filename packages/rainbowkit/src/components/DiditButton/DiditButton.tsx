@@ -1,13 +1,14 @@
+import clsx from 'clsx';
 import React from 'react';
 import './DiditButton.css';
 
 interface DiditButtonProps {
   label: string;
   icon?: React.ReactNode;
-  isDisabled?: boolean;
-  onClick?: () => void;
   className?: string;
+  isDisabled?: boolean;
   dataTestId?: string;
+  onClick?: () => void;
 }
 
 export function DiditButton({
@@ -18,9 +19,10 @@ export function DiditButton({
   label,
   onClick = () => {},
 }: DiditButtonProps) {
+  const buttonClassName = clsx('didit-button', className);
   return (
     <button
-      className={`${className} didit-button`}
+      className={buttonClassName}
       data-testid={dataTestId}
       disabled={isDisabled}
       onClick={onClick}

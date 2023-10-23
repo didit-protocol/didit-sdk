@@ -3,22 +3,26 @@ import React, { FC } from 'react';
 import { useDiditAuth } from '../../hooks';
 import { DiditAuthMethod, SocialAuthProvider } from '../../types';
 import { DiditButton } from '../DiditButton';
-import { DiditWalletConnect } from '../DiditWalletConnect';
-import './Dialog.css';
+import { DiditError } from '../DiditError';
+import DiditConnectWalletButton from '../DiditWalletConnectButton/DiditWalletConnectButton';
 import SocialIcon from '../Icons/SocialIcon';
+import './Dialog.css';
 
 interface LoginOptionsDialogProps {
-  className?: string;
+  wrapperClassName?: string;
+  buttonClassName?: string;
   dataTestId?: string;
   onLoginWithSocials?: () => void;
 }
 
 const LoginOptionsDialog: FC<LoginOptionsDialogProps> = ({
-  className = '',
+  buttonClassName = '',
   dataTestId = '',
   onLoginWithSocials = () => {},
+  wrapperClassName = '',
 }) => {
-  const { availableAuthMethods, isAuthenticated } = useDiditAuth();
+  const { availableAuthMethods, error, hasError, isAuthenticated } =
+    useDiditAuth();
 
   // const isEmailAuthAvailable = availableAuthMethods.includes(
   //   DiditAuthMethod.EMAIL
@@ -33,12 +37,12 @@ const LoginOptionsDialog: FC<LoginOptionsDialogProps> = ({
     DiditAuthMethod.WALLET
   );
 
-  const LoginClassName = clsx('dialog-wrapper', className);
+  const LoginClassName = clsx('dialog-wrapper', wrapperClassName);
 
   return (
     <div className={LoginClassName} data-testid={dataTestId}>
       <div className="dialog-text">
-        <h2 className="dialog-text-title">Welcome back to Didit Profile</h2>
+        <h2 className="dialog-text-title">Sign In With Didit</h2>
         <p className="dialog-text-description">
           This paragraph of text is used to describe data and suggest the user
           to fill in the fields.
@@ -48,6 +52,7 @@ const LoginOptionsDialog: FC<LoginOptionsDialogProps> = ({
         {/*
         { isEmailAuthAvailable && (
           <DiditButton 
+            className={buttonClassName}
             icon={<EmailIcon />} 
             isDisabled={isAuthenticated}
             label="Continue with Email" 
@@ -57,13 +62,21 @@ const LoginOptionsDialog: FC<LoginOptionsDialogProps> = ({
                 */}
         {isAnySocialAuthAvailable && (
           <DiditButton
+            className={buttonClassName}
             icon={<SocialIcon />}
             isDisabled={isAuthenticated}
             label="Continue with a social account"
             onClick={onLoginWithSocials}
           />
         )}
-        {isWalletAuthAvailable && <DiditWalletConnect />}
+        {isWalletAuthAvailable && <DiditConnectWalletButton />}
+      </div>
+      <div className="dialog-error">
+        <DiditError
+          description={error || ''}
+          isHidden={!hasError}
+          title="Opps something went wrong"
+        />
       </div>
     </div>
   );

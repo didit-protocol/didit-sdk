@@ -5,7 +5,15 @@ export default function DiditLoginPage() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   return (
-    <div>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '1rem',
+      }}
+    >
       <DiditLogin mode="embedded" />
       <button onClick={() => setIsLoginModalOpen(true)}>
         open login modal

@@ -4,12 +4,14 @@ import LoginOptionsDialog from './LoginOptionsDialog';
 import SocialOptionsDialog from './SocialOptionsDialog';
 
 interface LoginDialogProps {
-  className?: string;
+  wrapperClassName?: string;
+  buttonClassName?: string;
   dataTestId?: string;
 }
 const LoginDialog: FC<LoginDialogProps> = ({
-  className = '',
+  buttonClassName = '',
   dataTestId = '',
+  wrapperClassName = '',
 }) => {
   const [isSocialOptionsDialog, setIsSocialOptionsDialog] = useState(false);
 
@@ -26,15 +28,17 @@ const LoginDialog: FC<LoginDialogProps> = ({
       {/* <LeftArrowButton onClick={handlBackToLoginOptions} /> */}
       {isSocialOptionsDialog ? (
         <SocialOptionsDialog
-          className={className}
+          buttonClassName={buttonClassName}
           dataTestId={dataTestId}
           onBackClick={handlBackToLoginOptions}
+          wrapperClassName={wrapperClassName}
         />
       ) : (
         <LoginOptionsDialog
-          className={className}
+          buttonClassName={buttonClassName}
           dataTestId={dataTestId}
           onLoginWithSocials={HandleLoginWithSocials}
+          wrapperClassName={wrapperClassName}
         />
       )}
     </>
