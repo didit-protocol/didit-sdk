@@ -18,7 +18,6 @@ import {
 } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import Home from './pages/Home';
-import { useEffect } from 'react';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
