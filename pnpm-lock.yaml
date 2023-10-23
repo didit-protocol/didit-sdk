@@ -165,7 +165,7 @@ importers:
         version: 6.0.3
       didit-sdk:
         specifier: workspace:*
-        version: link:../../packages/rainbowkit
+        version: link:../../packages/didit-sdk
       react-scripts:
         specifier: 5.0.1
         version: 5.0.1
@@ -184,7 +184,7 @@ importers:
     dependencies:
       didit-sdk:
         specifier: workspace:*
-        version: link:../../packages/rainbowkit
+        version: link:../../packages/didit-sdk
       localforage:
         specifier: ^1.10.0
         version: 1.10.0
@@ -238,7 +238,7 @@ importers:
         specifier: ^4.4.5
         version: 4.4.9(@types/node@18.16.12)
 
-  packages/rainbowkit:
+  packages/didit-sdk:
     dependencies:
       '@vanilla-extract/css':
         specifier: 1.9.1
@@ -285,7 +285,7 @@ importers:
         version: 1.4.2(@types/react@18.2.21)(lokijs@1.5.12)(react@18.2.0)(typescript@5.0.4)(viem@1.12.2)
       autoprefixer:
         specifier: ^10.4.15
-        version: 10.4.16(postcss@8.4.6)
+        version: 10.4.16(postcss@8.4.31)
       jsdom:
         specifier: ^22.1.0
         version: 22.1.0
@@ -294,7 +294,7 @@ importers:
         version: 13.2.4
       postcss:
         specifier: ^8.4.4
-        version: 8.4.6
+        version: 8.4.31
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -5904,22 +5904,6 @@ packages:
       picocolors: 1.0.0
       postcss: 8.4.31
       postcss-value-parser: 4.2.0
-
-  /autoprefixer@10.4.16(postcss@8.4.6):
-    resolution: {integrity: sha512-7vd3UC6xKp0HLfua5IjZlcXvGAGy7cBAXTg2lyQ/8WpNhd6SiZ8Be+xm3FyBSYJx5GKcpRCzBh7RH4/0dnY+uQ==}
-    engines: {node: ^10 || ^12 || >=14}
-    hasBin: true
-    peerDependencies:
-      postcss: ^8.1.0
-    dependencies:
-      browserslist: 4.22.1
-      caniuse-lite: 1.0.30001543
-      fraction.js: 4.3.6
-      normalize-range: 0.1.2
-      picocolors: 1.0.0
-      postcss: 8.4.6
-      postcss-value-parser: 4.2.0
-    dev: true
 
   /available-typed-arrays@1.0.5:
     resolution: {integrity: sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==}
@@ -12969,15 +12953,6 @@ packages:
       nanoid: 3.3.6
       picocolors: 1.0.0
       source-map-js: 1.0.2
-
-  /postcss@8.4.6:
-    resolution: {integrity: sha512-OovjwIzs9Te46vlEx7+uXB0PLijpwjXGKXjVGGPIGubGpq7uh5Xgf6D6FiJ/SzJMBosHDp6a2hiXOS97iBXcaA==}
-    engines: {node: ^10 || ^12 || >=14}
-    dependencies:
-      nanoid: 3.3.6
-      picocolors: 1.0.0
-      source-map-js: 1.0.2
-    dev: true
 
   /preact-render-to-string@5.2.6(preact@10.18.1):
     resolution: {integrity: sha512-JyhErpYOvBV1hEPwIxc/fHWXPfnEGdRKxc8gFdAZ7XV4tlzyzG847XAyEZqoDnynP88akM4eaHcSOzNcLWFguw==}

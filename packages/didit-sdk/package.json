@@ -76,6 +76,6 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/didit-protocol/didit-sdk",
-    "directory": "packages/rainbowkit"
+    "directory": "packages/didit-sdk"
   }
 }

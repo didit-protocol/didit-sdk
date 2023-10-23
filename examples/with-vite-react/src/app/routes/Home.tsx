@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { DiditLogin, ConnectButton, useDiditAuth } from 'didit-sdk';
+import { DiditLogin, DiditAuthMethod, DiditLoginButton, DiditLogoutButton, useDiditAuth } from 'didit-sdk';
 
 const Home = () => {
   const { authMethod, status, token, isAuthenticated, error, logout } =
@@ -39,7 +39,7 @@ const Home = () => {
               <b>{status}</b>
             </span>
           </p>
-          {isAuthenticated && <button onClick={logout}>LOGOUT</button>}
+          <DiditLogoutButton />
         </div>
         <div
           style={{
@@ -78,8 +78,10 @@ const Home = () => {
             gap: 12,
           }}
         >
-          <ConnectButton label="Connect with wallet" />
-          <DiditLogin />
+          <DiditLoginButton
+            label="Didit with Google"
+            authMethod={DiditAuthMethod.GOOGLE}
+          />
         </div>
       </div>
     </div>
