@@ -8,14 +8,14 @@
 
 Didit-SDK is a [React](https://reactjs.org/) library that makes it easy to add wallet connection to your dapp.
 
-- ✅ Didit User Authentication flow
+- ✅ **Didit** User Authentication flow
 - 🔥 Out-of-the-box wallet management
 - ✅ Easily customizable
 - 🦄 Built on top of [rainbowkit](https://www.rainbowkit.com), [wagmi](https://wagmi.sh) and [viem](https://viem.sh)
 
-### Try it out
+## Try it out
 
-You can use the CodeSandbox links below try out Didit Sdk:
+You can use the CodeSandbox links below try out **Didit** Sdk:
 
 - with [Vite-React](https://codesandbox.io/p/sandbox/github/rainbow-me/rainbowkit/tree/main/examples/with-vite) // TODO: setup example on codesandbox
 - with [Create-React-Appp](https://codesandbox.io/p/sandbox/github/rainbow-me/rainbowkit/tree/main/examples/with-vite) // TODO: setup example on codesandbox
@@ -52,32 +52,31 @@ pnpm run dev
 
 ### Installation
 
-## integrate didit-sdk into your project.
+#### Integrate didit-sdk into your project
 
 install didit-sdk and its peer dependencies, [wagmi](https://wagmi.sh) and [viem](https://viem.sh).
 
 ```bash
-npm install didit-sdk didit-provider wagmi viem
+npm install didit-sdk wagmi viem
 ```
 
 > Note: RainbowKit is a [React](https://reactjs.org/) library.
 
 #### Import
 
-Import didit-sdk and wagmi.
+Import ` didit-sdk`` and `wagmi.
+
+All the components, providers, hooks and utils are exported from the main `didit-sdk` package.
 
 ```tsx
 import 'didit-sdk/styles.css';
 
-import { getDefaultWallets, DiditAuthProvider, darkTheme } from 'didit-sdk';
-import { DiditProvider } from 'didit-provider';
-import { configureChains, createConfig, WagmiConfig } from 'wagmi';
-import { mainnet, polygon, optimism, arbitrum, base, zora } from 'wagmi/chains';
-import { alchemyProvider } from 'wagmi/providers/alchemy';
-import { publicProvider } from 'wagmi/providers/public';
+import { DiditAuthProvider, DiditLoginButton, DiditAuthMethod, ... } from 'didit-sdk';
 ```
 
 #### Configure
+
+##### Configure Wagmi
 
 Configure your desired chains and generate the required connectors. You will also need to setup a `wagmi` config.
 
@@ -85,6 +84,9 @@ Configure your desired chains and generate the required connectors. You will als
 
 ```tsx line=4-99
 ...
+import { getDefaultWallets } from 'didit-sdk';
+import { configureChains, createConfig, WagmiConfig } from 'wagmi';
+import { mainnet, polygon, optimism, arbitrum, base, zora } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 
@@ -98,7 +100,7 @@ const { chains, publicClient } = configureChains(
 
 const { connectors } = getDefaultWallets({
   appName: 'App with Didit',
-  projectId: 'YOUR_PROJECT_ID',
+  projectId: 'YOUR_WALLET_CONNECT_PROJECT_ID',
   chains
 });
 
@@ -111,21 +113,58 @@ const wagmiConfig = createConfig({
 
 [Read more about configuring chains & providers with `wagmi`](https://wagmi.sh/docs/providers/configuring-chains).
 
-#### Setup providers
+##### Configure Didit providers
 
-1. Set up the DiditProvider
-   pass **clientUrl (str)** URL to your backend server [i.e: 'http://127.0.0.1:8000/avatar/integrations']
+1. Set up the `DiditAuthProvider` with minimum configurable props:
+
+- `clientId`: Your **Didit** client id
 
 ```tsx
-  <DiditProvider clientUrl="https://apx.dev.didit.me/profile/authorizations/v1">
+import { DiditAuthProvider} from 'didit-sdk';
+
+...
+
+      <DiditAuthProvider
+        clientId="676573"
+      >
+        {children}
+      </DiditAuthProvider>
 ```
 
-2. Set up DiditAuthProvider
+2. Additionally you can configure your **Didit** connection with more custom props:
 
-Pass the next parameters to the provider:
+- `authMethods`: The authentication methods you want to enable for your users (Default: `['google', 'wallet]`)
+- `baseUrl`: The base url of your custom backend with **Didit** auth (Default: `https://apx.didit.me/auth`)
+- `claims`: The claims you want to request from your users (Default: `['read:email']`)
+- `scope`: The scope you want to request from your users (Default: `['openid']`)
+- `onError`: A callback function that will be called when an error occurs during the authentication process
+- `onLogin`: A callback function that will be called when the user successfully logs in
+- `onLogout`: A callback function that will be called when the user successfully logs out
 
-- **chains (str)**: Wagmi config of the requested chain [i.e: wagmiConfig.chains]
-- **theme (str)**: theme function to customize RainbowKit UI to match your branding.
+```tsx
+import { DiditAuthProvider, DiditAuthMethod } from 'didit-sdk';
+
+...
+      <DiditAuthProvider
+        authMethods={[DiditAuthMethod.WALLET, DiditAuthMethod.GOOGLE]}
+        baseUrl="https://my.didit.app/auth"
+        clientId="676573"
+        claims={ ['read:email', 'write:email', 'read:profile', 'read:blockchain']}
+        scope={ ['openid', 'profile']
+        onLogin={(_authMethod?: DiditAuthMethod) =>
+          console.log('Logged in **Didit** with', _authMethod)
+        }
+        onLogout={() => console.log('Logged out Didit')}
+        onError={(_error: string) => console.error('Didit error: ', _error)}
+      >
+```
+
+2. Set up [`WagmiConfig`](https://wagmi.sh/docs/provider) provider and `DiditRainbowkitProvider`:
+
+Pass the next parameters to the `DiditRainbowkitProvider` provider:
+
+- `chains`: Wagmi config of the requested chain [i.e: wagmiConfig.chains]
+- `theme`: theme function to customize RainbowKit UI to match your branding.
   there are 3 built-in theme functions:
   - `lightTheme` &nbsp; (default)
   - `darkTheme`
@@ -133,75 +172,180 @@ Pass the next parameters to the provider:
     refer to [RainbowKit Theming](https://www.rainbowkit.com/docs/theming) for more.
 
 ```tsx
-  <DiditAuthProvider chains={chains} theme={darkTheme()}>
+    <WagmiConfig
+      config={wagmiConfig} // The one that was configured before for Wagmi
+    >
+        <DiditRainbowkitProvider
+          chains={chains}
+          theme={lightTheme()}
+        >
+          {children}
+        </DiditRainbowkitProvider>
+      </DiditAuthProvider>
+    </WagmiConfig>
 ```
 
-#### Wrap providers
+##### Wrap all providers
 
-Wrap your application with `DiditProvider`, `DiditAuthProvider` and [`WagmiConfig`](https://wagmi.sh/docs/provider).
+Wrap your application with `WagmiConfig`, `DiditRainbowkitProvider` and `DiditAuthProvider` providers in the following order and way:
 
 ```tsx
 const App = () => {
   return (
-    <WagmiConfig config={wagmiConfig}>
-      <DiditProvider clientUrl="https://apx.dev.didit.me/profile/authorizations/v1">
-        <DiditAuthProvider chains={chains} theme={darkTheme()}>
+    <WagmiConfig
+      config={wagmiConfig} // The one that was configured before for Wagmi
+    >
+      <DiditAuthProvider clientId="676573">
+        <DiditRainbowkitProvider chains={chains} theme={lightTheme()}>
           {children}
-        </DiditAuthProvider>
-      </DiditProvider>
+        </DiditRainbowkitProvider>
+      </DiditAuthProvider>
     </WagmiConfig>
   );
 };
 ```
 
-#### Add the connect button
+#### Manage authentication
+
+##### Add default Didit login and logout components
+
+1. Add the `DiditLoginButton` component to your app using a authentication method:
+
+```tsx
+import { DiditLoginButton, DiditAuthMethod } from 'didit-sdk';
+
+...
+
+  <DiditLoginButton
+    label="Connect with Didit"
+    authMethod={DiditAuthMethod.GOOGLE}
+  />
+```
+
+2. Add the `DiditLogoutButton` component to your app:
+
+```tsx
+import { DiditLogoutButton } from 'didit-sdk';
+
+...
+
+  <DiditLogoutButton
+    label="Logout from Didit"
+  />
+```
+
+3. Additionally you can use the `DiditLogin` component to provide multiple authentication methods. You can also configure it with:
+
+- `mode`: The mode of the login component (`modal` or `embedded`) (Default: `modal`)
+
+```tsx
+import { DiditLogin } from 'didit-sdk';
+
+...
+
+  <DiditLogin
+    mode="modal"
+    isModalOpen={isLoginModalOpen}
+    onModalClose={() => setIsLoginModalOpen(false)}
+  />
+```
+
+```tsx
+import { DiditLogin } from 'didit-sdk';
+
+...
+
+  <DiditLogin mode="embedded" />
+```
+
+> The `DiditLogin` is automatically configured with the authentication methods you provided to the `DiditAuthProvider` provider.
 
 Then, in your app, import and render the `ConnectButton` component.
 
+#### Retrieve the authentication status
+
+You can use the `useDiditAuth` hook to retrieve the authentication status and current connection;
+
+- `authMethod`: The current authentication method being used
+
+  ```tsx
+  import { DiditAuthMethod } from 'didit-sdk';
+  ```
+
+- `status`: The current authentication status ('loading', 'authenticated', 'unauthenticated')
+
+  ```tsx
+  import { AuthenticationStatus } from 'didit-sdk';
+  ```
+
+- `token`: The current **Didit** access token
+- `isAuthenticated`: Whether the user is authenticated or not
+- `walletAddress`: The current user's wallet address if connected by the wallet auth method
+- `error`: The current error in authentication process if any
+
 ```tsx
-import { ConnectButton } from 'didit-sdk';
+import { useDiditAuth } from 'didit-sdk';
 
-export const YourApp = () => {
-  return <ConnectButton />;
-};
-```
+...
+  const { authMethod, status, token, isAuthenticated, walletAddress, error } = useDiditAuth();
 
-#### Retrieve the accessToken & walletAddress
-
-```tsx
-import { useDiditStatus } from 'didit-sdk';
-// 'loading' | 'authenticated' | 'unauthenticated'
-const Component = () => {
-  const { address, token, status, error } = useDiditStatus();
   return (
     <div>
-      {status === 'authenticated' && <span>token: {token}</span>}
-      <span>address: {address}</span>
+      <p>Auth method: {authMethod}</p>
+      <p>Status: {status}</p>
+      <p>Token: {token}</p>
+      <p>Is authenticated: {isAuthenticated}</p>
+      <p>Address: {walletAddress}</p>
+      <p>Error: {error}</p>
     </div>
   );
-};
 ```
 
-- **address:** connected address
-- **token:** provided accessToken
-- **status:** `"loading" | "authenticated" | "unauthenticated"`
-- **error:** any error from within the SDK
+##### Customize the authentication flow
 
-#### Login & Logout functions
+Additonally you can customize the **Didit** authentication flow by also using rest of the values returned by the `useDiditAuth` hook:
 
 ```tsx
-import { useAuthenticationAdapter, useConnectModal } from 'didit-sdk';
+import { useDiditAuth } from 'didit-sdk';
 
-const Component = () => {
-  const adapter = useAuthenticationAdapter();
-  const { openConnectModal } = useConnectModal();
-  return (
-    <>
-      <button onClick={() => adapter.signOut()}>LOGOUT</button>
-      {openConnectModal && (
-        <button onClick={() => openConnectModal()}>LOGIN</button>
-      )}
-    </>
-  );
-};
+...
+
+const {
+    authMethod,
+    availableAuthMethods,
+    error,
+    hasError,
+    isAuthenticated,
+    isLoading,
+    login,
+    loginWithApple,
+    loginWithEmail,
+    loginWithGoogle,
+    loginWithSocial,
+    loginWithWallet,
+    logout,
+    status,
+    token,
+    walletAddress: address,
+} = useDiditAuth({
+  onError: (error: string) => console.error('Didit error: ', error),
+  onLogin: (authMethod?: string) => console.log('Logged in **Didit** with', authMethod),
+  onLogout: () => console.log('Logged out Didit')
+});
+
+return (
+  <button
+    id="custom-Didit-login-button"
+    onClick={() => {
+      if (isAuthenticated) {
+        logout();
+      } else {
+        loginWithWallet();
+      }
+    }}
+  >
+    {isAuthenticated ? 'Logout' : 'Login'}
+  </button>
+)
+
 ```

@@ -22,7 +22,7 @@ const AUTH_METHOD_COOKIE_NAME = 'didit_auth_method';
 const TOKEN_COOKIE_NAME = 'didit_token';
 const WALLET_ADDRESS_COOKIE_NAME = 'didit_wallet_address';
 const DEFAULT_BASE_URL = 'https://apx.didit.me/auth';
-const DEFAULT_CLAIMS = '';
+const DEFAULT_CLAIMS = 'read:email';
 const DEFAULT_SCOPE = 'openid';
 const DEFAULT_AUTH_METHODS = [DiditAuthMethod.WALLET, DiditAuthMethod.GOOGLE];
 

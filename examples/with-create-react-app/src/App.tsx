@@ -55,7 +55,7 @@ function App() {
         clientId={process.env.REACT_APP_DIDIT_CLIENT_ID || ''}
         claims={process.env.REACT_APP_DIDIT_CLAIMS}
         scope={process.env.REACT_APP_DIDIT_SCOPE || ''}
-        onLogin={(_authMethod?: string) =>
+        onLogin={(_authMethod?: DiditAuthMethod) =>
           console.log('DiditAuthProvider: Logged in Didit with', _authMethod)
         }
         onLogout={() => console.log('DiditAuthProvider: Logged out from Didit')}

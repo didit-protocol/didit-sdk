@@ -20,7 +20,7 @@ const Providers = ({ children }: ProvidersProps) => {
         clientId={import.meta.env.VITE_DIDIT_CLIENT_ID || ''}
         claims={import.meta.env.VITE_DIDIT_CLAIMS}
         scope={import.meta.env.VITE_DIDIT_SCOPE || ''}
-        onLogin={(_authMethod?: string) =>
+        onLogin={(_authMethod?: DiditAuthMethod) =>
           console.log('Logged in Didit with', _authMethod)
         }
         onLogout={() => console.log('Logged out Didit')}
