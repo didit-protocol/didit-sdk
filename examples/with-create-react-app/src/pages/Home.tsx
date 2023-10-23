@@ -1,6 +1,12 @@
 import { useState } from 'react';
 
-import { DiditLogin, DiditLogoutButton, useDiditAuth } from 'didit-sdk';
+import {
+  DiditAuthMethod,
+  DiditLogin,
+  DiditLoginButton,
+  DiditLogoutButton,
+  useDiditAuth,
+} from 'didit-sdk';
 
 const Home = () => {
   const { authMethod, status, token, isAuthenticated } = useDiditAuth({
@@ -77,9 +83,21 @@ const Home = () => {
             display: 'flex',
             flexDirection: 'column',
             gap: 12,
+            marginTop: '40px',
+            marginBottom: '40px',
           }}
         >
           <DiditLogin mode="embedded" />
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 12,
+            marginTop: '40px',
+            marginBottom: '40px',
+          }}
+        >
           <button onClick={() => setIsLoginModalOpen(true)}>
             open login modal
           </button>
@@ -87,6 +105,10 @@ const Home = () => {
             mode="modal"
             isModalOpen={isLoginModalOpen}
             onModalClose={() => setIsLoginModalOpen(false)}
+          />
+          <DiditLoginButton
+            label="Connect with Didit"
+            authMethod={DiditAuthMethod.GOOGLE}
           />
         </div>
       </div>

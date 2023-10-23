@@ -5,11 +5,13 @@ import { DiditButton } from '../DiditButton';
 interface DiditLogoutButtonProps {
   className?: string;
   dataTestId?: string;
+  label?: string;
 }
 
 const DiditLogoutButton: FC<DiditLogoutButtonProps> = ({
   className = '',
   dataTestId = '',
+  label = 'Logout',
 }) => {
   const { logout } = useDiditAuth();
 
@@ -17,7 +19,7 @@ const DiditLogoutButton: FC<DiditLogoutButtonProps> = ({
     <DiditButton
       className={className}
       dataTestId={dataTestId}
-      label="Logout"
+      label={label}
       onClick={logout}
     />
   );
