@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocalStorage } from 'usehooks-ts';
 import { DIDIT } from '../../config';
+import { useLocalStorage } from '../../hooks';
 import usePreviousState from '../../hooks/usePreviousState';
 import { AuthenticationStatus, DiditAuthMethod } from '../../types';
 import { parseJwt } from '../../utils';
@@ -23,7 +23,7 @@ interface DiditAuthProviderProps {
 }
 
 /*
-The DiditAuthProvider provides authentication for the Didit SDK. 
+The DiditAuthProvider provides authentication for the Didit SDK.
 It is a wrapper around the DiditEmailAuthProvider (email and social) and the DiditWalletAuthProvider (wallet).
 It is used to authenticate users with their email address, social media accounts or wallet address.
 */

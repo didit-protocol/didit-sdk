@@ -1,11 +1,11 @@
 import React, { ReactNode, useEffect, useMemo, useState } from 'react';
-import { useLocalStorage } from 'usehooks-ts';
 import { useAccount, useDisconnect } from 'wagmi';
 import {
   createAuthenticationAdapter,
   RainbowKitAuthenticationProvider,
 } from '../../components/RainbowKitProvider/AuthenticationContext';
 import { DIDIT } from '../../config';
+import { useLocalStorage } from '../../hooks';
 import { AuthenticationStatus, DiditAuthMethod } from '../../types';
 
 interface DiditWalletProviderProps {

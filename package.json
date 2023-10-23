@@ -79,7 +79,7 @@
     "husky": "^8.0.3",
     "jsdom": "^22.1.0",
     "lokijs": "^1.5.12",
-    "next": "^13.4.19",
+    "next": "13.5.6",
     "next-auth": "4.22.3",
     "postcss": "^8.4.29",
     "postcss-prefix-selector": "^1.16.0",
@@ -99,8 +99,8 @@
     ]
   },
   "config": {
-     "commitizen": {
-       "path": "./node_modules/cz-conventional-changelog"
-     }
-   }
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
 }
