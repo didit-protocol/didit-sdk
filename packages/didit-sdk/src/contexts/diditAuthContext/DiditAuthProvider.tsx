@@ -76,8 +76,9 @@ const DiditAuthProvider = ({
 
   const handleError = useCallback(
     (error: string) => {
-      setError(error);
-      if (error) onError(error);
+      const stringError = String(error);
+      setError(String(stringError));
+      if (error) onError(stringError);
     },
     [setError, onError]
   );
