@@ -1,6 +1,6 @@
 import { lightTheme, DiditAuthProvider } from 'didit-sdk';
 import { WagmiConfig } from 'wagmi';
-import { DiditProvider } from 'didit-provider';
+import { DiditEmailAuthProvider, DiditProvider } from 'didit-provider';
 import { config, chains } from './config/wagmi';
 
 interface ProvidersProps {
@@ -11,9 +11,14 @@ const Providers = ({ children }: ProvidersProps) => {
   return (
     <WagmiConfig config={config}>
       <DiditProvider clientUrl="https://apx.dev.didit.me/profile/authorizations/v1">
-        <DiditAuthProvider chains={chains} theme={lightTheme()}>
-          {children}
-        </DiditAuthProvider>
+        <DiditEmailAuthProvider
+          baseUrl={'https://apx.dev.didit.me/auth'}
+          clientId="676573"
+        >
+          <DiditAuthProvider chains={chains} theme={lightTheme()}>
+            {children}
+          </DiditAuthProvider>
+        </DiditEmailAuthProvider>
       </DiditProvider>
     </WagmiConfig>
   );

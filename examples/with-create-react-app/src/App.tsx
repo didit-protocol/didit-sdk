@@ -1,11 +1,6 @@
 import 'didit-sdk/styles.css';
-import {
-  getDefaultWallets,
-  lightTheme,
-  DiditAuthProvider,
-  ConnectButton,
-} from 'didit-sdk';
-import { DiditProvider } from 'didit-provider';
+import { getDefaultWallets, lightTheme, DiditAuthProvider } from 'didit-sdk';
+import { DiditEmailAuthProvider, DiditProvider } from 'didit-provider';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import {
   mainnet,
@@ -17,6 +12,7 @@ import {
   goerli,
 } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
+import Home from './pages/Home';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
@@ -48,23 +44,14 @@ function App() {
   return (
     <WagmiConfig config={wagmiConfig}>
       <DiditProvider clientUrl="https://apx.dev.didit.me/profile/authorizations/v1">
-        <DiditAuthProvider chains={chains} theme={lightTheme()}>
-          <div
-            style={{
-              width: '100vw',
-              height: '100vh',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              padding: 12,
-            }}
-          >
-            <div>
-              <h1>Didit Protocol</h1>
-              <ConnectButton />
-            </div>
-          </div>
-        </DiditAuthProvider>
+        <DiditEmailAuthProvider
+          baseUrl="http://127.0.0.1:8000/email-auth"
+          clientId="676573"
+        >
+          <DiditAuthProvider chains={chains} theme={lightTheme()}>
+            <Home />
+          </DiditAuthProvider>
+        </DiditEmailAuthProvider>
       </DiditProvider>
     </WagmiConfig>
   );
