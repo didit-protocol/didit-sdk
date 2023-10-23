@@ -12,7 +12,7 @@ const Providers = ({ children }: ProvidersProps) => {
     <WagmiConfig config={config}>
       <DiditProvider clientUrl="https://apx.dev.didit.me/profile/authorizations/v1">
         <DiditEmailAuthProvider
-          baseUrl="http://127.0.0.1:8000/email-auth"
+          baseUrl={'https://apx.dev.didit.me/auth'}
           clientId="676573"
         >
           <DiditAuthProvider chains={chains} theme={lightTheme()}>
