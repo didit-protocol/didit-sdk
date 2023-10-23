@@ -10,7 +10,8 @@ import './Dialog.css';
 import LeftArrowButton from '../LeftArrowButton/LeftArrowButton';
 
 interface SocialOptionsDialogProps {
-  className?: string;
+  wrapperClassName?: string;
+  buttonClassName?: string;
   dataTestId?: string;
   hasError?: boolean;
   errorTitle?: string;
@@ -19,14 +20,15 @@ interface SocialOptionsDialogProps {
 }
 
 const SocialOptionsDialog: FC<SocialOptionsDialogProps> = ({
-  className = '',
+  buttonClassName = '',
   dataTestId = '',
   errorDescription = '',
   errorTitle = '',
   hasError = false,
   onBackClick = () => {},
+  wrapperClassName = '',
 }) => {
-  const LoginClassName = clsx('dialog-wrapper', className);
+  const LoginClassName = clsx('dialog-wrapper', wrapperClassName);
 
   return (
     <div className={LoginClassName} data-testid={dataTestId}>
@@ -42,21 +44,25 @@ const SocialOptionsDialog: FC<SocialOptionsDialogProps> = ({
       </div>
       <div className="dialog-buttons">
         <DiditButton
+          className={buttonClassName}
           icon={<GoogleIcon />}
           label="Continue with Email"
           onClick={() => {}}
         />
         <DiditButton
+          className={buttonClassName}
           icon={<AppleIcon />}
           label="Continue with Social"
           onClick={() => {}}
         />
         <DiditButton
+          className={buttonClassName}
           icon={<TwitterIcon />}
           label="Continue with Social"
           onClick={() => {}}
         />
         <DiditButton
+          className={buttonClassName}
           icon={<FacebookIcon />}
           label="Continue with Social"
           onClick={() => {}}

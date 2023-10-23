@@ -8,7 +8,8 @@ import './Dialog.css';
 import SocialIcon from '../Icons/SocialIcon';
 
 interface LoginOptionsDialogProps {
-  className?: string;
+  wrapperClassName?: string;
+  buttonClassName?: string;
   dataTestId?: string;
   hasError?: boolean;
   errorTitle?: string;
@@ -17,32 +18,38 @@ interface LoginOptionsDialogProps {
 }
 
 const LoginOptionsDialog: FC<LoginOptionsDialogProps> = ({
-  className = '',
+  buttonClassName = '',
   dataTestId = '',
   errorDescription = '',
   errorTitle = '',
   hasError = false,
   onLoginWithSocials = () => {},
+  wrapperClassName = '',
 }) => {
-  const LoginClassName = clsx('dialog-wrapper', className);
+  const LoginClassName = clsx('dialog-wrapper', wrapperClassName);
 
   return (
     <div className={LoginClassName} data-testid={dataTestId}>
       <div className="dialog-text">
-        <h2 className="dialog-text-title">Welcome back to Didit Profile</h2>
+        <h2 className="dialog-text-title">Sign In With Didit</h2>
         <p className="dialog-text-description">
           This paragraph of text is used to describe data and suggest the user
           to fill in the fields.
         </p>
       </div>
       <div className="dialog-buttons">
-        <DiditButton icon={<EmailIcon />} label="Continue with Email" />
         <DiditButton
+          className={buttonClassName}
+          icon={<EmailIcon />}
+          label="Continue with Email"
+        />
+        <DiditButton
+          className={buttonClassName}
           icon={<SocialIcon />}
           label="Continue with Social"
           onClick={onLoginWithSocials}
         />
-        <DiditWalletConnectButton />
+        <DiditWalletConnectButton className={buttonClassName} />
       </div>
       <div className="dialog-error">
         <DiditError

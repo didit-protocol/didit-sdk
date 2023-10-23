@@ -4,12 +4,14 @@ import LoginOptionsDialog from './LoginOptionsDialog';
 import SocialOptionsDialog from './SocialOptionsDialog';
 
 interface LoginDialogProps {
-  className?: string;
+  wrapperClassName?: string;
+  buttonClassName?: string;
   dataTestId?: string;
 }
 const LoginDialog: FC<LoginDialogProps> = ({
-  className = '',
+  buttonClassName = '',
   dataTestId = '',
+  wrapperClassName = '',
 }) => {
   const [isSocialOptionsDialog, setIsSocialOptionsDialog] = useState(false);
 
@@ -26,18 +28,21 @@ const LoginDialog: FC<LoginDialogProps> = ({
       {/* <LeftArrowButton onClick={handlBackToLoginOptions} /> */}
       {isSocialOptionsDialog ? (
         <SocialOptionsDialog
-          className={className}
+          buttonClassName={buttonClassName}
           dataTestId={dataTestId}
           onBackClick={handlBackToLoginOptions}
+          wrapperClassName={wrapperClassName}
         />
       ) : (
         <LoginOptionsDialog
-          className={className}
+          buttonClassName={buttonClassName}
           dataTestId={dataTestId}
+          // TODO: figure out how to detict the login error
           errorDescription="Please try again later"
           errorTitle="Opps something went wrong"
           hasError={false}
           onLoginWithSocials={HandleLoginWithSocials}
+          wrapperClassName={wrapperClassName}
         />
       )}
     </>
