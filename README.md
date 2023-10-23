@@ -341,6 +341,7 @@ return (
         loginWithWallet();
       }
     }}
+    disabled={ isAuthenticating === undefined }
   >
     {isAuthenticated ? 'Logout' : 'Login'}
   </button>

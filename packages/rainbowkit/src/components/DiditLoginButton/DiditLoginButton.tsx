@@ -16,7 +16,7 @@ const DiditLoginButton: FC<DiditLoginButtonProps> = ({
   dataTestId = '',
   label = 'Login with Didit',
 }) => {
-  const { availableAuthMethods, login } = useDiditAuth();
+  const { availableAuthMethods, isAuthenticated, login } = useDiditAuth();
 
   const loginWith = useCallback(() => login(authMethod), [authMethod, login]);
 
@@ -31,10 +31,14 @@ const DiditLoginButton: FC<DiditLoginButtonProps> = ({
     }
   }, [authMethod, availableAuthMethods]);
 
+  const isButtonDisabled =
+    !availableAuthMethods.includes(authMethod) || isAuthenticated;
+
   return (
     <DiditButton
       className={className}
       dataTestId={dataTestId}
+      isDisabled={isButtonDisabled}
       label={label}
       onClick={loginWith}
     />

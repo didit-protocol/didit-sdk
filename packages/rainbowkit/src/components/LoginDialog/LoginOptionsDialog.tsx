@@ -18,7 +18,7 @@ const LoginOptionsDialog: FC<LoginOptionsDialogProps> = ({
   dataTestId = '',
   onLoginWithSocials = () => {},
 }) => {
-  const { availableAuthMethods } = useDiditAuth();
+  const { availableAuthMethods, isAuthenticated } = useDiditAuth();
 
   // const isEmailAuthAvailable = availableAuthMethods.includes(
   //   DiditAuthMethod.EMAIL
@@ -49,6 +49,7 @@ const LoginOptionsDialog: FC<LoginOptionsDialogProps> = ({
         { isEmailAuthAvailable && (
           <DiditButton 
             icon={<EmailIcon />} 
+            isDisabled={isAuthenticated}
             label="Continue with Email" 
             onClick={loginWithEmail}
           />
@@ -57,6 +58,7 @@ const LoginOptionsDialog: FC<LoginOptionsDialogProps> = ({
         {isAnySocialAuthAvailable && (
           <DiditButton
             icon={<SocialIcon />}
+            isDisabled={isAuthenticated}
             label="Continue with a social account"
             onClick={onLoginWithSocials}
           />
