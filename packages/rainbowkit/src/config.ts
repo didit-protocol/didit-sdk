@@ -18,6 +18,7 @@ const EMAIL_AUTH_POPUP_WIDTH = 400;
 const EMAIL_AUTH_POPUP_HEIGHT = 600;
 
 // General Didit
+const AUTH_METHOD_COOKIE_NAME = 'didit_auth_method';
 const TOKEN_COOKIE_NAME = 'didit_token';
 const WALLET_ADDRESS_COOKIE_NAME = 'didit_wallet_address';
 const DEFAULT_BASE_URL = 'https://apx.didit.me/auth';
@@ -26,6 +27,7 @@ const DEFAULT_SCOPE = 'openid';
 const DEFAULT_AUTH_METHODS = [DiditAuthMethod.WALLET, DiditAuthMethod.GOOGLE];
 
 const DIDIT = {
+  AUTH_METHOD_COOKIE_NAME,
   AUTH_TOKEN_PATH,
   AUTH_WALLET_AUTHORIZATION_PATH,
   DEFAULT_AUTH_METHODS,

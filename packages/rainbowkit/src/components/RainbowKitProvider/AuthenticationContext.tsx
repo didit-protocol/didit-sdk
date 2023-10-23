@@ -55,6 +55,7 @@ export function RainbowKitAuthenticationProvider({
   // adapter that the user session is no longer active.
   useAccount({
     onDisconnect: () => {
+      debugger;
       adapter.signOut();
     },
   });
@@ -71,6 +72,7 @@ export function RainbowKitAuthenticationProvider({
     onceRef.current = true;
 
     if (isDisconnected && status === AuthenticationStatus.AUTHENTICATED) {
+      debugger;
       adapter.signOut();
     }
   }, [status, adapter, isDisconnected, token, address]);

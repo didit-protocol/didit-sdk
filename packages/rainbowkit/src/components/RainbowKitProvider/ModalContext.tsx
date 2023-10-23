@@ -102,7 +102,7 @@ export function ModalProvider({ children }: ModalProviderProps) {
           openConnectModal:
             connectionStatus === 'disconnected' ||
             connectionStatus === 'unauthenticated'
-              ? openConnectModal
+              ? openConnectModal // TODO: Check why this logic is not working
               : undefined,
         }),
         [

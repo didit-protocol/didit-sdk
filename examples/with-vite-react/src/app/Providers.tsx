@@ -20,7 +20,7 @@ const Providers = ({ children }: ProvidersProps) => {
         clientId="676573"
         claims="read:emails write:emails"
         scope="openid profile"
-        onLogin={(_authMethod: string) =>
+        onLogin={(_authMethod?: string) =>
           console.log('Logged in Didit with', _authMethod)
         }
         onLogout={() => console.log('Logged out Didit')}

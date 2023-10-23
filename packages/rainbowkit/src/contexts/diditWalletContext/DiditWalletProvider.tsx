@@ -51,16 +51,19 @@ export function DiditWalletProvider({
   const { disconnect } = useDisconnect();
 
   useEffect(() => {
+    if (authMethod !== DiditAuthMethod.WALLET) return;
+
     if (!address && wagmiAccount.address) {
       setAddress(wagmiAccount.address);
+      setWalletddress(wagmiAccount.address);
     } else if (address && wagmiAccount.address) {
       if (address !== wagmiAccount.address) {
-        adapter.signOut();
         setAddress(wagmiAccount.address);
+        setWalletddress(wagmiAccount.address);
       }
     } else {
-      adapter.signOut();
       setAddress(undefined);
+      setWalletddress('');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wagmiAccount.address, address]);

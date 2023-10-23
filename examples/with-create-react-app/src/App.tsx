@@ -33,7 +33,7 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 );
 
 const { connectors } = getDefaultWallets({
-  appName: 'RainbowKit demo',
+  appName: 'Didit SDK demo',
   projectId: 'YOUR_PROJECT_ID',
   chains,
 });
@@ -50,7 +50,7 @@ function App() {
     <WagmiConfig config={wagmiConfig}>
       <DiditAuthProvider
         authMethods={[DiditAuthMethod.GOOGLE, DiditAuthMethod.WALLET]}
-        baseUrl="http://127.0.0.1:8000/email-auth"
+        baseUrl="https:/apx.dev.didit.me/profile"
         clientId="676573"
         claims="read:emails write:emails"
         scope="openid profile"

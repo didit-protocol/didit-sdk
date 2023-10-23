@@ -43,12 +43,14 @@ const DiditAuthProvider = ({
     ''
   );
 
+  const [authMethod, setAuthMethod] = useLocalStorage<
+    DiditAuthMethod | undefined
+  >(DIDIT.AUTH_METHOD_COOKIE_NAME, undefined);
+
   const [status, setStatus] =
     useState<AuthenticationStatus>(INITIAL_AUTH_STATUS);
   const prevStatus = usePreviousState(status);
   const [error, setError] = useState('');
-
-  const [authMethod, setAuthMethod] = useState<DiditAuthMethod>();
 
   const authenticate = useCallback(
     (_authMethod: DiditAuthMethod) => {
@@ -58,7 +60,7 @@ const DiditAuthProvider = ({
         setStatus(AuthenticationStatus.AUTHENTICATED);
       }
     },
-    [status, setStatus]
+    [setAuthMethod, status]
   );
 
   const deauthenticate = useCallback(() => {
@@ -69,7 +71,7 @@ const DiditAuthProvider = ({
       setToken('');
       setError('');
     }
-  }, [status, setStatus, setToken, setError]);
+  }, [setAuthMethod, status, setToken]);
 
   const handleError = useCallback(
     (error: string) => {
@@ -100,6 +102,18 @@ const DiditAuthProvider = ({
     }
     return true;
   }, [scope]);
+
+  // Initial status from local storage
+  useEffect(() => {
+    if (!!authMethod && !!token) authenticate(authMethod);
+    else {
+      // Clear all auth data but don't call logout (deauthenticate)
+      setToken('');
+      setAuthMethod(undefined);
+      setStatus(AuthenticationStatus.UNAUTHENTICATED);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Check token expiration
   useEffect(() => {

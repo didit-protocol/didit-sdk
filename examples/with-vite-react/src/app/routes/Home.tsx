@@ -1,15 +1,10 @@
 import { useEffect } from 'react';
 
-import {
-  DiditLogin,
-  ConnectButton,
-  useAuthenticationAdapter,
-  useDiditAuth,
-} from 'didit-sdk';
+import { DiditLogin, ConnectButton, useDiditAuth } from 'didit-sdk';
 
 const Home = () => {
-  const { authMethod, status, token, isAuthenticated, error } = useDiditAuth();
-  const adapter = useAuthenticationAdapter();
+  const { authMethod, status, token, isAuthenticated, error, logout } =
+    useDiditAuth();
   const accessToken = String(token);
 
   useEffect(() => {
@@ -44,9 +39,7 @@ const Home = () => {
               <b>{status}</b>
             </span>
           </p>
-          {isAuthenticated && (
-            <button onClick={() => adapter.signOut()}>LOGOUT</button>
-          )}
+          {isAuthenticated && <button onClick={logout}>LOGOUT</button>}
         </div>
         <div
           style={{

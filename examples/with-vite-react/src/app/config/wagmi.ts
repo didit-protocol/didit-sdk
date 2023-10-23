@@ -23,7 +23,7 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 );
 
 const { connectors } = getDefaultWallets({
-  appName: 'RainbowKit demo',
+  appName: 'Didit SDK demo',
   projectId: 'b0337f8e2c56c722a1fb3a4cdf893249',
   chains,
 });
