@@ -16,10 +16,10 @@ const Providers = ({ children }: ProvidersProps) => {
     <WagmiConfig config={config}>
       <DiditAuthProvider
         authMethods={[DiditAuthMethod.WALLET, DiditAuthMethod.GOOGLE]}
-        baseUrl="http://127.0.0.1:8000/email-auth"
-        clientId="676573"
-        claims="read:emails write:emails"
-        scope="openid profile"
+        baseUrl={import.meta.env.VITE_DIDIT_AUTH_BASE_URL || ''}
+        clientId={import.meta.env.VITE_DIDIT_CLIENT_ID || ''}
+        claims={import.meta.env.VITE_DIDIT_CLAIMS}
+        scope={import.meta.env.VITE_DIDIT_SCOPE || ''}
         onLogin={(_authMethod?: string) =>
           console.log('Logged in Didit with', _authMethod)
         }

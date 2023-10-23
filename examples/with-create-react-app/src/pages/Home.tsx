@@ -1,21 +1,15 @@
 import { useState } from 'react';
 
-import {
-  DiditLogin,
-  DiditLogoutButton,
-  useAuthenticationAdapter,
-  useDiditAuth,
-} from 'didit-sdk';
+import { DiditLogin, DiditLogoutButton, useDiditAuth } from 'didit-sdk';
 
 const Home = () => {
-  const { authMethod, status, token, isAuthenticated, error } = useDiditAuth({
+  const { authMethod, status, token, isAuthenticated } = useDiditAuth({
     onError: (_error: string) =>
       console.error('useDiditAuth: Didit error: ', _error),
     onLogin: (_authMethod?: string) =>
       console.log('useDiditAuth: Logged in Didit with', _authMethod),
     onLogout: () => console.log('useDiditAuth: Logged out from Didit'),
   });
-  const adapter = useAuthenticationAdapter();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   const accessToken = String(token);

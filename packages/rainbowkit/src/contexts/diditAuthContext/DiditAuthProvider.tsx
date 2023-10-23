@@ -27,6 +27,7 @@ The DiditAuthProvider provides authentication for the Didit SDK.
 It is a wrapper around the DiditEmailAuthProvider (email and social) and the DiditWalletAuthProvider (wallet).
 It is used to authenticate users with their email address, social media accounts or wallet address.
 */
+
 const DiditAuthProvider = ({
   authMethods = DIDIT.DEFAULT_AUTH_METHODS,
   baseUrl = DIDIT.DEFAULT_BASE_URL,
@@ -105,8 +106,10 @@ const DiditAuthProvider = ({
 
   // Initial status from local storage
   useEffect(() => {
-    if (!!authMethod && !!token) authenticate(authMethod);
-    else {
+    if (!!authMethod && !!token) {
+      authenticate(authMethod);
+      onLogin(authMethod);
+    } else {
       // Clear all auth data but don't call logout (deauthenticate)
       setToken('');
       setAuthMethod(undefined);

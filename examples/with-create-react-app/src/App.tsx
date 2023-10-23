@@ -18,6 +18,7 @@ import {
 } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import Home from './pages/Home';
+import { useEffect } from 'react';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
@@ -33,8 +34,8 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 );
 
 const { connectors } = getDefaultWallets({
-  appName: 'Didit SDK demo',
-  projectId: 'YOUR_PROJECT_ID',
+  appName: process.env.REACT_APP_APP_NAME || '',
+  projectId: process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID || '',
   chains,
 });
 
@@ -50,11 +51,11 @@ function App() {
     <WagmiConfig config={wagmiConfig}>
       <DiditAuthProvider
         authMethods={[DiditAuthMethod.GOOGLE, DiditAuthMethod.WALLET]}
-        baseUrl="https:/apx.dev.didit.me/profile"
-        clientId="676573"
-        claims="read:emails write:emails"
-        scope="openid profile"
-        onLogin={(_authMethod: string) =>
+        baseUrl={process.env.REACT_APP_DIDIT_AUTH_BASE_URL || ''}
+        clientId={process.env.REACT_APP_DIDIT_CLIENT_ID || ''}
+        claims={process.env.REACT_APP_DIDIT_CLAIMS}
+        scope={process.env.REACT_APP_DIDIT_SCOPE || ''}
+        onLogin={(_authMethod?: string) =>
           console.log('DiditAuthProvider: Logged in Didit with', _authMethod)
         }
         onLogout={() => console.log('DiditAuthProvider: Logged out from Didit')}
