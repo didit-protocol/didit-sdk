@@ -152,7 +152,7 @@ import { DiditAuthProvider, DiditAuthMethod } from 'didit-sdk';
         claims={ ['read:email', 'write:email', 'read:profile', 'read:blockchain']}
         scope={ ['openid', 'profile']
         onLogin={(_authMethod?: DiditAuthMethod) =>
-          console.log('Logged in **Didit** with', _authMethod)
+          console.log('Logged in Didit with', _authMethod)
         }
         onLogout={() => console.log('Logged out Didit')}
         onError={(_error: string) => console.error('Didit error: ', _error)}
@@ -260,8 +260,6 @@ import { DiditLogin } from 'didit-sdk';
 
 > The `DiditLogin` is automatically configured with the authentication methods you provided to the `DiditAuthProvider` provider.
 
-Then, in your app, import and render the `ConnectButton` component.
-
 #### Retrieve the authentication status
 
 You can use the `useDiditAuth` hook to retrieve the authentication status and current connection;
@@ -329,7 +327,7 @@ const {
     walletAddress: address,
 } = useDiditAuth({
   onError: (error: string) => console.error('Didit error: ', error),
-  onLogin: (authMethod?: string) => console.log('Logged in **Didit** with', authMethod),
+  onLogin: (authMethod?: string) => console.log('Logged in Didit with', authMethod),
   onLogout: () => console.log('Logged out Didit')
 });
 
