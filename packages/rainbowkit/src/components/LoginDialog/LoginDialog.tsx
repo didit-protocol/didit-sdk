@@ -34,6 +34,9 @@ const LoginDialog: FC<LoginDialogProps> = ({
         <LoginOptionsDialog
           className={className}
           dataTestId={dataTestId}
+          errorDescription="Please try again later"
+          errorTitle="Opps something went wrong"
+          hasError={false}
           onLoginWithSocials={HandleLoginWithSocials}
         />
       )}

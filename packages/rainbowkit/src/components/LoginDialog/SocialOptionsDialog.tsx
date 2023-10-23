@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import React, { FC } from 'react';
 import { DiditButton } from '../DiditButton';
+import { DiditError } from '../DiditError';
 import AppleIcon from '../Icons/AppleIcon';
 import FacebookIcon from '../Icons/FacebookIcon';
 import GoogleIcon from '../Icons/GoogleIcon';
@@ -11,12 +12,18 @@ import LeftArrowButton from '../LeftArrowButton/LeftArrowButton';
 interface SocialOptionsDialogProps {
   className?: string;
   dataTestId?: string;
+  hasError?: boolean;
+  errorTitle?: string;
+  errorDescription?: string;
   onBackClick?: () => void;
 }
 
 const SocialOptionsDialog: FC<SocialOptionsDialogProps> = ({
   className = '',
   dataTestId = '',
+  errorDescription = '',
+  errorTitle = '',
+  hasError = false,
   onBackClick = () => {},
 }) => {
   const LoginClassName = clsx('dialog-wrapper', className);
@@ -53,6 +60,13 @@ const SocialOptionsDialog: FC<SocialOptionsDialogProps> = ({
           icon={<FacebookIcon />}
           label="Continue with Social"
           onClick={() => {}}
+        />
+      </div>
+      <div className="dialog-error">
+        <DiditError
+          description={errorDescription}
+          isHidden={hasError}
+          title={errorTitle}
         />
       </div>
     </div>

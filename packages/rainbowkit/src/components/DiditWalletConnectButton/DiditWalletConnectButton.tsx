@@ -3,12 +3,12 @@ import { DiditButton } from '../DiditButton';
 import CoinbaseIcon from '../Icons/CoinbaseIcon';
 import { useConnectModal } from '../RainbowKitProvider/ModalContext';
 
-interface DiditWalletConnectProps {
+interface DiditConnectWalletButtonProps {
   className?: string;
   dataTestId?: string;
 }
 
-const DiditWalletConnect: FC<DiditWalletConnectProps> = ({
+const DiditConnectWalletButton: FC<DiditConnectWalletButtonProps> = ({
   className = '',
   dataTestId = '',
 }) => {
@@ -24,4 +24,4 @@ const DiditWalletConnect: FC<DiditWalletConnectProps> = ({
   );
 };
 
-export default DiditWalletConnect;
+export default DiditConnectWalletButton;

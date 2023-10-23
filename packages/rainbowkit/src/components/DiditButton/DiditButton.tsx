@@ -4,15 +4,17 @@ import './DiditButton.css';
 interface DiditButtonProps {
   label: string;
   icon?: React.ReactNode;
-  onClick?: () => void;
   className?: string;
+  isDisabled?: boolean;
   dataTestId?: string;
+  onClick?: () => void;
 }
 
 export function DiditButton({
   className = '',
   dataTestId = '',
   icon = null,
+  isDisabled = false,
   label,
   onClick = () => {},
 }: DiditButtonProps) {
@@ -20,6 +22,7 @@ export function DiditButton({
     <button
       className={`${className} didit-button`}
       data-testid={dataTestId}
+      disabled={isDisabled}
       onClick={onClick}
       type="button"
     >

@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import React, { FC } from 'react';
 import { LoginDialog } from '../LoginDialog';
-import LoginModal from './LoginModal';
+import LoginModal from '../LoginModal/LoginModal';
 
 const mode_map = {
   embedded: LoginDialog,

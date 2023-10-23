@@ -1,7 +1,8 @@
 import clsx from 'clsx';
 import React, { FC } from 'react';
 import { DiditButton } from '../DiditButton';
-import { DiditWalletConnect } from '../DiditWalletConnect';
+import { DiditError } from '../DiditError';
+import { DiditWalletConnectButton } from '../DiditWalletConnectButton';
 import { EmailIcon } from '../Icons/Email';
 import './Dialog.css';
 import SocialIcon from '../Icons/SocialIcon';
@@ -9,12 +10,18 @@ import SocialIcon from '../Icons/SocialIcon';
 interface LoginOptionsDialogProps {
   className?: string;
   dataTestId?: string;
+  hasError?: boolean;
+  errorTitle?: string;
+  errorDescription?: string;
   onLoginWithSocials?: () => void;
 }
 
 const LoginOptionsDialog: FC<LoginOptionsDialogProps> = ({
   className = '',
   dataTestId = '',
+  errorDescription = '',
+  errorTitle = '',
+  hasError = false,
   onLoginWithSocials = () => {},
 }) => {
   const LoginClassName = clsx('dialog-wrapper', className);
@@ -35,7 +42,14 @@ const LoginOptionsDialog: FC<LoginOptionsDialogProps> = ({
           label="Continue with Social"
           onClick={onLoginWithSocials}
         />
-        <DiditWalletConnect />
+        <DiditWalletConnectButton />
+      </div>
+      <div className="dialog-error">
+        <DiditError
+          description={errorDescription}
+          isHidden={!hasError}
+          title={errorTitle}
+        />
       </div>
     </div>
   );

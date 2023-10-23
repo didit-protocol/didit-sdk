@@ -14,6 +14,16 @@
   border: 1px solid transparent;
   background: var(--brand-accent-light, #d4e1ff);
 }
+
+.didit-button:disabled {
+  opacity: 0.7;
+  cursor: auto;
+}
+.didit-button:disabled:hover {
+  border: 1px solid var(--brand-accent-light, #d4e1ff);
+  background: var(--surfaces-grey-lighter, #fbfcff);
+}
+
 .didit-button-icon {
   width: 16px;
   height: 16px;
