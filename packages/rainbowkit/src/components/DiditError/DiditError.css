@@ -1,0 +1,22 @@
+.didit-error-wrapper {
+  font-variant-numeric: lining-nums proportional-nums;
+  /* Paragraphs/Small */
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 140%; /* 16.8px */
+  text-align: start;
+  width: 100%;
+}
+.didit-error-title {
+  margin: 0;
+  padding: 0;
+  color: var(--text-ui-error, #ef3f3f);
+  text-transform: capitalize;
+  font-weight: 600;
+}
+.didit-error-description {
+  margin: 0;
+  padding: 0;
+  color: var(--text-ui-grey, #6d758e);
+}
