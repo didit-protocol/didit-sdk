@@ -1,7 +1,7 @@
 {
   "name": "didit-sdk",
   "version": "1.1.3",
-  "description": "The best way to connect a wallet",
+  "description": "A collection of utilities to log in, authenticate and authorize in Didit protocol.",
   "files": [
     "dist",
     "styles.css",
@@ -70,7 +70,8 @@
     "@vanilla-extract/sprinkles": "1.5.0",
     "clsx": "1.1.1",
     "qrcode": "1.5.0",
-    "react-remove-scroll": "2.5.4"
+    "react-remove-scroll": "2.5.4",
+    "didit-provider": "workspace:*"
   },
   "repository": {
     "type": "git",

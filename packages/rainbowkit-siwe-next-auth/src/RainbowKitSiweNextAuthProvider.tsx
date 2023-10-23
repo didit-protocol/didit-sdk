@@ -6,6 +6,7 @@ import React, { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useAccount, useDisconnect } from 'wagmi';
+import { DIDIT } from './config';
 
 interface DiditProviderProps {
   enabled?: boolean;
@@ -19,10 +20,13 @@ export function DiditProvider({
   enabled,
 }: DiditProviderProps) {
   const wagmiAccount = useAccount();
-  const [token, setToken] = useLocalStorage<string>('_gamium_token_', '');
+  const [token, setToken] = useLocalStorage<string>(
+    DIDIT.TOKEN_COOKIE_NAME,
+    ''
+  );
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [gmmAddress, setGmmAddress] = useLocalStorage<string>(
-    '_gamium_address',
+  const [_walletAddress, setWalletddress] = useLocalStorage<string>(
+    DIDIT.WALLET_ADDRESS_COOKIE_NAME,
     ''
   );
   const STATUS_INIT = 'loading';
@@ -77,10 +81,10 @@ export function DiditProvider({
       createAuthenticationAdapter({
         createMessage: async ({ address }) => {
           const parameters = walletAuthPayload(address);
-          const endpoint = `${clientUrl}/wallet-authorization`;
+          const endpoint = `${clientUrl}${DIDIT.AUTH_WALLET_AUTHORIZATION_PATH}`;
           try {
             var { code, policy } = await postRequest(endpoint, parameters);
-            setGmmAddress(address);
+            setWalletddress(address);
           } catch (walletAuthError) {
             throw walletAuthError;
           }
@@ -101,7 +105,7 @@ export function DiditProvider({
         },
 
         verify: async ({ code, signature }) => {
-          const endpoint = `${clientUrl}/token`;
+          const endpoint = `${clientUrl}${DIDIT.AUTH_TOKEN_PATH}`;
           const parameters = `code=${code}&wallet_signature=${signature}&grant_type=connect_wallet`;
           try {
             var { access_token } = await postRequest(endpoint, parameters);
