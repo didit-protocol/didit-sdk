@@ -4,7 +4,7 @@
 
 # Didit-SDK
 
-**The best way to connect a wallet**
+**The easiest wau to connect to [Didit protocol(https://docs.didit.me/)]**
 
 Didit-SDK is a [React](https://reactjs.org/) library that makes it easy to add wallet connection to your dapp.
 
