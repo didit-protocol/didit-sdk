@@ -1,3 +1,4 @@
+import { useLocalStorageValue } from '@react-hookz/web';
 import React, { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useAccount, useDisconnect } from 'wagmi';
 import {
@@ -5,7 +6,6 @@ import {
   RainbowKitAuthenticationProvider,
 } from '../../components/RainbowKitProvider/AuthenticationContext';
 import { DIDIT } from '../../config';
-import { useLocalStorage } from '../../hooks';
 import { AuthenticationStatus, DiditAuthMethod } from '../../types';
 
 interface DiditWalletProviderProps {
@@ -45,11 +45,10 @@ export function DiditWalletProvider({
 }: DiditWalletProviderProps) {
   const wagmiAccount = useAccount();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_walletAddress, setWalletddress] = useLocalStorage<string>(
-    DIDIT.WALLET_ADDRESS_COOKIE_NAME,
-    ''
-  );
+  const { remove: removeWalletaddress, set: setWalletddress } =
+    useLocalStorageValue<string>(DIDIT.WALLET_ADDRESS_COOKIE_NAME, {
+      initializeWithValue: false,
+    });
 
   const [address, setAddress] = useState(wagmiAccount?.address ?? undefined);
   const { disconnect } = useDisconnect();
@@ -67,7 +66,7 @@ export function DiditWalletProvider({
       }
     } else {
       setAddress(undefined);
-      setWalletddress('');
+      removeWalletaddress();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wagmiAccount.address, address]);

@@ -1,6 +1,12 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useLocalStorageValue } from '@react-hookz/web';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { DIDIT } from '../../config';
-import { useLocalStorage } from '../../hooks';
 import usePreviousState from '../../hooks/usePreviousState';
 import { AuthenticationStatus, DiditAuthMethod } from '../../types';
 import { parseJwt } from '../../utils';
@@ -49,14 +55,21 @@ const DiditAuthProvider = ({
   walletAuthBaseUrl = DIDIT.DEFAULT_WALLET_AUTH_BASE_URL,
   walletAuthorizationPath = DIDIT.DEFAULT_WALLET_AUTH_AUTHORIZATION_PATH,
 }: DiditAuthProviderProps) => {
-  const [token, setToken] = useLocalStorage<string>(
-    DIDIT.TOKEN_COOKIE_NAME,
-    ''
-  );
+  const {
+    remove: removeToken,
+    set: setToken,
+    value: token,
+  } = useLocalStorageValue<string>(DIDIT.TOKEN_COOKIE_NAME, {
+    initializeWithValue: false,
+  });
 
-  const [authMethod, setAuthMethod] = useLocalStorage<
-    DiditAuthMethod | undefined
-  >(DIDIT.AUTH_METHOD_COOKIE_NAME, undefined);
+  const {
+    remove: removeAuthMethod,
+    set: setAuthMethod,
+    value: authMethod,
+  } = useLocalStorageValue<DiditAuthMethod>(DIDIT.AUTH_METHOD_COOKIE_NAME, {
+    initializeWithValue: false,
+  });
 
   const [status, setStatus] =
     useState<AuthenticationStatus>(INITIAL_AUTH_STATUS);
@@ -75,14 +88,13 @@ const DiditAuthProvider = ({
   );
 
   const deauthenticate = useCallback(() => {
-    setAuthMethod(undefined);
-
+    removeAuthMethod();
     if (status !== AuthenticationStatus.UNAUTHENTICATED) {
       setStatus(AuthenticationStatus.UNAUTHENTICATED);
-      setToken('');
+      removeToken();
       setError('');
     }
-  }, [setAuthMethod, status, setToken]);
+  }, [removeAuthMethod, status, removeToken]);
 
   const handleError = useCallback(
     (error: string) => {
@@ -115,38 +127,36 @@ const DiditAuthProvider = ({
     return true;
   }, [scope]);
 
-  // Initial status from local storage
+  const firstRender = useRef(true);
+
   useEffect(() => {
-    if (!!authMethod && !!token) {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    // TODO: check if token is valid through didi api
+    if (!!token && !!authMethod) {
       authenticate(authMethod);
       onLogin(authMethod);
     } else {
-      // Clear all auth data but don't call logout (deauthenticate)
-      setToken('');
-      setAuthMethod(undefined);
       setStatus(AuthenticationStatus.UNAUTHENTICATED);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [authMethod, token]);
 
   // Check token expiration
+  // Todo: call didi api check token expiration
+  // and use refresh token to get new token
   useEffect(() => {
     if (token) {
       const token_info = parseJwt(token);
       if (token_info.exp * 1000 < Date.now()) {
-        setToken('');
+        removeToken();
+        removeAuthMethod();
       }
-    } else {
-      setToken('');
     }
-  }, [token, setToken]);
-
-  // Clear token if user logs out
-  useEffect(() => {
-    if (status === AuthenticationStatus.UNAUTHENTICATED) {
-      setToken('');
-    }
-  }, [status, setToken]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
   // Login and logout event callbacks
   useEffect(() => {
