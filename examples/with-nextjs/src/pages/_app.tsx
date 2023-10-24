@@ -37,15 +37,22 @@ export default function App({ Component, pageProps }: AppProps) {
     >
       <DiditAuthProvider
         authMethods={[DiditAuthMethod.WALLET, DiditAuthMethod.GOOGLE]}
-        baseUrl={process.env.NEXT_PUBLIC_DIDIT_AUTH_BASE_URL || ''}
         claims={process.env.NEXT_PUBLIC_DIDIT_CLAIMS}
         clientId={process.env.NEXT_PUBLIC_DIDIT_CLIENT_ID || ''}
+        emailAuthBaseUrl={
+          process.env.NEXT_PUBLIC_DIDIT_EMAIL_AUTH_BASE_URL || ''
+        }
         onError={(_error: string) => console.error('Didit error: ', _error)}
         onLogin={(_authMethod?: DiditAuthMethod) =>
           console.error('Logged in Didit with', _authMethod)
         }
         onLogout={() => console.error('Logged out Didit')}
         scope={process.env.NEXT_PUBLIC_DIDIT_SCOPE}
+        tokenAuthorizationPath="/token"
+        walletAuthBaseUrl={
+          process.env.NEXT_PUBLIC_DIDIT_WALLET_AUTH_BASE_URL || ''
+        }
+        walletAuthorizationPath="/wallet-authorization"
       >
         <DiditRainbowkitProvider chains={chains} theme={lightTheme()}>
           <Component {...pageProps} />
