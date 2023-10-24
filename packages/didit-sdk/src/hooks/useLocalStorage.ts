@@ -1,33 +1,66 @@
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 
 export default function useLocalStorage<T>(
   key: string,
-  defaultValue: T
-): [T, Dispatch<SetStateAction<T>>] {
-  const isMounted = useRef(false);
-  const [value, setValue] = useState<T>(defaultValue);
+  defaultValue?: T
+): [T | undefined, Dispatch<SetStateAction<T>>, Dispatch<SetStateAction<T>>] {
+  const [value, setValue] = useState(() => {
+    let currentValue;
 
-  useEffect(() => {
-    try {
-      const item = window.localStorage.getItem(key);
-      if (item) {
-        setValue(JSON.parse(item));
-      }
-    } catch (e) {
-      // console.error(e);
+    if (typeof window === 'undefined') {
+      return defaultValue;
     }
-    return () => {
-      isMounted.current = false;
-    };
+
+    try {
+      currentValue = localStorage.getItem(key);
+      return currentValue ? (parseJSON(currentValue) as T) : defaultValue;
+    } catch (error) {
+      console.error(error);
+      return defaultValue;
+    }
+  });
+
+  const setItem = useCallback(
+    (_value: any) => {
+      if (_value === undefined || _value === null) {
+        setValue(undefined);
+        localStorage.removeItem(key);
+      }
+      setValue(_value);
+      if (typeof window !== 'undefined') {
+        try {
+          window.localStorage.setItem(key, JSON.stringify(_value));
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    },
+    [key]
+  );
+
+  const removeItem = useCallback(() => {
+    localStorage.removeItem(key);
   }, [key]);
 
   useEffect(() => {
-    if (isMounted.current) {
-      window.localStorage.setItem(key, JSON.stringify(value));
-    } else {
-      isMounted.current = true;
-    }
-  }, [key, value]);
+    localStorage.setItem(key, JSON.stringify(value));
+  }, [value, key]);
 
-  return [value, setValue];
+  return [value, setItem, removeItem];
+}
+
+// A wrapper for "JSON.parse()"" to support "undefined" value
+function parseJSON<T>(value: string | null): T | undefined {
+  try {
+    return value === 'undefined' ? undefined : JSON.parse(value ?? '');
+  } catch {
+    console.warn('parsing error on', { value });
+    return undefined;
+  }
 }
