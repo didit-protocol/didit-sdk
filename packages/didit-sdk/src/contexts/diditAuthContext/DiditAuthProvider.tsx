@@ -11,14 +11,19 @@ import { DiditAuthContext } from './diditAuthContext';
 const INITIAL_AUTH_STATUS = AuthenticationStatus.LOADING;
 
 interface DiditAuthProviderProps {
-  baseUrl?: string;
+  emailAuthBaseUrl?: string;
+  walletAuthBaseUrl?: string;
   children: React.ReactNode;
   clientId: string;
   claims?: string;
   authMethods?: DiditAuthMethod[];
+  emailAuthorizationPath?: string;
+  emailRedirectionPath?: string;
   onError?: (error: string) => void;
   onLogin: (authMethod?: DiditAuthMethod) => void;
   onLogout?: () => void;
+  tokenAuthorizationPath?: string;
+  walletAuthorizationPath?: string;
   scope?: string;
 }
 
@@ -30,14 +35,19 @@ It is used to authenticate users with their email address, social media accounts
 
 const DiditAuthProvider = ({
   authMethods = DIDIT.DEFAULT_AUTH_METHODS,
-  baseUrl = DIDIT.DEFAULT_BASE_URL,
   children,
   claims = DIDIT.DEFAULT_CLAIMS,
   clientId,
+  emailAuthBaseUrl = DIDIT.DEFAULT_EMAIL_AUTH_BASE_URL,
+  emailAuthorizationPath = DIDIT.DEFAULT_EMAIL_AUTH_AUTHORIZATION_PATH,
+  emailRedirectionPath = DIDIT.DEFAULT_EMAIL_AUTH_REDIRECT_URI_PATH,
   onError = () => {},
   onLogin = () => {},
   onLogout = () => {},
   scope = DIDIT.DEFAULT_SCOPE,
+  tokenAuthorizationPath = DIDIT.DEFAULT_WALLET_AUTH_TOKEN_PATH,
+  walletAuthBaseUrl = DIDIT.DEFAULT_WALLET_AUTH_BASE_URL,
+  walletAuthorizationPath = DIDIT.DEFAULT_WALLET_AUTH_AUTHORIZATION_PATH,
 }: DiditAuthProviderProps) => {
   const [token, setToken] = useLocalStorage<string>(
     DIDIT.TOKEN_COOKIE_NAME,
@@ -174,9 +184,11 @@ const DiditAuthProvider = ({
     <DiditAuthContext.Provider value={contextValue}>
       <DiditEmailAuthProvider
         authMethod={authMethod}
-        baseUrl={baseUrl}
         claims={claims}
         clientId={clientId}
+        emailAuthBaseUrl={emailAuthBaseUrl}
+        emailAuthorizationPath={emailAuthorizationPath}
+        emailRedirectionPath={emailRedirectionPath}
         error={error}
         onAuthenticate={authenticate}
         onDeauthenticate={deauthenticate}
@@ -188,7 +200,6 @@ const DiditAuthProvider = ({
       >
         <DiditWalletProvider
           authMethod={authMethod}
-          baseUrl={baseUrl}
           claims={claims}
           error={error}
           onAuthenticate={authenticate}
@@ -198,6 +209,9 @@ const DiditAuthProvider = ({
           scope={scope}
           status={status}
           token={token}
+          tokenAuthorizationPath={tokenAuthorizationPath}
+          walletAuthBaseUrl={walletAuthBaseUrl}
+          walletAuthorizationPath={walletAuthorizationPath}
         >
           {children}
         </DiditWalletProvider>
