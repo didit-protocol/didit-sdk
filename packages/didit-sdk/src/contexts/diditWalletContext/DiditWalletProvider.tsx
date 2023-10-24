@@ -151,12 +151,23 @@ export function DiditWalletProvider({
       },
       method: 'POST',
     });
-    if (response.status === 200) {
-      return response.json();
+    if (response.ok) {
+      // Handle successful response here
+      return await response.json();
     } else {
-      const responseObj = await response.json();
-      onError(responseObj);
-      throw new Error(responseObj);
+      const errorData = await response.json();
+      if (typeof errorData === 'string') {
+        onError(errorData);
+        throw new Error(errorData);
+      } else {
+        const errorMessage =
+          errorData?.error ||
+          errorData?.message ||
+          errorData?.details ||
+          'Unknown error';
+        onError(errorMessage);
+        throw new Error(errorMessage);
+      }
     }
   }
 

@@ -1,5 +1,4 @@
-import axios from 'axios';
-import { isAxiosError } from 'axios';
+import axios, { isAxiosError } from 'axios';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
