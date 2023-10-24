@@ -1,0 +1,51 @@
+import { DiditAuthMethod } from './types';
+
+// Didit Wallet login
+const AUTH_WALLET_AUTHORIZATION_PATH =
+  '/authorizations/v1/wallet-authorization/';
+const AUTH_TOKEN_PATH = '/authorizations/v1/token/';
+
+// Email auth login
+const EMAIL_AUTH_AUTHORIZATION_PATH = '/oidc/authorize/';
+const EMAIL_AUTH_REDIRECT_URI_PATH = '/oidc/callback/';
+const EMAIL_AUTH_CODE_CHALLENGE_METHOD = 'S256';
+const EMAIL_AUTH_RESPONSE_TYPE = 'code';
+const EMAIL_AUTH_CODE_VERIFIER_NAME = 'didit_auth_code_verifier';
+const EMAIL_AUTH_INIT_POST_MESSAGE_TYPE = 'didit-auth-init';
+const EMAIL_AUTH_TOKEN_POST_MESSAGE_TYPE = 'didit-auth-token';
+const EMAIL_AUTH_TOKEN_POST_MESSAGE_ERROR_TYPE = 'didit-auth-token-error';
+const EMAIL_AUTH_POPUP_WIDTH = 400;
+const EMAIL_AUTH_POPUP_HEIGHT = 600;
+
+// General Didit
+const AUTH_METHOD_COOKIE_NAME = 'didit_auth_method';
+const TOKEN_COOKIE_NAME = 'didit_token';
+const WALLET_ADDRESS_COOKIE_NAME = 'didit_wallet_address';
+const DEFAULT_BASE_URL = 'https://apx.didit.me/auth';
+const DEFAULT_CLAIMS = 'read:email';
+const DEFAULT_SCOPE = 'openid';
+const DEFAULT_AUTH_METHODS = [DiditAuthMethod.WALLET, DiditAuthMethod.GOOGLE];
+
+const DIDIT = {
+  AUTH_METHOD_COOKIE_NAME,
+  AUTH_TOKEN_PATH,
+  AUTH_WALLET_AUTHORIZATION_PATH,
+  DEFAULT_AUTH_METHODS,
+  DEFAULT_BASE_URL,
+  DEFAULT_CLAIMS,
+  DEFAULT_SCOPE,
+  EMAIL_AUTH_AUTHORIZATION_PATH,
+  EMAIL_AUTH_CODE_CHALLENGE_METHOD,
+  EMAIL_AUTH_CODE_VERIFIER_NAME,
+  EMAIL_AUTH_INIT_POST_MESSAGE_TYPE,
+  EMAIL_AUTH_POPUP_HEIGHT,
+  EMAIL_AUTH_POPUP_WIDTH,
+  EMAIL_AUTH_REDIRECT_URI_PATH,
+  EMAIL_AUTH_RESPONSE_TYPE,
+  EMAIL_AUTH_TOKEN_POST_MESSAGE_ERROR_TYPE,
+  EMAIL_AUTH_TOKEN_POST_MESSAGE_TYPE,
+  TOKEN_COOKIE_NAME,
+  WALLET_ADDRESS_COOKIE_NAME,
+};
+
+export { DIDIT };

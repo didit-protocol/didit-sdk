@@ -1,6 +1,11 @@
 import 'didit-sdk/styles.css';
-import { getDefaultWallets, lightTheme, DiditAuthProvider } from 'didit-sdk';
-import { DiditEmailAuthProvider, DiditProvider } from 'didit-provider';
+import {
+  getDefaultWallets,
+  lightTheme,
+  DiditAuthProvider,
+  DiditRainbowkitProvider,
+  DiditAuthMethod,
+} from 'didit-sdk';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import {
   mainnet,
@@ -28,8 +33,8 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 );
 
 const { connectors } = getDefaultWallets({
-  appName: 'RainbowKit demo',
-  projectId: 'YOUR_PROJECT_ID',
+  appName: process.env.REACT_APP_APP_NAME || '',
+  projectId: process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID || '',
   chains,
 });
 
@@ -43,16 +48,24 @@ const wagmiConfig = createConfig({
 function App() {
   return (
     <WagmiConfig config={wagmiConfig}>
-      <DiditProvider clientUrl="https://apx.dev.didit.me/profile/authorizations/v1">
-        <DiditEmailAuthProvider
-          baseUrl="http://127.0.0.1:8000/email-auth"
-          clientId="676573"
-        >
-          <DiditAuthProvider chains={chains} theme={lightTheme()}>
-            <Home />
-          </DiditAuthProvider>
-        </DiditEmailAuthProvider>
-      </DiditProvider>
+      <DiditAuthProvider
+        authMethods={[DiditAuthMethod.GOOGLE, DiditAuthMethod.WALLET]}
+        baseUrl={process.env.REACT_APP_DIDIT_AUTH_BASE_URL || ''}
+        clientId={process.env.REACT_APP_DIDIT_CLIENT_ID || ''}
+        claims={process.env.REACT_APP_DIDIT_CLAIMS}
+        scope={process.env.REACT_APP_DIDIT_SCOPE || ''}
+        onLogin={(_authMethod?: DiditAuthMethod) =>
+          console.log('DiditAuthProvider: Logged in Didit with', _authMethod)
+        }
+        onLogout={() => console.log('DiditAuthProvider: Logged out from Didit')}
+        onError={(_error: string) =>
+          console.error('DiditAuthProvider: Didit error: ', _error)
+        }
+      >
+        <DiditRainbowkitProvider chains={chains} theme={lightTheme()}>
+          <Home />
+        </DiditRainbowkitProvider>
+      </DiditAuthProvider>
     </WagmiConfig>
   );
 }

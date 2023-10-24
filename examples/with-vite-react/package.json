@@ -10,7 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "didit-provider": "workspace:*",
     "didit-sdk": "workspace:*",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",

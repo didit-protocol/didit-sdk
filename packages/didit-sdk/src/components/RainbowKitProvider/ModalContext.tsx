@@ -1,0 +1,153 @@
+import React, {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react';
+import { useAccount, useNetwork } from 'wagmi';
+import { useDiditAuthenticationStatus } from '../../hooks';
+import { useConnectionStatus } from '../../hooks/useConnectionStatus';
+import { AccountModal } from '../AccountModal/AccountModal';
+import { ChainModal } from '../ChainModal/ChainModal';
+import { ConnectModal } from '../ConnectModal/ConnectModal';
+
+function useModalStateValue() {
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  return {
+    closeModal: useCallback(() => setModalOpen(false), []),
+    isModalOpen,
+    openModal: useCallback(() => setModalOpen(true), []),
+  };
+}
+
+interface ModalContextValue {
+  accountModalOpen: boolean;
+  chainModalOpen: boolean;
+  connectModalOpen: boolean;
+  openAccountModal?: () => void;
+  openChainModal?: () => void;
+  openConnectModal?: () => void;
+}
+
+const ModalContext = createContext<ModalContextValue>({
+  accountModalOpen: false,
+  chainModalOpen: false,
+  connectModalOpen: false,
+});
+
+interface ModalProviderProps {
+  children: ReactNode;
+}
+
+export function ModalProvider({ children }: ModalProviderProps) {
+  const {
+    closeModal: closeConnectModal,
+    isModalOpen: connectModalOpen,
+    openModal: openConnectModal,
+  } = useModalStateValue();
+
+  const {
+    closeModal: closeAccountModal,
+    isModalOpen: accountModalOpen,
+    openModal: openAccountModal,
+  } = useModalStateValue();
+
+  const {
+    closeModal: closeChainModal,
+    isModalOpen: chainModalOpen,
+    openModal: openChainModal,
+  } = useModalStateValue();
+
+  const connectionStatus = useConnectionStatus();
+  const { chain } = useNetwork();
+  const chainSupported = !chain?.unsupported;
+
+  interface CloseModalsOptions {
+    keepConnectModalOpen?: boolean;
+  }
+
+  function closeModals({
+    keepConnectModalOpen = false,
+  }: CloseModalsOptions = {}) {
+    if (!keepConnectModalOpen) {
+      closeConnectModal();
+    }
+    closeAccountModal();
+    closeChainModal();
+  }
+
+  const isUnauthenticated =
+    useDiditAuthenticationStatus() === 'unauthenticated';
+  useAccount({
+    onConnect: () => closeModals({ keepConnectModalOpen: isUnauthenticated }),
+    onDisconnect: () => closeModals(),
+  });
+
+  return (
+    <ModalContext.Provider
+      value={useMemo(
+        () => ({
+          accountModalOpen,
+          chainModalOpen,
+          connectModalOpen,
+          openAccountModal:
+            chainSupported && connectionStatus === 'connected'
+              ? openAccountModal
+              : undefined,
+          openChainModal:
+            connectionStatus === 'connected' ? openChainModal : undefined,
+          openConnectModal:
+            connectionStatus === 'disconnected' ||
+            connectionStatus === 'unauthenticated'
+              ? openConnectModal // TODO: Check why this logic is not working
+              : undefined,
+        }),
+        [
+          connectionStatus,
+          chainSupported,
+          accountModalOpen,
+          chainModalOpen,
+          connectModalOpen,
+          openAccountModal,
+          openChainModal,
+          openConnectModal,
+        ]
+      )}
+    >
+      {children}
+      <ConnectModal onClose={closeConnectModal} open={connectModalOpen} />
+      <AccountModal onClose={closeAccountModal} open={accountModalOpen} />
+      <ChainModal onClose={closeChainModal} open={chainModalOpen} />
+    </ModalContext.Provider>
+  );
+}
+
+export function useModalState() {
+  const { accountModalOpen, chainModalOpen, connectModalOpen } =
+    useContext(ModalContext);
+
+  return {
+    accountModalOpen,
+    chainModalOpen,
+    connectModalOpen,
+  };
+}
+
+export function useAccountModal() {
+  const { accountModalOpen, openAccountModal } = useContext(ModalContext);
+  return { accountModalOpen, openAccountModal };
+}
+
+export function useChainModal() {
+  const { chainModalOpen, openChainModal } = useContext(ModalContext);
+  return { chainModalOpen, openChainModal };
+}
+
+export function useConnectModal() {
+  const { connectModalOpen, openConnectModal } = useContext(ModalContext);
+
+  return { connectModalOpen, openConnectModal };
+}

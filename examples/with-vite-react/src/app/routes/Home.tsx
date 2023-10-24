@@ -1,18 +1,15 @@
 import { useEffect } from 'react';
 
 import {
-  DiditLogin,
-  ConnectButton,
-  useDiditStatus,
-  useAuthenticationAdapter,
+  DiditAuthMethod,
+  DiditLoginButton,
+  DiditLogoutButton,
+  useDiditAuth,
 } from 'didit-sdk';
 
 const Home = () => {
-  const { token, status, error } = useDiditStatus(); // TODO: Status is now torking ATM with Google. We need a rework on Didit providers
-  const adapter = useAuthenticationAdapter();
+  const { authMethod, status, token, isAuthenticated, error } = useDiditAuth();
   const accessToken = String(token);
-
-  const isAuthenticated = status === 'authenticated';
 
   useEffect(() => {
     if (error) {
@@ -46,9 +43,21 @@ const Home = () => {
               <b>{status}</b>
             </span>
           </p>
-          {isAuthenticated && (
-            <button onClick={() => adapter.signOut()}>LOGOUT</button>
-          )}
+          <DiditLogoutButton />
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            gap: 12,
+          }}
+        >
+          <p>
+            <span>Didit auth method: </span>
+            <span>
+              <b>{authMethod}</b>
+            </span>
+          </p>
         </div>
         <div
           style={{
@@ -73,8 +82,10 @@ const Home = () => {
             gap: 12,
           }}
         >
-          <ConnectButton label="Connect with wallet" />
-          <DiditLogin />
+          <DiditLoginButton
+            label="Didit with Google"
+            authMethod={DiditAuthMethod.GOOGLE}
+          />
         </div>
       </div>
     </div>

@@ -17,14 +17,14 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
     optimism,
     arbitrum,
     zora,
-    ...(import.meta.env.REACT_APP_ENABLE_TESTNETS === 'true' ? [goerli] : []),
+    ...(import.meta.env.VITE_ENABLE_TESTNETS === 'true' ? [goerli] : []),
   ],
   [publicProvider()]
 );
 
 const { connectors } = getDefaultWallets({
-  appName: 'RainbowKit demo',
-  projectId: 'b0337f8e2c56c722a1fb3a4cdf893249',
+  appName: import.meta.env.VITE_APP_NAME || '',
+  projectId: import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID || '',
   chains,
 });
 
