@@ -17,8 +17,10 @@ export default function DiditError({
   isHidden = true,
   title,
 }: DiditErrorProps) {
-  const diditErrorClassName = clsx('didit-error-wrapper', className);
   if (isHidden) return null;
+
+  const diditErrorClassName = clsx('didit-error-wrapper', className);
+
   return (
     <div className={diditErrorClassName} data-testid={dataTestId}>
       <p className="didit-error-title">{title}</p>
