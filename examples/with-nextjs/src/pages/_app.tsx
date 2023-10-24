@@ -21,7 +21,7 @@ const { chains, publicClient } = configureChains(
 const { connectors } = getDefaultWallets({
   appName: process.env.NEXT_PUBLIC_APP_NAME || '',
   chains,
-  projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || '',
+  projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || 'cutsom id',
 });
 
 const wagmiConfig = createConfig({
