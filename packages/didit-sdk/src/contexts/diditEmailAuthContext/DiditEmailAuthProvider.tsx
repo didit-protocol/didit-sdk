@@ -14,10 +14,12 @@ interface DiditTokenData {
 
 interface DiditEmailAuthProviderProps {
   authMethod?: DiditAuthMethod;
-  baseUrl: string;
   children: React.ReactNode;
-  clientId: string;
   claims: string;
+  clientId: string;
+  emailAuthBaseUrl?: string;
+  emailAuthorizationPath?: string;
+  emailRedirectionPath?: string;
   error?: string;
   onAuthenticate?: (_authMethod: DiditAuthMethod) => void;
   onDeauthenticate?: () => void;
@@ -30,10 +32,12 @@ interface DiditEmailAuthProviderProps {
 
 const DiditEmailAuthProvider = ({
   authMethod = undefined,
-  baseUrl,
   children,
   claims = '',
   clientId,
+  emailAuthBaseUrl = DIDIT.DEFAULT_EMAIL_AUTH_BASE_URL,
+  emailAuthorizationPath = DIDIT.DEFAULT_EMAIL_AUTH_AUTHORIZATION_PATH,
+  emailRedirectionPath = DIDIT.DEFAULT_EMAIL_AUTH_REDIRECT_URI_PATH,
   error,
   onAuthenticate = () => {},
   onDeauthenticate = () => {},
@@ -73,7 +77,7 @@ const DiditEmailAuthProvider = ({
 
   const handleReceiveMessage = useCallback(
     (event: MessageEvent) => {
-      const diditOrigin = new URL(baseUrl).origin;
+      const diditOrigin = new URL(emailAuthBaseUrl).origin;
 
       if (event.origin.replace(/\/$/, '') !== diditOrigin.replace(/\/$/, ''))
         return;
@@ -102,13 +106,18 @@ const DiditEmailAuthProvider = ({
         handleTokenError(messageData?.error, messageData?.error_description);
       }
     },
-    [baseUrl, initMessageInterval, handleTokenSuccess, handleTokenError]
+    [
+      emailAuthBaseUrl,
+      initMessageInterval,
+      handleTokenSuccess,
+      handleTokenError,
+    ]
   );
 
   // Init communication with Didit popup window
   const startInitMessageInterval = useCallback(
     (_popup: Window) => {
-      const diditOrigin = new URL(baseUrl).origin;
+      const diditOrigin = new URL(emailAuthBaseUrl).origin;
       const _initMessageInterval = setInterval(() => {
         _popup?.postMessage(
           {
@@ -119,7 +128,7 @@ const DiditEmailAuthProvider = ({
       }, 1000);
       setInitMessageInterval(_initMessageInterval);
     },
-    [baseUrl, setInitMessageInterval]
+    [emailAuthBaseUrl, setInitMessageInterval]
   );
 
   const loginWithSocial = useCallback(
@@ -130,8 +139,8 @@ const DiditEmailAuthProvider = ({
       }
 
       // Configure the Didit auth popup
-      const authorizationUrl = `${baseUrl}${DIDIT.EMAIL_AUTH_AUTHORIZATION_PATH}`;
-      const redirectUri = `${baseUrl}${DIDIT.EMAIL_AUTH_REDIRECT_URI_PATH}`;
+      const authorizationUrl = `${emailAuthBaseUrl}${emailAuthorizationPath}`;
+      const redirectUri = `${emailAuthBaseUrl}${emailRedirectionPath}`;
       const codeChallengeMethod = DIDIT.EMAIL_AUTH_CODE_CHALLENGE_METHOD;
       const responseType = DIDIT.EMAIL_AUTH_RESPONSE_TYPE;
       const idp = socialAuthProvider;
@@ -165,12 +174,14 @@ const DiditEmailAuthProvider = ({
     },
     [
       authMethod,
-      baseUrl,
+      emailAuthBaseUrl,
       clientId,
       scope,
       claims,
       startInitMessageInterval,
       onDeauthenticate,
+      emailAuthorizationPath,
+      emailRedirectionPath,
     ]
   );
 

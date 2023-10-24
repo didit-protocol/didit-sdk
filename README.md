@@ -134,7 +134,12 @@ import { DiditAuthProvider} from 'didit-sdk';
 2. Additionally you can configure your **Didit** connection with more custom props:
 
 - `authMethods`: The authentication methods you want to enable for your users (Default: `['google', 'wallet]`)
-- `baseUrl`: The base url of your custom backend with **Didit** auth (Default: `https://apx.didit.me/auth`)
+- `emailAuthBaseUrl`: The base URL of your custom backend with **Didit** auth for email and social auth methods (Default: `https://apx.didit.me/auth`)
+- `walletAuthBaseUrl`: The base URL of your custom backend with **Didit** auth for wallet auth method (Default: `https://apx.didit.me/auth`)
+- `emailAuthorizationPath`: Custom path for email authorization endpoint (Default: `/oidc/authorize/`)
+- `emailRedirectionPath`: Custom path for email redirection. It is used as redirect_uri param after authorization (Default: `/oidc/callback/`)
+- `walletAuthorizationPath`: Custom path for wallet authorization endpoint (Default: `/authorizations/v1/wallet-authorization/`)
+- `tokenAuthorizationPath`: Custom path for token endpoint (Default: `/authorizations/v1/token/`)
 - `claims`: The claims you want to request from your users (Default: `['read:email']`)
 - `scope`: The scope you want to request from your users (Default: `['openid']`)
 - `onError`: A callback function that will be called when an error occurs during the authentication process
@@ -147,10 +152,15 @@ import { DiditAuthProvider, DiditAuthMethod } from 'didit-sdk';
 ...
       <DiditAuthProvider
         authMethods={[DiditAuthMethod.WALLET, DiditAuthMethod.GOOGLE]}
-        baseUrl="https://my.didit.app/auth"
+        emailAuthBaseUrl="https://my.didit.app/auth/email"
+        walletAuthBaseUrl="https://my.didit.app/auth/wallet"
         clientId="676573"
         claims={ ['read:email', 'write:email', 'read:profile', 'read:blockchain']}
         scope={ ['openid', 'profile']
+        emailAuthorizationPath="/authorize/"
+        emailRedirectionPath="/redirect/"
+        walletAuthorizationPath="/wallet-authorization/"
+        tokenAuthorizationPath="/token/"
         onLogin={(_authMethod?: DiditAuthMethod) =>
           console.log('Logged in Didit with', _authMethod)
         }

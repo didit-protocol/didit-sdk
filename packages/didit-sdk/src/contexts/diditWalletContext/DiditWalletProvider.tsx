@@ -10,7 +10,6 @@ import { AuthenticationStatus, DiditAuthMethod } from '../../types';
 
 interface DiditWalletProviderProps {
   authMethod?: DiditAuthMethod;
-  baseUrl: string;
   children: ReactNode;
   claims: string;
   enabled?: boolean;
@@ -22,11 +21,13 @@ interface DiditWalletProviderProps {
   scope: string;
   status?: AuthenticationStatus;
   token?: string;
+  tokenAuthorizationPath?: string;
+  walletAuthBaseUrl?: string;
+  walletAuthorizationPath?: string;
 }
 
 export function DiditWalletProvider({
   authMethod = undefined,
-  baseUrl,
   children,
   claims,
   enabled,
@@ -38,6 +39,9 @@ export function DiditWalletProvider({
   scope,
   status = AuthenticationStatus.LOADING,
   token = '',
+  tokenAuthorizationPath = DIDIT.DEFAULT_WALLET_AUTH_TOKEN_PATH,
+  walletAuthBaseUrl = DIDIT.DEFAULT_WALLET_AUTH_BASE_URL,
+  walletAuthorizationPath = DIDIT.DEFAULT_WALLET_AUTH_AUTHORIZATION_PATH,
 }: DiditWalletProviderProps) {
   const wagmiAccount = useAccount();
 
@@ -78,7 +82,7 @@ export function DiditWalletProvider({
           }
 
           const parameters = walletAuthPayload(address, claims, scope);
-          const endpoint = `${baseUrl}${DIDIT.AUTH_WALLET_AUTHORIZATION_PATH}`;
+          const endpoint = `${walletAuthBaseUrl}${walletAuthorizationPath}`;
           try {
             var { code, policy } = await postRequest(endpoint, parameters);
             setWalletddress(address);
@@ -101,7 +105,7 @@ export function DiditWalletProvider({
         },
 
         verify: async ({ code, signature }) => {
-          const endpoint = `${baseUrl}${DIDIT.AUTH_TOKEN_PATH}`;
+          const endpoint = `${walletAuthBaseUrl}${tokenAuthorizationPath}`;
           const parameters = `code=${code}&wallet_signature=${signature}&grant_type=connect_wallet`;
           try {
             var { access_token } = await postRequest(endpoint, parameters);

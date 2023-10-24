@@ -16,7 +16,10 @@ const Providers = ({ children }: ProvidersProps) => {
     <WagmiConfig config={config}>
       <DiditAuthProvider
         authMethods={[DiditAuthMethod.WALLET, DiditAuthMethod.GOOGLE]}
-        baseUrl={import.meta.env.VITE_DIDIT_AUTH_BASE_URL || ''}
+        emailAuthBaseUrl={process.env.REACT_APP_DIDIT_EMAIL_AUTH_BASE_URL || ''}
+        walletAuthBaseUrl={
+          process.env.REACT_APP_DIDIT_WALLET_AUTH_BASE_URL || ''
+        }
         clientId={import.meta.env.VITE_DIDIT_CLIENT_ID || ''}
         claims={import.meta.env.VITE_DIDIT_CLAIMS}
         scope={import.meta.env.VITE_DIDIT_SCOPE || ''}
