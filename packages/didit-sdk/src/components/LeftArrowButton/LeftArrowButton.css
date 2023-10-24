@@ -10,6 +10,7 @@
   border-radius: 48px;
   background: var(--surfaces-light-grey, #fafafb);
   transition: color 0.2s ease-in-out, background 0.2s ease-in-out;
+  border: none;
 }
 
 .left-arrow-button:hover {

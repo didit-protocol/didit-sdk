@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 
 import {
-  DiditLogin,
   DiditAuthMethod,
   DiditLoginButton,
   DiditLogoutButton,
@@ -9,8 +8,7 @@ import {
 } from 'didit-sdk';
 
 const Home = () => {
-  const { authMethod, status, token, isAuthenticated, error, logout } =
-    useDiditAuth();
+  const { authMethod, status, token, isAuthenticated, error } = useDiditAuth();
   const accessToken = String(token);
 
   useEffect(() => {

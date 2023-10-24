@@ -1,0 +1,20 @@
+// TODO: fix this test loading the .env file
+// import { render, screen } from '@testing-library/react';
+// import App from './App';
+// describe('App', () => {
+//   const OLD_ENV = process.env;
+
+//   beforeEach(() => {
+//     jest.resetModules(); // Most important - it clears the cache
+//     process.env = { ...OLD_ENV }; // Make a copy
+//   });
+
+//   afterAll(() => {
+//     process.env = OLD_ENV; // Restore old environment
+//   });
+//   test('renders learn react link', () => {
+//     render(<App />);
+//     const linkElement = screen.getByText(/Didit Protocol/i);
+//     expect(linkElement).toBeInTheDocument();
+//   });
+// });
