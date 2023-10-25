@@ -44,9 +44,9 @@ export default function App({ Component, pageProps }: AppProps) {
         }
         onError={(_error: string) => console.error('Didit error: ', _error)}
         onLogin={(_authMethod?: DiditAuthMethod) =>
-          console.log('Logged in Didit with', _authMethod)
+          console.warn('Logged in Didit with', _authMethod)
         }
-        onLogout={() => console.log('Logged out Didit')}
+        onLogout={() => console.warn('Logged out Didit')}
         scope={process.env.NEXT_PUBLIC_DIDIT_SCOPE}
         tokenAuthorizationPath="/token"
         walletAuthBaseUrl={

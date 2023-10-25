@@ -1,5 +1,5 @@
 import { useLocalStorageValue } from '@react-hookz/web';
-import React, { ReactNode, useEffect, useMemo, useState } from 'react';
+import React, { ReactNode, useEffect, useMemo } from 'react';
 import { useAccount, useDisconnect } from 'wagmi';
 import {
   createAuthenticationAdapter,
@@ -45,31 +45,31 @@ export function DiditWalletProvider({
 }: DiditWalletProviderProps) {
   const wagmiAccount = useAccount();
 
-  const { remove: removeWalletaddress, set: setWalletddress } =
-    useLocalStorageValue<string>(DIDIT.WALLET_ADDRESS_COOKIE_NAME, {
-      initializeWithValue: false,
-    });
+  const {
+    remove: removeWalletaddress,
+    set: setWalletddress,
+    value: walletAddress,
+  } = useLocalStorageValue<string>(DIDIT.WALLET_ADDRESS_COOKIE_NAME, {
+    defaultValue: wagmiAccount?.address || '',
+    initializeWithValue: false,
+  });
 
-  const [address, setAddress] = useState(wagmiAccount?.address ?? undefined);
   const { disconnect } = useDisconnect();
 
   useEffect(() => {
     if (authMethod !== DiditAuthMethod.WALLET) return;
 
-    if (!address && wagmiAccount.address) {
-      setAddress(wagmiAccount.address);
+    if (!walletAddress && wagmiAccount.address) {
       setWalletddress(wagmiAccount.address);
-    } else if (address && wagmiAccount.address) {
-      if (address !== wagmiAccount.address) {
-        setAddress(wagmiAccount.address);
+    } else if (walletAddress && wagmiAccount.address) {
+      if (walletAddress !== wagmiAccount.address) {
         setWalletddress(wagmiAccount.address);
       }
     } else {
-      setAddress(undefined);
       removeWalletaddress();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wagmiAccount.address, address]);
+  }, [wagmiAccount.address, walletAddress, authMethod]);
 
   const adapter = useMemo(
     () =>
@@ -100,7 +100,7 @@ export function DiditWalletProvider({
         signOut: async () => {
           onDeauthenticate();
           disconnect();
-          setAddress(undefined);
+          removeWalletaddress();
         },
 
         verify: async ({ code, signature }) => {
@@ -173,7 +173,7 @@ export function DiditWalletProvider({
   return (
     <RainbowKitAuthenticationProvider
       adapter={adapter}
-      address={address}
+      address={walletAddress || ''}
       enabled={enabled}
       error={error}
       status={status}

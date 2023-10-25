@@ -11,7 +11,8 @@ import { useState } from 'react';
 const inter = Inter({ subsets: ['latin'] });
 
 export default function Home() {
-  const { authMethod, isAuthenticated, status, token } = useDiditAuth();
+  const { authMethod, isAuthenticated, status, token, walletAddress } =
+    useDiditAuth();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   const accessToken = String(token);
@@ -32,6 +33,12 @@ export default function Home() {
             <span>Didit status: </span>
             <span>
               <b>{status}</b>
+            </span>
+          </p>
+          <p>
+            <span>Didit address: </span>
+            <span>
+              <b>{walletAddress}</b>
             </span>
           </p>
           <DiditLogoutButton />
