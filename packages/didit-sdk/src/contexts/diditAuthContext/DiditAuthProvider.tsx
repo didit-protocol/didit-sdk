@@ -26,7 +26,7 @@ interface DiditAuthProviderProps {
   emailAuthorizationPath?: string;
   emailRedirectionPath?: string;
   onError?: (error: string) => void;
-  onLogin: (authMethod?: DiditAuthMethod) => void;
+  onLogin?: (authMethod?: DiditAuthMethod) => void;
   onLogout?: () => void;
   tokenAuthorizationPath?: string;
   walletAuthorizationPath?: string;
