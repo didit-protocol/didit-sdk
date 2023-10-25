@@ -1,5 +1,5 @@
-import React, { ReactNode, useEffect, useMemo, useState } from 'react';
-import { useLocalStorage } from 'usehooks-ts';
+import { useLocalStorageValue } from '@react-hookz/web';
+import React, { ReactNode, useEffect, useMemo } from 'react';
 import { useAccount, useDisconnect } from 'wagmi';
 import {
   createAuthenticationAdapter,
@@ -45,32 +45,31 @@ export function DiditWalletProvider({
 }: DiditWalletProviderProps) {
   const wagmiAccount = useAccount();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_walletAddress, setWalletddress] = useLocalStorage<string>(
-    DIDIT.WALLET_ADDRESS_COOKIE_NAME,
-    ''
-  );
+  const {
+    remove: removeWalletAddress,
+    set: setWalletAddress,
+    value: walletAddress,
+  } = useLocalStorageValue<string>(DIDIT.WALLET_ADDRESS_COOKIE_NAME, {
+    defaultValue: wagmiAccount?.address || '',
+    initializeWithValue: false,
+  });
 
-  const [address, setAddress] = useState(wagmiAccount?.address ?? undefined);
   const { disconnect } = useDisconnect();
 
   useEffect(() => {
     if (authMethod !== DiditAuthMethod.WALLET) return;
 
-    if (!address && wagmiAccount.address) {
-      setAddress(wagmiAccount.address);
-      setWalletddress(wagmiAccount.address);
-    } else if (address && wagmiAccount.address) {
-      if (address !== wagmiAccount.address) {
-        setAddress(wagmiAccount.address);
-        setWalletddress(wagmiAccount.address);
+    if (!walletAddress && wagmiAccount.address) {
+      setWalletAddress(wagmiAccount.address);
+    } else if (walletAddress && wagmiAccount.address) {
+      if (walletAddress !== wagmiAccount.address) {
+        setWalletAddress(wagmiAccount.address);
       }
     } else {
-      setAddress(undefined);
-      setWalletddress('');
+      removeWalletAddress();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wagmiAccount.address, address]);
+  }, [wagmiAccount.address, walletAddress, authMethod]);
 
   const adapter = useMemo(
     () =>
@@ -85,7 +84,7 @@ export function DiditWalletProvider({
           const endpoint = `${walletAuthBaseUrl}${walletAuthorizationPath}`;
           try {
             var { code, policy } = await postRequest(endpoint, parameters);
-            setWalletddress(address);
+            setWalletAddress(address);
           } catch (walletAuthError) {
             throw walletAuthError;
           }
@@ -101,7 +100,7 @@ export function DiditWalletProvider({
         signOut: async () => {
           onDeauthenticate();
           disconnect();
-          setAddress(undefined);
+          removeWalletAddress();
         },
 
         verify: async ({ code, signature }) => {
@@ -151,19 +150,30 @@ export function DiditWalletProvider({
       },
       method: 'POST',
     });
-    if (response.status === 200) {
-      return response.json();
+    if (response.ok) {
+      // Handle successful response here
+      return await response.json();
     } else {
-      const responseObj = await response.json();
-      onError(responseObj);
-      throw new Error(responseObj);
+      const errorData = await response.json();
+      if (typeof errorData === 'string') {
+        onError(errorData);
+        throw new Error(errorData);
+      } else {
+        const errorMessage =
+          errorData?.error ||
+          errorData?.message ||
+          errorData?.details ||
+          'Unknown error';
+        onError(errorMessage);
+        throw new Error(errorMessage);
+      }
     }
   }
 
   return (
     <RainbowKitAuthenticationProvider
       adapter={adapter}
-      address={address}
+      address={walletAddress || ''}
       enabled={enabled}
       error={error}
       status={status}
