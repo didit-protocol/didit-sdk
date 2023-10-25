@@ -46,8 +46,8 @@ export function DiditWalletProvider({
   const wagmiAccount = useAccount();
 
   const {
-    remove: removeWalletaddress,
-    set: setWalletddress,
+    remove: removeWalletAddress,
+    set: setWalletAddress,
     value: walletAddress,
   } = useLocalStorageValue<string>(DIDIT.WALLET_ADDRESS_COOKIE_NAME, {
     defaultValue: wagmiAccount?.address || '',
@@ -60,13 +60,13 @@ export function DiditWalletProvider({
     if (authMethod !== DiditAuthMethod.WALLET) return;
 
     if (!walletAddress && wagmiAccount.address) {
-      setWalletddress(wagmiAccount.address);
+      setWalletAddress(wagmiAccount.address);
     } else if (walletAddress && wagmiAccount.address) {
       if (walletAddress !== wagmiAccount.address) {
-        setWalletddress(wagmiAccount.address);
+        setWalletAddress(wagmiAccount.address);
       }
     } else {
-      removeWalletaddress();
+      removeWalletAddress();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wagmiAccount.address, walletAddress, authMethod]);
@@ -84,7 +84,7 @@ export function DiditWalletProvider({
           const endpoint = `${walletAuthBaseUrl}${walletAuthorizationPath}`;
           try {
             var { code, policy } = await postRequest(endpoint, parameters);
-            setWalletddress(address);
+            setWalletAddress(address);
           } catch (walletAuthError) {
             throw walletAuthError;
           }
@@ -100,7 +100,7 @@ export function DiditWalletProvider({
         signOut: async () => {
           onDeauthenticate();
           disconnect();
-          removeWalletaddress();
+          removeWalletAddress();
         },
 
         verify: async ({ code, signature }) => {
