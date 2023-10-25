@@ -55,6 +55,7 @@ const DiditAuthProvider = ({
   walletAuthBaseUrl = DIDIT.DEFAULT_WALLET_AUTH_BASE_URL,
   walletAuthorizationPath = DIDIT.DEFAULT_WALLET_AUTH_AUTHORIZATION_PATH,
 }: DiditAuthProviderProps) => {
+  const firstRender = useRef(true);
   const {
     remove: removeToken,
     set: setToken,
@@ -127,14 +128,12 @@ const DiditAuthProvider = ({
     return true;
   }, [scope]);
 
-  const firstRender = useRef(true);
-
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
       return;
     }
-    // TODO: check if token is valid through didi api
+    // TODO: Check if token is valid through Didit Auth service API
     if (!!token && !!authMethod) {
       authenticate(authMethod);
       onLogin(authMethod);
