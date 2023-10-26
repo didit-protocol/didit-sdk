@@ -3,7 +3,7 @@ import {
   DiditLogin,
   useDiditAuth,
   useAuthenticationAdapter
-} from 'diditsdktest';
+} from 'didit-sdk';
 import { Inter } from 'next/font/google';
 import { useState } from 'react';
 
