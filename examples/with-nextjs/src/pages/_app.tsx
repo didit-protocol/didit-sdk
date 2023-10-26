@@ -36,7 +36,11 @@ export default function App({ Component, pageProps }: AppProps) {
       config={wagmiConfig} // The one that was configured before for Wagmi
     >
       <DiditAuthProvider
-        authMethods={[DiditAuthMethod.WALLET, DiditAuthMethod.GOOGLE]}
+        authMethods={[
+          DiditAuthMethod.WALLET,
+          DiditAuthMethod.GOOGLE,
+          DiditAuthMethod.APPLE,
+        ]}
         claims={process.env.NEXT_PUBLIC_DIDIT_CLAIMS}
         clientId={process.env.NEXT_PUBLIC_DIDIT_CLIENT_ID || ''}
         emailAuthBaseUrl={

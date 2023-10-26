@@ -49,7 +49,11 @@ function App() {
   return (
     <WagmiConfig config={wagmiConfig}>
       <DiditAuthProvider
-        authMethods={[DiditAuthMethod.GOOGLE, DiditAuthMethod.WALLET]}
+        authMethods={[
+          DiditAuthMethod.GOOGLE,
+          DiditAuthMethod.WALLET,
+          DiditAuthMethod.APPLE,
+        ]}
         emailAuthBaseUrl={process.env.REACT_APP_DIDIT_EMAIL_AUTH_BASE_URL || ''}
         walletAuthBaseUrl={
           process.env.REACT_APP_DIDIT_WALLET_AUTH_BASE_URL || ''

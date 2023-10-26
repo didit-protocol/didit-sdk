@@ -4,6 +4,7 @@ import { useDiditAuth } from '../../hooks';
 import { DiditAuthMethod } from '../../types';
 import { DiditButton } from '../DiditButton';
 import { DiditError } from '../DiditError';
+import AppleIcon from '../Icons/AppleIcon';
 import GoogleIcon from '../Icons/GoogleIcon';
 import './Dialog.css';
 import LeftArrowButton from '../LeftArrowButton/LeftArrowButton';
@@ -26,15 +27,16 @@ const SocialOptionsDialog: FC<SocialOptionsDialogProps> = ({
     error,
     hasError,
     isAuthenticated,
+    loginWithApple,
     loginWithGoogle,
   } = useDiditAuth();
 
   const isGoogleAuthAvailable = availableAuthMethods.includes(
     DiditAuthMethod.GOOGLE
   );
-  // const isAppleAuthAvailable = availableAuthMethods.includes(
-  //   DiditAuthMethod.APPLE
-  // );
+  const isAppleAuthAvailable = availableAuthMethods.includes(
+    DiditAuthMethod.APPLE
+  );
 
   const LoginClassName = clsx('dialog-wrapper', wrapperClassName);
 
@@ -60,18 +62,15 @@ const SocialOptionsDialog: FC<SocialOptionsDialogProps> = ({
             onClick={loginWithGoogle}
           />
         )}
-        {/*
-        { isAppleAuthAvailable && (
+        {isAppleAuthAvailable && (
           <DiditButton
             className={buttonClassName}
-            icon={<GoogleIcon />}
+            icon={<AppleIcon />}
             isDisabled={isAuthenticated}
-            label="Continue with Google"
+            label="Continue with Apple"
             onClick={loginWithApple}
           />
         )}
-        } 
-        */}
       </div>
       <div className="dialog-error">
         <DiditError

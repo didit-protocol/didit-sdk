@@ -44,7 +44,7 @@ const useDiditAuth = ({
   const login = useCallback(
     (authMethod: DiditAuthMethod) => {
       const loginMethods = {
-        // [DiditAuthMethod.APPLE]: loginWithApple,
+        [DiditAuthMethod.APPLE]: loginWithApple,
         // [DiditAuthMethod.EMAIL]: loginWithEmail,
         [DiditAuthMethod.GOOGLE]: loginWithGoogle,
         [DiditAuthMethod.WALLET]: loginWithWallet,
@@ -56,7 +56,7 @@ const useDiditAuth = ({
       }
       loginMethod();
     },
-    [loginWithGoogle, loginWithWallet]
+    [loginWithGoogle, loginWithWallet, loginWithApple]
   );
 
   // Didit logout + disconnect from RainbowKit

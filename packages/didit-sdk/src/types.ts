@@ -1,11 +1,11 @@
 enum SocialAuthProvider {
   GOOGLE = 'google',
-  // APPLE = 'apple',
+  APPLE = 'apple',
 }
 
 enum DiditAuthMethod {
   GOOGLE = 'google',
-  // APPLE = 'apple',
+  APPLE = 'apple',
   // EMAIL = 'email',
   WALLET = 'wallet',
 }

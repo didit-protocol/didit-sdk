@@ -191,8 +191,8 @@ const DiditEmailAuthProvider = ({
   );
 
   const loginWithApple = useCallback(
-    () => console.warn("NotImplementedError: Apple login isn't supported yet"),
-    []
+    () => loginWithSocial(SocialAuthProvider.APPLE),
+    [loginWithSocial]
   );
 
   const loginWithEmail = useCallback(
