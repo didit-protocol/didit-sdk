@@ -131,8 +131,8 @@ const DiditEmailAuthProvider = ({
     [emailAuthBaseUrl, setInitMessageInterval]
   );
 
-  const loginWithSocial = useCallback(
-    async (socialAuthProvider: SocialAuthProvider) => {
+  const generateSocialAuthUrl = useCallback(
+    async (socialAuthProvider: SocialAuthProvider, popup: Window) => {
       // Force login when trying to login with a different method
       if (authMethod !== (socialAuthProvider as unknown as DiditAuthMethod)) {
         onDeauthenticate();
@@ -154,23 +154,11 @@ const DiditEmailAuthProvider = ({
       // Generate the authorization url
       const authorizeUrl = `${authorizationUrl}?client_id=${clientId}&response_type=${responseType}&scope=${scope}&claims=${claims}&redirect_uri=${encodedRedirectUrl}&code_verifier=${codeVerifier}&code_challenge=${codeChallenge}&code_challenge_method=${codeChallengeMethod}&idp=${idp}`;
 
-      // Open a pop-up centered in the middle of the screen instead of redirecting
-      const width = DIDIT.EMAIL_AUTH_POPUP_WIDTH;
-      const height = DIDIT.EMAIL_AUTH_POPUP_HEIGHT;
+      // update popup url
+      popup.location = authorizeUrl;
+      setDiditEmailAuthPopup(popup);
 
-      // Recalculate the left and top positions just before opening the popup
-      const left = window.innerWidth / 2 - width / 2 + window.screenX;
-      const top = window.innerHeight / 2 - height / 2 + window.screenY;
-
-      // Open the popup window
-      const _diditPopup = window.open(
-        authorizeUrl,
-        'Authentication',
-        `width=${width},height=${height},left=${left},top=${top}`
-      );
-      setDiditEmailAuthPopup(_diditPopup);
-
-      if (_diditPopup) startInitMessageInterval(_diditPopup);
+      if (popup) startInitMessageInterval(popup);
     },
     [
       authMethod,
@@ -183,6 +171,27 @@ const DiditEmailAuthProvider = ({
       emailAuthorizationPath,
       emailRedirectionPath,
     ]
+  );
+
+  const loginWithSocial = useCallback(
+    (socialAuthProvider: SocialAuthProvider) => {
+      // Open a pop-up centered in the middle of the screen instead of redirecting
+      const width = DIDIT.EMAIL_AUTH_POPUP_WIDTH;
+      const height = DIDIT.EMAIL_AUTH_POPUP_HEIGHT;
+
+      // Recalculate the left and top positions just before opening the popup
+      const left = window.innerWidth / 2 - width / 2 + window.screenX;
+      const top = window.innerHeight / 2 - height / 2 + window.screenY;
+      var popupReference = window.open(
+        '',
+        'Authorization',
+        `width=${width},height=${height},left=${left},top=${top}`
+      );
+      if (popupReference) {
+        generateSocialAuthUrl(socialAuthProvider, popupReference);
+      }
+    },
+    [generateSocialAuthUrl]
   );
 
   const loginWithGoogle = useCallback(
