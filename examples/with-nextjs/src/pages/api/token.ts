@@ -15,7 +15,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const data = {
       code: code,
-      grant_type: 'https://gamium.world/oauth/grant_types/connectwallet',
+      grant_type: 'connect_wallet',
       wallet_signature,
     };
 
