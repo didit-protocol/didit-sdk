@@ -8,8 +8,14 @@ import React, {
 } from 'react';
 import { DIDIT } from '../../config';
 import usePreviousState from '../../hooks/usePreviousState';
-import { AuthenticationStatus, DiditAuthMethod } from '../../types';
+import {
+  AuthenticationStatus,
+  DiditAuthMethod,
+  DiditTokenData,
+  DiditUser,
+} from '../../types';
 import { parseJwt } from '../../utils';
+import decodeAccessToken from '../../utils/decodeAccessToken';
 import { DiditEmailAuthProvider } from '../diditEmailAuthContext';
 import { DiditWalletProvider } from '../diditWalletContext';
 import { DiditAuthContext } from './diditAuthContext';
@@ -76,6 +82,23 @@ const DiditAuthProvider = ({
     useState<AuthenticationStatus>(INITIAL_AUTH_STATUS);
   const prevStatus = usePreviousState(status);
   const [error, setError] = useState('');
+
+  const tokenData: DiditTokenData | undefined = useMemo(
+    () => (token ? decodeAccessToken(token) : undefined),
+    [token]
+  );
+
+  const user: DiditUser | undefined = useMemo(
+    () =>
+      tokenData
+        ? {
+            identifier: tokenData.identifier,
+            identifierType: tokenData.identifier_type,
+            sub: tokenData.sub,
+          }
+        : undefined,
+    [tokenData]
+  );
 
   const authenticate = useCallback(
     (_authMethod: DiditAuthMethod) => {
@@ -186,8 +209,19 @@ const DiditAuthProvider = ({
       logout: deauthenticate,
       status,
       token,
+      tokenData,
+      user,
     }),
-    [authMethod, authMethods, deauthenticate, error, status, token]
+    [
+      authMethod,
+      authMethods,
+      deauthenticate,
+      error,
+      status,
+      token,
+      tokenData,
+      user,
+    ]
   );
 
   return (

@@ -16,4 +16,27 @@ enum AuthenticationStatus {
   UNAUTHENTICATED = 'unauthenticated',
 }
 
-export { SocialAuthProvider, DiditAuthMethod, AuthenticationStatus };
+type DiditTokenData = {
+  identifier: string;
+  identifier_type: string;
+  sub: string;
+  claims: string[];
+  client_id: string;
+  exp: number;
+  iat: number;
+  iss: string;
+};
+
+type DiditUser = {
+  identifier: DiditTokenData['identifier'];
+  identifierType: DiditTokenData['identifier_type'];
+  sub: DiditTokenData['sub'];
+};
+
+export {
+  SocialAuthProvider,
+  DiditAuthMethod,
+  AuthenticationStatus,
+  type DiditTokenData,
+  type DiditUser,
+};

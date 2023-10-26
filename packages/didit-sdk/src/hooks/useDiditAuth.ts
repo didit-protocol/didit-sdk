@@ -24,6 +24,8 @@ const useDiditAuth = ({
     logout: deauthenticate,
     status,
     token,
+    tokenData,
+    user,
   } = useDiditAuthContext();
   const { loginWithApple, loginWithEmail, loginWithGoogle, loginWithSocial } =
     useDiditEmailAuthContext();
@@ -97,6 +99,8 @@ const useDiditAuth = ({
     logout,
     status,
     token,
+    tokenData,
+    user,
     walletAddress: address,
   };
 };
