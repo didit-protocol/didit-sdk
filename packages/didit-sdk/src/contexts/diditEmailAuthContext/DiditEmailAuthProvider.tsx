@@ -132,7 +132,7 @@ const DiditEmailAuthProvider = ({
   );
 
   const generateSocialAuthUrl = useCallback(
-    async (socialAuthProvider: SocialAuthProvider, popup: Window) => {
+    async (socialAuthProvider: SocialAuthProvider) => {
       // Force login when trying to login with a different method
       if (authMethod !== (socialAuthProvider as unknown as DiditAuthMethod)) {
         onDeauthenticate();
@@ -153,12 +153,7 @@ const DiditEmailAuthProvider = ({
 
       // Generate the authorization url
       const authorizeUrl = `${authorizationUrl}?client_id=${clientId}&response_type=${responseType}&scope=${scope}&claims=${claims}&redirect_uri=${encodedRedirectUrl}&code_verifier=${codeVerifier}&code_challenge=${codeChallenge}&code_challenge_method=${codeChallengeMethod}&idp=${idp}`;
-
-      // update popup url
-      popup.location = authorizeUrl;
-      setDiditEmailAuthPopup(popup);
-
-      if (popup) startInitMessageInterval(popup);
+      return authorizeUrl;
     },
     [
       authMethod,
@@ -166,7 +161,6 @@ const DiditEmailAuthProvider = ({
       clientId,
       scope,
       claims,
-      startInitMessageInterval,
       onDeauthenticate,
       emailAuthorizationPath,
       emailRedirectionPath,
@@ -188,10 +182,17 @@ const DiditEmailAuthProvider = ({
         `width=${width},height=${height},left=${left},top=${top}`
       );
       if (popupReference) {
-        generateSocialAuthUrl(socialAuthProvider, popupReference);
+        generateSocialAuthUrl(socialAuthProvider).then(authorizeUrl => {
+          // update popup url
+          if (popupReference) {
+            popupReference.location = authorizeUrl;
+            setDiditEmailAuthPopup(popupReference);
+            startInitMessageInterval(popupReference);
+          }
+        });
       }
     },
-    [generateSocialAuthUrl]
+    [generateSocialAuthUrl, startInitMessageInterval]
   );
 
   const loginWithGoogle = useCallback(
