@@ -1,9 +1,6 @@
-import {
-  DiditAuthMethod,
-  DiditLogin,
-  useDiditAuth,
-  useAuthenticationAdapter,
-} from 'didit-sdk';
+/* eslint jsx-a11y/label-has-associated-control: 0 */
+
+import { DiditLogin, useAuthenticationAdapter, useDiditAuth } from 'didit-sdk';
 import { Inter } from 'next/font/google';
 import { useState } from 'react';
 
@@ -68,6 +65,7 @@ export default function Home() {
               <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 w-52"
                 onClick={() => setIsLoginModalOpen(true)}
+                type="button"
               >
                 Open Login Modal
               </button>
@@ -75,6 +73,7 @@ export default function Home() {
               <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 w-52"
                 onClick={() => signOut()}
+                type="button"
               >
                 Logout
               </button>
@@ -84,17 +83,17 @@ export default function Home() {
           <div className="flex space-x-4 mb-4">
             <label className="flex items-center">
               <input
-                type="checkbox"
                 checked={providers.google}
                 onChange={() => handleProviderChange('google')}
+                type="checkbox"
               />
               <span className="ml-2">Google</span>
             </label>
             <label className="flex items-center">
               <input
-                type="checkbox"
                 checked={providers.wallet}
                 onChange={() => handleProviderChange('wallet')}
+                type="checkbox"
               />
               <span className="ml-2">Wallet</span>
             </label>
@@ -104,9 +103,9 @@ export default function Home() {
           <div className="mb-4">
             <label className="block mb-2 font-medium">Mode:</label>
             <select
-              value={modeSelected}
-              onChange={e => setModeSelected(e.target.value)}
               className="border rounded p-2"
+              onChange={e => setModeSelected(e.target.value)}
+              value={modeSelected}
             >
               <option value="modal">Modal</option>
               <option value="embedded">Embedded</option>
