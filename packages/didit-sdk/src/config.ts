@@ -25,7 +25,11 @@ const TOKEN_COOKIE_NAME = 'didit_token';
 const WALLET_ADDRESS_COOKIE_NAME = 'didit_wallet_address';
 const DEFAULT_CLAIMS = 'read:email';
 const DEFAULT_SCOPE = 'openid';
-const DEFAULT_AUTH_METHODS = [DiditAuthMethod.WALLET, DiditAuthMethod.GOOGLE];
+const DEFAULT_AUTH_METHODS = [
+  DiditAuthMethod.WALLET,
+  DiditAuthMethod.GOOGLE,
+  DiditAuthMethod.APPLE,
+];
 
 const DIDIT = {
   AUTH_METHOD_COOKIE_NAME,

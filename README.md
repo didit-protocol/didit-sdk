@@ -133,7 +133,7 @@ import { DiditAuthProvider} from 'didit-sdk';
 
 2. Additionally you can configure your **Didit** connection with more custom props:
 
-- `authMethods`: The authentication methods you want to enable for your users (Default: `['google', 'wallet]`)
+- `authMethods`: The authentication methods you want to enable for your users (Default: `['google', 'apple', 'wallet']`)
 - `emailAuthBaseUrl`: The base URL of your custom backend with **Didit** auth for email and social auth methods (Default: `https://apx.didit.me/auth`)
 - `walletAuthBaseUrl`: The base URL of your custom backend with **Didit** auth for wallet auth method (Default: `https://apx.didit.me/auth`)
 - `emailAuthorizationPath`: Custom path for email authorization endpoint (Default: `/oidc/authorize/`)
@@ -334,6 +334,8 @@ const {
     logout,
     status,
     token,
+    tokenData,
+    user,
     walletAddress: address,
 } = useDiditAuth({
   onError: (error: string) => console.error('Didit error: ', error),
@@ -355,6 +357,14 @@ return (
   >
     {isAuthenticated ? 'Logout' : 'Login'}
   </button>
+  <div>
+    <p>Auth method: {authMethod}</p>
+    <p>Status: {status}</p>
+    <p>Token: {token}</p>
+    <p>Is authenticated: {isAuthenticated}</p>
+    <p>User identifier: {user?.identifier}</p>
+    <p>Identifier type: {user?.identifierType}</p>
+  </div>
 )
 
 ```

@@ -9,7 +9,7 @@ import {
 } from 'didit-sdk';
 
 const Home = () => {
-  const { authMethod, status, token, isAuthenticated } = useDiditAuth({
+  const { authMethod, status, token, user, isAuthenticated } = useDiditAuth({
     onError: (_error: string) =>
       console.error('useDiditAuth: Didit error: ', _error),
     onLogin: (_authMethod?: string) =>
@@ -76,6 +76,34 @@ const Home = () => {
                 <b>{`${accessToken.slice(0, 8)}...${accessToken.slice(-8)}`}</b>
               </span>
             )}
+          </p>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            gap: 12,
+          }}
+        >
+          <p>
+            <span>Didit identifier type: </span>
+            <span>
+              <b>{user?.identifierType}</b>
+            </span>
+          </p>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            gap: 12,
+          }}
+        >
+          <p>
+            <span>Didit identifier : </span>
+            <span>
+              <b>{user?.identifier}</b>
+            </span>
           </p>
         </div>
         <div
