@@ -1,22 +1,20 @@
-import {
-  DiditAuthMethod,
-  DiditLogin,
-  useDiditAuth,
-  useAuthenticationAdapter
-} from 'didit-sdk';
+/* eslint jsx-a11y/label-has-associated-control: 0 */
+
+import { DiditLogin, useAuthenticationAdapter, useDiditAuth } from 'didit-sdk';
 import { Inter } from 'next/font/google';
 import { useState } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function Home() {
-  const { authMethod, isAuthenticated, status, token, walletAddress } = useDiditAuth();
+  const { authMethod, isAuthenticated, status, token, walletAddress } =
+    useDiditAuth();
   const { signOut } = useAuthenticationAdapter();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [modeSelected, setModeSelected] = useState("modal");
+  const [modeSelected, setModeSelected] = useState('modal');
   const [providers, setProviders] = useState({
     google: false,
-    wallet: false
+    wallet: false,
   });
 
   const accessToken = String(token);
@@ -24,11 +22,13 @@ export default function Home() {
   const handleProviderChange = (provider: string) => {
     setProviders({
       ...providers,
-      [provider]: !providers[provider as keyof typeof providers]
+      [provider]: !providers[provider as keyof typeof providers],
     });
   };
   return (
-    <main className={`flex flex-col min-h-screen p-10 bg-gray-100 ${inter.className}`}>
+    <main
+      className={`flex flex-col min-h-screen p-10 bg-gray-100 ${inter.className}`}
+    >
       {/* Authentication Details Header */}
       <header className="mb-6 p-6 bg-white shadow-lg rounded-lg">
         <h1 className="text-3xl font-bold mb-4">Didit Unified Access</h1>
@@ -59,20 +59,21 @@ export default function Home() {
       {/* Content Area */}
       <section className="flex-1">
         <div className="flex flex-col p-6 bg-white shadow-lg rounded-lg space-y-6">
-          
           {/* Buttons at the top right */}
           <div className="self-end mb-4">
-            {status === "unauthenticated" ? (
-              <button 
+            {status === 'unauthenticated' ? (
+              <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 w-52"
                 onClick={() => setIsLoginModalOpen(true)}
+                type="button"
               >
                 Open Login Modal
               </button>
             ) : (
-              <button 
+              <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 w-52"
                 onClick={() => signOut()}
+                type="button"
               >
                 Logout
               </button>
@@ -81,18 +82,18 @@ export default function Home() {
           {/* Provider Checkboxes */}
           <div className="flex space-x-4 mb-4">
             <label className="flex items-center">
-              <input 
-                type="checkbox" 
-                checked={providers.google} 
+              <input
+                checked={providers.google}
                 onChange={() => handleProviderChange('google')}
+                type="checkbox"
               />
               <span className="ml-2">Google</span>
             </label>
             <label className="flex items-center">
-              <input 
-                type="checkbox" 
-                checked={providers.wallet} 
+              <input
+                checked={providers.wallet}
                 onChange={() => handleProviderChange('wallet')}
+                type="checkbox"
               />
               <span className="ml-2">Wallet</span>
             </label>
@@ -101,39 +102,33 @@ export default function Home() {
           {/* Mode Select */}
           <div className="mb-4">
             <label className="block mb-2 font-medium">Mode:</label>
-            <select 
-              value={modeSelected} 
-              onChange={(e) => setModeSelected(e.target.value)}
+            <select
               className="border rounded p-2"
+              onChange={e => setModeSelected(e.target.value)}
+              value={modeSelected}
             >
               <option value="modal">Modal</option>
               <option value="embedded">Embedded</option>
             </select>
           </div>
 
-          { status === "unauthenticated" && (
+          {status === 'unauthenticated' && (
             <>
-
-           { modeSelected === "modal" && ( 
-          <div className="flex flex-col space-y-2">
-
-
-          <DiditLogin 
-          isModalOpen={isLoginModalOpen}
-          onModalClose={() => setIsLoginModalOpen(false)}
-          />
-          </div>
+              {modeSelected === 'modal' && (
+                <div className="flex flex-col space-y-2">
+                  <DiditLogin
+                    isModalOpen={isLoginModalOpen}
+                    onModalClose={() => setIsLoginModalOpen(false)}
+                  />
+                </div>
+              )}
+              {modeSelected === 'embedded' && (
+                <div className="flex flex-col space-y-2">
+                  <DiditLogin mode="embedded" />
+                </div>
+              )}
+            </>
           )}
-          { modeSelected === "embedded" && (
-          <div className="flex flex-col space-y-2">
-
-            <DiditLogin 
-            mode="embedded"/>
-          </div>
-          )}
-          </>
-          )}
-         
         </div>
       </section>
     </main>
