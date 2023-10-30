@@ -30,6 +30,7 @@ interface DiditAuthProviderProps {
   claims?: string;
   authMethods?: DiditAuthMethod[];
   emailAuthorizationPath?: string;
+  emailLogoutPath?: string;
   emailRedirectionPath?: string;
   onError?: (error: string) => void;
   onLogin?: (authMethod?: DiditAuthMethod) => void;
@@ -52,6 +53,7 @@ const DiditAuthProvider = ({
   clientId,
   emailAuthBaseUrl = DIDIT.DEFAULT_EMAIL_AUTH_BASE_URL,
   emailAuthorizationPath = DIDIT.DEFAULT_EMAIL_AUTH_AUTHORIZATION_PATH,
+  emailLogoutPath = DIDIT.DEFAULT_EMAIL_AUTH_LOGOUT_PATH,
   emailRedirectionPath = DIDIT.DEFAULT_EMAIL_AUTH_REDIRECT_URI_PATH,
   onError = () => {},
   onLogin = () => {},
@@ -111,6 +113,31 @@ const DiditAuthProvider = ({
     [setAuthMethod, status]
   );
 
+  const logoutFromDidit = useCallback(async () => {
+    try {
+      const url = `${emailAuthBaseUrl}${emailLogoutPath}`;
+
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        method: 'GET',
+      });
+
+      if (response.ok) {
+        return Promise.resolve();
+      } else {
+        return Promise.reject(
+          `Error logging out from Didit: ${response.statusText}`
+        );
+      }
+    } catch (error) {
+      console.error('Error logging out from Didit: ', error);
+      return Promise.reject(error);
+    }
+  }, [emailAuthBaseUrl, emailLogoutPath, token]);
+
   const deauthenticate = useCallback(() => {
     removeAuthMethod();
     if (status !== AuthenticationStatus.UNAUTHENTICATED) {
@@ -119,6 +146,20 @@ const DiditAuthProvider = ({
       setError('');
     }
   }, [removeAuthMethod, status, removeToken]);
+
+  const logout = useCallback(async () => {
+    try {
+      if (status === AuthenticationStatus.AUTHENTICATED && !!token) {
+        await logoutFromDidit();
+        debugger;
+      }
+      deauthenticate();
+      onLogout();
+    } catch (error) {
+      debugger;
+      onError(String(error));
+    }
+  }, [deauthenticate, logoutFromDidit, onLogout, onError, status, token]);
 
   const handleError = useCallback(
     (error: string) => {
@@ -206,22 +247,13 @@ const DiditAuthProvider = ({
       authMethod,
       availableAuthMethods: authMethods,
       error,
-      logout: deauthenticate,
+      logout,
       status,
       token,
       tokenData,
       user,
     }),
-    [
-      authMethod,
-      authMethods,
-      deauthenticate,
-      error,
-      status,
-      token,
-      tokenData,
-      user,
-    ]
+    [authMethod, authMethods, logout, error, status, token, tokenData, user]
   );
 
   return (
