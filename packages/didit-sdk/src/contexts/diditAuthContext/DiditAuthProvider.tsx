@@ -113,6 +113,7 @@ const DiditAuthProvider = ({
     [setAuthMethod, status]
   );
 
+  // logoutFromDidit is used to logout from the Didit service.
   const logoutFromDidit = useCallback(async () => {
     try {
       const url = `${emailAuthBaseUrl}${emailLogoutPath}`;
@@ -138,25 +139,29 @@ const DiditAuthProvider = ({
     }
   }, [emailAuthBaseUrl, emailLogoutPath, token]);
 
+  // deauthenticate is used to force a frontend only logout. It remvoes all authentication data from the browser
   const deauthenticate = useCallback(() => {
+    setStatus(AuthenticationStatus.UNAUTHENTICATED);
+    removeToken();
     removeAuthMethod();
-    if (status !== AuthenticationStatus.UNAUTHENTICATED) {
-      setStatus(AuthenticationStatus.UNAUTHENTICATED);
-      removeToken();
-      setError('');
-    }
-  }, [removeAuthMethod, status, removeToken]);
+    setError('');
+  }, [removeAuthMethod, removeToken]);
 
+  // forceCompleteLogout is used to force a complete logout from the Didit service and from the frontend.
+  const forceCompleteLogout = useCallback(() => {
+    if (token) logoutFromDidit(); // Logout from Didit service
+    deauthenticate(); // Remove all authentication data from the browser
+  }, [token, logoutFromDidit, deauthenticate]);
+
+  // logout is the callback used to logout from the SDK.
   const logout = useCallback(async () => {
     try {
       if (status === AuthenticationStatus.AUTHENTICATED && !!token) {
         await logoutFromDidit();
-        debugger;
       }
       deauthenticate();
       onLogout();
     } catch (error) {
-      debugger;
       onError(String(error));
     }
   }, [deauthenticate, logoutFromDidit, onLogout, onError, status, token]);
@@ -202,20 +207,22 @@ const DiditAuthProvider = ({
       authenticate(authMethod);
       onLogin(authMethod);
     } else {
-      setStatus(AuthenticationStatus.UNAUTHENTICATED);
+      // Consolidate logout status in both frontend and backend
+      forceCompleteLogout();
+      onLogout();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authMethod, token]);
 
   // Check token expiration
-  // Todo: call didi api check token expiration
+  // Todo: call Didit api check token expiration
   // and use refresh token to get new token
   useEffect(() => {
     if (token) {
       const token_info = parseJwt(token);
       if (token_info.exp * 1000 < Date.now()) {
-        removeToken();
-        removeAuthMethod();
+        // We cannot logout from Didit service since the token is expired
+        deauthenticate();
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
