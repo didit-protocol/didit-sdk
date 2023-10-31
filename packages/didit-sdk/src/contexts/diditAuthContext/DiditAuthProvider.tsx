@@ -30,7 +30,7 @@ interface DiditAuthProviderProps {
   claims?: string;
   authMethods?: DiditAuthMethod[];
   emailAuthorizationPath?: string;
-  emailLogoutPath?: string;
+  emailLogoutIframePath?: string;
   emailRedirectionPath?: string;
   onError?: (error: string) => void;
   onLogin?: (authMethod?: DiditAuthMethod) => void;
@@ -53,7 +53,7 @@ const DiditAuthProvider = ({
   clientId,
   emailAuthBaseUrl = DIDIT.DEFAULT_EMAIL_AUTH_BASE_URL,
   emailAuthorizationPath = DIDIT.DEFAULT_EMAIL_AUTH_AUTHORIZATION_PATH,
-  emailLogoutPath = DIDIT.DEFAULT_EMAIL_AUTH_LOGOUT_PATH,
+  emailLogoutIframePath = DIDIT.DEFAULT_EMAIL_AUTH_LOGOUT_IFRAME_PATH,
   emailRedirectionPath = DIDIT.DEFAULT_EMAIL_AUTH_REDIRECT_URI_PATH,
   onError = () => {},
   onLogin = () => {},
@@ -64,6 +64,8 @@ const DiditAuthProvider = ({
   walletAuthorizationPath = DIDIT.DEFAULT_WALLET_AUTH_AUTHORIZATION_PATH,
 }: DiditAuthProviderProps) => {
   const firstRender = useRef(true);
+  const logoutIframe = useRef<HTMLIFrameElement>(null);
+
   const {
     remove: removeToken,
     set: setToken,
@@ -115,29 +117,17 @@ const DiditAuthProvider = ({
 
   // logoutFromDidit is used to logout from the Didit service.
   const logoutFromDidit = useCallback(async () => {
-    try {
-      const url = `${emailAuthBaseUrl}${emailLogoutPath}`;
+    const diditOrigin = new URL(emailAuthBaseUrl).origin;
 
-      const response = await fetch(url, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        method: 'GET',
-      });
-
-      if (response.ok) {
-        return Promise.resolve();
-      } else {
-        return Promise.reject(
-          `Error logging out from Didit: ${response.statusText}`
-        );
-      }
-    } catch (error) {
-      console.error('Error logging out from Didit: ', error);
-      return Promise.reject(error);
-    }
-  }, [emailAuthBaseUrl, emailLogoutPath, token]);
+    // Send logout message to Didit Auth iframe
+    debugger;
+    logoutIframe.current?.contentWindow?.postMessage(
+      {
+        type: DIDIT.EMAIL_AUTH_LOGOUT_POST_MESSAGE_TYPE,
+      },
+      diditOrigin
+    );
+  }, [emailAuthBaseUrl]);
 
   // deauthenticate is used to force a frontend only logout. It remvoes all authentication data from the browser
   const deauthenticate = useCallback(() => {
@@ -165,6 +155,28 @@ const DiditAuthProvider = ({
       onError(String(error));
     }
   }, [deauthenticate, logoutFromDidit, onLogout, onError, status, token]);
+
+  const handleLogoutIframeMessage = useCallback(
+    (event: MessageEvent) => {
+      const diditOrigin = new URL(emailAuthBaseUrl).origin;
+
+      if (event.origin.replace(/\/$/, '') !== diditOrigin.replace(/\/$/, ''))
+        return;
+
+      // Access the data sent in the message
+      const messageData = event?.data;
+
+      // Check if the message is an init response message
+      if (messageData?.type === DIDIT.EMAIL_AUTH_LOGOUT_POST_MESSAGE_TYPE) {
+        debugger;
+        if (messageData.success === false) {
+          console.error(messageData.error);
+          onError(messageData.error);
+        }
+      }
+    },
+    [emailAuthBaseUrl, onError]
+  );
 
   const handleError = useCallback(
     (error: string) => {
@@ -249,6 +261,16 @@ const DiditAuthProvider = ({
     validateScope();
   }, [validateClaims, validateScope]);
 
+  // Handle messages from Didit Auth iframe
+  useEffect(() => {
+    window.addEventListener('message', handleLogoutIframeMessage, false);
+
+    // Clean up the window function when the component unmounts
+    return () => {
+      window.removeEventListener('message', handleLogoutIframeMessage);
+    };
+  }, [handleLogoutIframeMessage]);
+
   const contextValue = useMemo(
     () => ({
       authMethod,
@@ -265,6 +287,14 @@ const DiditAuthProvider = ({
 
   return (
     <DiditAuthContext.Provider value={contextValue}>
+      <iframe
+        height="0"
+        id="logout-iframe"
+        ref={logoutIframe}
+        src={`${emailAuthBaseUrl}${emailLogoutIframePath}`}
+        title="Didit Logout Iframe"
+        width="0"
+      />
       <DiditEmailAuthProvider
         authMethod={authMethod}
         claims={claims}
