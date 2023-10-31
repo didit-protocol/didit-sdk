@@ -293,6 +293,9 @@ importers:
       '@testing-library/user-event':
         specifier: ^14.4.3
         version: 14.4.3
+      '@types/js-cookie':
+        specifier: ^3.0.5
+        version: 3.0.5
       '@types/qrcode':
         specifier: ^1.4.2
         version: 1.4.2
@@ -4298,6 +4301,10 @@ packages:
       expect: 29.7.0
       pretty-format: 29.7.0
     dev: false
+
+  /@types/js-cookie@3.0.5:
+    resolution: {integrity: sha512-dtLshqoiGRDHbHueIT9sjkd2F4tW1qPSX2xKAQK8p1e6pM+Z913GM1shv7dOqqasEMYbC5zEaClJomQe8OtQLA==}
+    dev: true
 
   /@types/json-schema@7.0.13:
     resolution: {integrity: sha512-RbSSoHliUbnXj3ny0CNFOoxrIDV6SUGyStHsvDqosw6CkdPV8TtWGlfecuK4ToyMEAql6pzNxgCFKanovUzlgQ==}
