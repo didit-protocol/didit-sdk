@@ -1,4 +1,5 @@
 import { useLocalStorageValue } from '@react-hookz/web';
+import Cookies from 'js-cookie';
 import React, {
   useCallback,
   useEffect,
@@ -102,6 +103,10 @@ const DiditAuthProvider = ({
     [tokenData]
   );
 
+  const setSessionId = useCallback((sessionId: string) => {
+    Cookies.set('sessionid', sessionId);
+  }, []);
+
   const authenticate = useCallback(
     (_authMethod: DiditAuthMethod) => {
       setAuthMethod(_authMethod);
@@ -119,6 +124,7 @@ const DiditAuthProvider = ({
       const url = `${emailAuthBaseUrl}${emailLogoutPath}`;
 
       const response = await fetch(url, {
+        credentials: 'include',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -143,6 +149,7 @@ const DiditAuthProvider = ({
   const deauthenticate = useCallback(() => {
     setStatus(AuthenticationStatus.UNAUTHENTICATED);
     removeToken();
+    Cookies.remove('sessionid');
     removeAuthMethod();
     setError('');
   }, [removeAuthMethod, removeToken]);
@@ -276,6 +283,7 @@ const DiditAuthProvider = ({
         onAuthenticate={authenticate}
         onDeauthenticate={deauthenticate}
         onError={handleError}
+        onUpdateSessionId={setSessionId}
         onUpdateToken={setToken}
         scope={scope}
         status={status}

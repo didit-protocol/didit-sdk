@@ -23,6 +23,7 @@ const EMAIL_AUTH_POPUP_HEIGHT = 600;
 // General Didit
 const AUTH_METHOD_COOKIE_NAME = 'didit_auth_method';
 const TOKEN_COOKIE_NAME = 'didit_token';
+const SESSION_ID_COOKIE_NAME = 'didit_session_id';
 const WALLET_ADDRESS_COOKIE_NAME = 'didit_wallet_address';
 const DEFAULT_CLAIMS = 'read:email';
 const DEFAULT_SCOPE = 'openid';
@@ -52,6 +53,7 @@ const DIDIT = {
   EMAIL_AUTH_RESPONSE_TYPE,
   EMAIL_AUTH_TOKEN_POST_MESSAGE_ERROR_TYPE,
   EMAIL_AUTH_TOKEN_POST_MESSAGE_TYPE,
+  SESSION_ID_COOKIE_NAME,
   TOKEN_COOKIE_NAME,
   WALLET_ADDRESS_COOKIE_NAME,
 };
