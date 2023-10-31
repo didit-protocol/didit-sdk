@@ -3,7 +3,6 @@ import {
   getDefaultWallets,
   lightTheme,
   DiditAuthProvider,
-  DiditRainbowkitProvider,
   DiditAuthMethod,
 } from 'didit-sdk';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';

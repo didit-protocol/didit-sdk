@@ -4,7 +4,7 @@
 
 # Didit-SDK
 
-**The easiest wau to connect to [Didit protocol(https://docs.didit.me/)]**
+**The easiest way to connect to [Didit protocol(https://docs.didit.me/)]**
 
 Didit-SDK is a [React](https://reactjs.org/) library that makes it easy to add wallet connection to your dapp.
 
@@ -25,7 +25,7 @@ You can use the CodeSandbox links below try out **Didit** Sdk:
 The following examples are provided in the [examples](./examples/) folder of this repo.
 
 - `with-vite-react`
-  The example contains a first view 'localhost:3030' where you can test the ConnetButton and a second view 'localhost:3030/status' where you can login, logout and check the auth status from with you own buttons and hooks!
+  The example contains a first view 'localhost:3000' where you can test the ConnetButton and a second view 'localhost:3000/status' where you can login, logout and check the auth status from with you own buttons and hooks!
 
 - `with-create-react-app`
   this one contains only connection button on home page
@@ -76,9 +76,65 @@ import { DiditAuthProvider, DiditLoginButton, DiditAuthMethod, ... } from 'didit
 
 #### Configure
 
+##### Configure Didit provider
+
+1. Set up the `DiditAuthProvider` with minimum configurable props:
+
+- `clientId`: Your **Didit** client id
+
+```tsx
+import { DiditAuthProvider} from 'didit-sdk';
+
+...
+
+      <DiditAuthProvider
+        clientId="676573"
+      >
+        {children}
+      </DiditAuthProvider>
+```
+
+2. Additionally you can configure your **Didit** connection with more custom props:
+
+- `authMethods`: The authentication methods you want to enable for your users (Default: `['google', 'apple', 'wallet']`)
+- `emailAuthBaseUrl`: The base URL of your custom backend with **Didit** auth for email and social auth methods (Default: `https://apx.didit.me/auth`)
+- `walletAuthBaseUrl`: The base URL of your custom backend with **Didit** auth for wallet auth method (Default: `https://apx.didit.me/auth`)
+- `emailAuthorizationPath`: Custom path for email authorization endpoint (Default: `/oidc/authorize/`)
+- `emailRedirectionPath`: Custom path for email redirection. It is used as redirect_uri param after authorization (Default: `/oidc/callback/`)
+- `walletAuthorizationPath`: Custom path for wallet authorization endpoint (Default: `/authorizations/v1/wallet-authorization/`)
+- `tokenAuthorizationPath`: Custom path for token endpoint (Default: `/authorizations/v1/token/`)
+- `claims`: The claims you want to request from your users (Default: `"read:email"`)
+- `scope`: The scopes you want to request from your users (Default: `"openid"`)
+- `onError`: A callback function that will be called when an error occurs during the authentication process
+- `onLogin`: A callback function that will be called when the user successfully logs in
+- `onLogout`: A callback function that will be called when the user successfully logs out
+
+```tsx
+import { DiditAuthProvider, DiditAuthMethod } from 'didit-sdk';
+
+...
+      <DiditAuthProvider
+        authMethods={[DiditAuthMethod.APPLE, DiditAuthMethod.GOOGLE]}
+        emailAuthBaseUrl="https://my.didit.app/auth/email"
+        walletAuthBaseUrl="https://my.didit.app/auth/wallet"
+        clientId="676573"
+        claims="read:email write:email read:profile read:blockchain"
+        scope="openid profile"
+        emailAuthorizationPath="/authorize/"
+        emailRedirectionPath="/redirect/"
+        walletAuthorizationPath="/wallet-authorization/"
+        tokenAuthorizationPath="/token/"
+        onLogin={(_authMethod?: DiditAuthMethod) =>
+          console.log('Logged in Didit with', _authMethod)
+        }
+        onLogout={() => console.log('Logged out Didit')}
+        onError={(_error: string) => console.error('Didit error: ', _error)}
+      >
+```
+
 ##### Configure Wagmi
 
-Configure your desired chains and generate the required connectors. You will also need to setup a `wagmi` config.
+if you want to use the wallet method, You will also need to configure your desired chains, generate the required connectors and setup a `wagmi` config
 
 > Note: Every dApp that relies on WalletConnect now needs to obtain a `projectId` from [WalletConnect Cloud](https://cloud.walletconnect.com/). This is absolutely free and only takes a few minutes.
 
@@ -113,65 +169,9 @@ const wagmiConfig = createConfig({
 
 [Read more about configuring chains & providers with `wagmi`](https://wagmi.sh/docs/providers/configuring-chains).
 
-##### Configure Didit providers
+1. Set up [`WagmiConfig`](https://wagmi.sh/docs/provider):
 
-1. Set up the `DiditAuthProvider` with minimum configurable props:
-
-- `clientId`: Your **Didit** client id
-
-```tsx
-import { DiditAuthProvider} from 'didit-sdk';
-
-...
-
-      <DiditAuthProvider
-        clientId="676573"
-      >
-        {children}
-      </DiditAuthProvider>
-```
-
-2. Additionally you can configure your **Didit** connection with more custom props:
-
-- `authMethods`: The authentication methods you want to enable for your users (Default: `['google', 'apple', 'wallet']`)
-- `emailAuthBaseUrl`: The base URL of your custom backend with **Didit** auth for email and social auth methods (Default: `https://apx.didit.me/auth`)
-- `walletAuthBaseUrl`: The base URL of your custom backend with **Didit** auth for wallet auth method (Default: `https://apx.didit.me/auth`)
-- `emailAuthorizationPath`: Custom path for email authorization endpoint (Default: `/oidc/authorize/`)
-- `emailRedirectionPath`: Custom path for email redirection. It is used as redirect_uri param after authorization (Default: `/oidc/callback/`)
-- `walletAuthorizationPath`: Custom path for wallet authorization endpoint (Default: `/authorizations/v1/wallet-authorization/`)
-- `tokenAuthorizationPath`: Custom path for token endpoint (Default: `/authorizations/v1/token/`)
-- `claims`: The claims you want to request from your users (Default: `['read:email']`)
-- `scope`: The scope you want to request from your users (Default: `['openid']`)
-- `onError`: A callback function that will be called when an error occurs during the authentication process
-- `onLogin`: A callback function that will be called when the user successfully logs in
-- `onLogout`: A callback function that will be called when the user successfully logs out
-
-```tsx
-import { DiditAuthProvider, DiditAuthMethod } from 'didit-sdk';
-
-...
-      <DiditAuthProvider
-        authMethods={[DiditAuthMethod.WALLET, DiditAuthMethod.GOOGLE]}
-        emailAuthBaseUrl="https://my.didit.app/auth/email"
-        walletAuthBaseUrl="https://my.didit.app/auth/wallet"
-        clientId="676573"
-        claims={ ['read:email', 'write:email', 'read:profile', 'read:blockchain']}
-        scope={ ['openid', 'profile']
-        emailAuthorizationPath="/authorize/"
-        emailRedirectionPath="/redirect/"
-        walletAuthorizationPath="/wallet-authorization/"
-        tokenAuthorizationPath="/token/"
-        onLogin={(_authMethod?: DiditAuthMethod) =>
-          console.log('Logged in Didit with', _authMethod)
-        }
-        onLogout={() => console.log('Logged out Didit')}
-        onError={(_error: string) => console.error('Didit error: ', _error)}
-      >
-```
-
-2. Set up [`WagmiConfig`](https://wagmi.sh/docs/provider) provider and `DiditRainbowkitProvider`:
-
-Pass the next parameters to the `DiditRainbowkitProvider` provider:
+Pass the next parameters to the `DiditAuthProvider` provider:
 
 - `chains`: Wagmi config of the requested chain [i.e: wagmiConfig.chains]
 - `theme`: theme function to customize RainbowKit UI to match your branding.
@@ -182,22 +182,18 @@ Pass the next parameters to the `DiditRainbowkitProvider` provider:
     refer to [RainbowKit Theming](https://www.rainbowkit.com/docs/theming) for more.
 
 ```tsx
-    <WagmiConfig
-      config={wagmiConfig} // The one that was configured before for Wagmi
-    >
-        <DiditRainbowkitProvider
-          chains={chains}
-          theme={lightTheme()}
-        >
-          {children}
-        </DiditRainbowkitProvider>
-      </DiditAuthProvider>
-    </WagmiConfig>
+<WagmiConfig
+  config={wagmiConfig} // The one that was configured before for Wagmi
+>
+  <DiditAuthProvider clientId="676573" chains={chains} theme={lightTheme()}>
+    {children}
+  </DiditAuthProvider>
+</WagmiConfig>
 ```
 
 ##### Wrap all providers
 
-Wrap your application with `WagmiConfig`, `DiditRainbowkitProvider` and `DiditAuthProvider` providers in the following order and way:
+Wrap your application with `WagmiConfig` and `DiditAuthProvider` providers in the following order and way:
 
 ```tsx
 const App = () => {
@@ -205,10 +201,8 @@ const App = () => {
     <WagmiConfig
       config={wagmiConfig} // The one that was configured before for Wagmi
     >
-      <DiditAuthProvider clientId="676573">
-        <DiditRainbowkitProvider chains={chains} theme={lightTheme()}>
-          {children}
-        </DiditRainbowkitProvider>
+      <DiditAuthProvider clientId="676573" chains={chains} theme={lightTheme()}>
+        {children}
       </DiditAuthProvider>
     </WagmiConfig>
   );
