@@ -3,7 +3,6 @@ import 'didit-sdk/styles.css';
 import {
   DiditAuthMethod,
   DiditAuthProvider,
-  DiditRainbowkitProvider,
   getDefaultWallets,
   lightTheme,
 } from 'didit-sdk';
@@ -41,6 +40,7 @@ export default function App({ Component, pageProps }: AppProps) {
           DiditAuthMethod.GOOGLE,
           DiditAuthMethod.APPLE,
         ]}
+        chains={chains}
         claims={process.env.NEXT_PUBLIC_DIDIT_CLAIMS}
         clientId={process.env.NEXT_PUBLIC_DIDIT_CLIENT_ID || ''}
         emailAuthBaseUrl={
@@ -52,15 +52,14 @@ export default function App({ Component, pageProps }: AppProps) {
         }
         onLogout={() => console.warn('Logged out Didit')}
         scope={process.env.NEXT_PUBLIC_DIDIT_SCOPE}
+        theme={lightTheme()}
         tokenAuthorizationPath="/token"
         walletAuthBaseUrl={
           process.env.NEXT_PUBLIC_DIDIT_WALLET_AUTH_BASE_URL || ''
         }
         walletAuthorizationPath="/wallet-authorization"
       >
-        <DiditRainbowkitProvider chains={chains} theme={lightTheme()}>
-          <Component {...pageProps} />
-        </DiditRainbowkitProvider>
+        <Component {...pageProps} />
       </DiditAuthProvider>
     </WagmiConfig>
   );
