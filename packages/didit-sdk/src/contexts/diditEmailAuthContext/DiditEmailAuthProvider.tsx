@@ -254,7 +254,7 @@ const DiditEmailAuthProvider = ({
   );
 
   const loginWithEmail = useCallback(
-    () => console.warn("NotImplementedError: Email login isn't supzported yet"),
+    () => console.warn("NotImplementedError: Email login isn't supported yet"),
     []
   );
 
