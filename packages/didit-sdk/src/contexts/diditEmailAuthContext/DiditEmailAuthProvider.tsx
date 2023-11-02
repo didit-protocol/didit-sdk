@@ -53,11 +53,23 @@ const DiditEmailAuthProvider = ({
   status,
   token,
 }: DiditEmailAuthProviderProps) => {
+  // Sanitize window values. Window reference is not available in SSR (nextjs)
+  const isPopupWindow = typeof window !== 'undefined' && !!window?.opener;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const windowLocation =
+    typeof window !== 'undefined'
+      ? window?.location
+      : {
+          href: '',
+          origin: '',
+          pathname: '',
+          search: '',
+        };
+
   // Create the Didit auth popup and broadcast channel to communicate with auth popup
   const [diditAuthPopup, setDiditEmailAuthPopup] = useState<Window | null>(
     null
   );
-  const isPopupWindow = !!window.opener;
 
   const {
     remove: removeCodeVerifier,
@@ -257,7 +269,7 @@ const DiditEmailAuthProvider = ({
     // Assert token request never happens in the popup window
     if (isPopupWindow) return;
 
-    const urlSearchParams = new URLSearchParams(window.location.search);
+    const urlSearchParams = new URLSearchParams(windowLocation.search);
     const params = Object.fromEntries(urlSearchParams.entries());
 
     const _authorizationCode = params?.code;
@@ -266,33 +278,33 @@ const DiditEmailAuthProvider = ({
 
     if (_authorizationCode && !token && codeVerifier) {
       urlSearchParams.delete('code');
-      window.history.replaceState({}, '', `${window.location.pathname}`);
+      window.history.replaceState({}, '', `${windowLocation.pathname}`);
 
       // Request the Didit token
       getDiditToken(_authorizationCode, codeVerifier);
     } else if (authorizationError) {
       urlSearchParams.delete('error');
       urlSearchParams.delete('error_description');
-      window.history.replaceState({}, '', `${window.location.pathname}`);
+      window.history.replaceState({}, '', `${windowLocation.pathname}`);
 
       handleTokenError(authorizationError, authorizationErrorDescription);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [window.location.search, token, getDiditToken, handleTokenError]);
+  }, [windowLocation.search, token, getDiditToken, handleTokenError]);
 
   // Effect to propagate redirection from the popup to the parent window
   useEffect(() => {
-    const windowUrl = window.location.origin + window.location.pathname;
+    const windowUrl = windowLocation.origin + windowLocation.pathname;
 
     // If there is a parent window and redirect uri matches, we are in the popup
     if (isPopupWindow && windowUrl === redirectUri) {
       // Redirect the parent window to the current URL with search params
-      window.opener.location.href = window.location.href;
+      window.opener.location.href = windowLocation.href;
       // Close the popup
       window.close();
     }
-  }, [isPopupWindow, redirectUri]);
+  }, [isPopupWindow, windowLocation, redirectUri]);
 
   const contextValue = useMemo(
     () => ({

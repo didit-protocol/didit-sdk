@@ -118,7 +118,7 @@ import { DiditAuthProvider, DiditAuthMethod } from 'didit-sdk';
         emailAuthBaseUrl="https://my.didit.app/auth/email"
         walletAuthBaseUrl="https://my.didit.app/auth/wallet"
         clientId="676573"
-        claims="read:email write:email read:profile read:blockchain"
+        claims="read:emails write:emails read:profile read:blockchain"
         scope="openid profile"
         emailAuthorizationPath="/authorize/"
         emailRedirectionPath="/redirect/"
