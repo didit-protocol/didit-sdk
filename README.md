@@ -138,6 +138,7 @@ import { DiditAuthProvider} from 'didit-sdk';
 - `walletAuthBaseUrl`: The base URL of your custom backend with **Didit** auth for wallet auth method (Default: `https://apx.didit.me/auth`)
 - `emailAuthorizationPath`: Custom path for email authorization endpoint (Default: `/oidc/authorize/`)
 - `emailRedirectionPath`: Custom path for email redirection. It is used as redirect_uri param after authorization (Default: `/oidc/callback/`)
+- `emailLogoutPath`: Custom path for email logout endpoint (Default: `/oidc/logout/`)
 - `walletAuthorizationPath`: Custom path for wallet authorization endpoint (Default: `/authorizations/v1/wallet-authorization/`)
 - `tokenAuthorizationPath`: Custom path for token endpoint (Default: `/authorizations/v1/token/`)
 - `claims`: The claims you want to request from your users (Default: `['read:email']`)
@@ -159,6 +160,7 @@ import { DiditAuthProvider, DiditAuthMethod } from 'didit-sdk';
         scope={ ['openid', 'profile']
         emailAuthorizationPath="/authorize/"
         emailRedirectionPath="/redirect/"
+        emailLogoutPath="/logout/"
         walletAuthorizationPath="/wallet-authorization/"
         tokenAuthorizationPath="/token/"
         onLogin={(_authMethod?: DiditAuthMethod) =>

@@ -30,6 +30,7 @@ interface DiditAuthProviderProps {
   claims?: string;
   authMethods?: DiditAuthMethod[];
   emailAuthorizationPath?: string;
+  emailLogoutPath?: string;
   emailRedirectionPath?: string;
   onError?: (error: string) => void;
   onLogin?: (authMethod?: DiditAuthMethod) => void;
@@ -52,6 +53,7 @@ const DiditAuthProvider = ({
   clientId,
   emailAuthBaseUrl = DIDIT.DEFAULT_EMAIL_AUTH_BASE_URL,
   emailAuthorizationPath = DIDIT.DEFAULT_EMAIL_AUTH_AUTHORIZATION_PATH,
+  emailLogoutPath = DIDIT.DEFAULT_EMAIL_AUTH_LOGOUT_PATH,
   emailRedirectionPath = DIDIT.DEFAULT_EMAIL_AUTH_REDIRECT_URI_PATH,
   onError = () => {},
   onLogin = () => {},
@@ -111,14 +113,58 @@ const DiditAuthProvider = ({
     [setAuthMethod, status]
   );
 
-  const deauthenticate = useCallback(() => {
-    removeAuthMethod();
-    if (status !== AuthenticationStatus.UNAUTHENTICATED) {
-      setStatus(AuthenticationStatus.UNAUTHENTICATED);
-      removeToken();
-      setError('');
+  // logoutFromDidit is used to logout from the Didit service.
+  const logoutFromDidit = useCallback(async () => {
+    try {
+      const url = `${emailAuthBaseUrl}${emailLogoutPath}`;
+
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        method: 'GET',
+      });
+
+      if (response.ok) {
+        return Promise.resolve();
+      } else {
+        return Promise.reject(
+          `Error logging out from Didit: ${response.statusText}`
+        );
+      }
+    } catch (error) {
+      console.error('Error logging out from Didit: ', error);
+      return Promise.reject(error);
     }
-  }, [removeAuthMethod, status, removeToken]);
+  }, [emailAuthBaseUrl, emailLogoutPath, token]);
+
+  // deauthenticate is used to force a frontend only logout. It remvoes all authentication data from the browser
+  const deauthenticate = useCallback(() => {
+    setStatus(AuthenticationStatus.UNAUTHENTICATED);
+    removeToken();
+    removeAuthMethod();
+    setError('');
+  }, [removeAuthMethod, removeToken]);
+
+  // forceCompleteLogout is used to force a complete logout from the Didit service and from the frontend.
+  const forceCompleteLogout = useCallback(() => {
+    if (token) logoutFromDidit(); // Logout from Didit service
+    deauthenticate(); // Remove all authentication data from the browser
+  }, [token, logoutFromDidit, deauthenticate]);
+
+  // logout is the callback used to logout from the SDK.
+  const logout = useCallback(async () => {
+    try {
+      if (status === AuthenticationStatus.AUTHENTICATED && !!token) {
+        await logoutFromDidit();
+      }
+      deauthenticate();
+      onLogout();
+    } catch (error) {
+      onError(String(error));
+    }
+  }, [deauthenticate, logoutFromDidit, onLogout, onError, status, token]);
 
   const handleError = useCallback(
     (error: string) => {
@@ -161,20 +207,22 @@ const DiditAuthProvider = ({
       authenticate(authMethod);
       onLogin(authMethod);
     } else {
-      setStatus(AuthenticationStatus.UNAUTHENTICATED);
+      // Consolidate logout status in both frontend and backend
+      forceCompleteLogout();
+      onLogout();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authMethod, token]);
 
   // Check token expiration
-  // Todo: call didi api check token expiration
+  // Todo: call Didit api check token expiration
   // and use refresh token to get new token
   useEffect(() => {
     if (token) {
       const token_info = parseJwt(token);
       if (token_info.exp * 1000 < Date.now()) {
-        removeToken();
-        removeAuthMethod();
+        // We cannot logout from Didit service since the token is expired
+        deauthenticate();
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -206,22 +254,13 @@ const DiditAuthProvider = ({
       authMethod,
       availableAuthMethods: authMethods,
       error,
-      logout: deauthenticate,
+      logout,
       status,
       token,
       tokenData,
       user,
     }),
-    [
-      authMethod,
-      authMethods,
-      deauthenticate,
-      error,
-      status,
-      token,
-      tokenData,
-      user,
-    ]
+    [authMethod, authMethods, logout, error, status, token, tokenData, user]
   );
 
   return (
