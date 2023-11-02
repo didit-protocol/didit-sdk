@@ -64,7 +64,7 @@ npm install didit-sdk wagmi viem
 
 #### Import
 
-Import ` didit-sdk`` and `wagmi.
+Import `didit-sdk` and `wagmi``.
 
 All the components, providers, hooks and utils are exported from the main `didit-sdk` package.
 
