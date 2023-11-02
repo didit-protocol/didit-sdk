@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { DiditLogin } from 'didit-sdk';
+import { DiditLogin, DiditLoginMode } from 'didit-sdk';
 
 export default function DiditLoginPage() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -14,12 +14,12 @@ export default function DiditLoginPage() {
         gap: '1rem',
       }}
     >
-      <DiditLogin mode="embedded" />
+      <DiditLogin mode={DiditLoginMode.EMBEDDED} />
       <button onClick={() => setIsLoginModalOpen(true)}>
         open login modal
       </button>
       <DiditLogin
-        mode="modal"
+        mode={DiditLoginMode.MODAL}
         isModalOpen={isLoginModalOpen}
         onModalClose={() => setIsLoginModalOpen(false)}
       />

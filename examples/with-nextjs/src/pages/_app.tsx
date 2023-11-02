@@ -44,9 +44,6 @@ export default function App({ Component, pageProps }: AppProps) {
         chains={chains}
         claims={process.env.NEXT_PUBLIC_DIDIT_CLAIMS}
         clientId={process.env.NEXT_PUBLIC_DIDIT_CLIENT_ID || ''}
-        emailAuthBaseUrl={
-          process.env.NEXT_PUBLIC_DIDIT_EMAIL_AUTH_BASE_URL || ''
-        }
         emailAuthMode={DiditEmailAuthMode.POPUP}
         onError={(_error: string) => console.error('Didit error: ', _error)}
         onLogin={(_authMethod?: DiditAuthMethod) =>

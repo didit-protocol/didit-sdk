@@ -19,8 +19,6 @@ interface DiditEmailAuthProviderProps {
   children: React.ReactNode;
   claims: string;
   clientId: string;
-  emailAuthBaseUrl?: string;
-  emailAuthorizationPath?: string;
   emailAuthMode?: DiditEmailAuthMode;
   error?: string;
   onAuthenticate?: (_authMethod: DiditAuthMethod) => void;
@@ -39,9 +37,7 @@ const DiditEmailAuthProvider = ({
   children,
   claims = '',
   clientId,
-  emailAuthBaseUrl = DIDIT.DEFAULT_EMAIL_AUTH_BASE_URL,
   emailAuthMode = DIDIT.DEFAULT_EMAIL_AUTH_MODE,
-  emailAuthorizationPath = DIDIT.DEFAULT_EMAIL_AUTH_AUTHORIZATION_PATH,
   error,
   onAuthenticate = () => {},
   onDeauthenticate = () => {},
@@ -140,7 +136,7 @@ const DiditEmailAuthProvider = ({
       }
 
       // Configure the Didit auth popup
-      const authorizationUrl = `${emailAuthBaseUrl}${emailAuthorizationPath}`;
+      const authorizationUrl = `${DIDIT.EMAIL_AUTH_BASE_URL}${DIDIT.EMAIL_AUTH_AUTHORIZATION_PATH}`;
       const codeChallengeMethod = DIDIT.EMAIL_AUTH_CODE_CHALLENGE_METHOD;
       const responseType = DIDIT.EMAIL_AUTH_RESPONSE_TYPE;
       const idp = _socialAuthProvider;
@@ -159,8 +155,6 @@ const DiditEmailAuthProvider = ({
     },
     [
       authMethod,
-      emailAuthBaseUrl,
-      emailAuthorizationPath,
       setSocialAuthProvider,
       redirectUri,
       setCodeVerifier,
@@ -221,7 +215,7 @@ const DiditEmailAuthProvider = ({
 
   const getDiditToken = useCallback(
     async (_authorizationCode: string, _codeVerifier: string) => {
-      const tokenUrl = `${emailAuthBaseUrl}/oidc/token/`;
+      const tokenUrl = `${DIDIT.EMAIL_AUTH_BASE_URL}/oidc/token/`;
 
       const tokenBody = new URLSearchParams();
       tokenBody.append('client_id', clientId);
@@ -246,7 +240,7 @@ const DiditEmailAuthProvider = ({
         handleTokenError('Error retrieving Didit token', String(error));
       }
     },
-    [clientId, emailAuthBaseUrl, handleTokenError, handleTokenSuccess]
+    [clientId, handleTokenError, handleTokenSuccess]
   );
 
   const loginWithGoogle = useCallback(

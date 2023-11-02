@@ -1,6 +1,6 @@
 /* eslint jsx-a11y/label-has-associated-control: 0 */
 
-import { DiditLogin, useDiditAuth } from 'didit-sdk';
+import { DiditLogin, DiditLoginMode, useDiditAuth } from 'didit-sdk';
 import { Inter } from 'next/font/google';
 import { useState } from 'react';
 
@@ -123,7 +123,7 @@ export default function Home() {
               )}
               {modeSelected === 'embedded' && (
                 <div className="flex flex-col space-y-2">
-                  <DiditLogin mode="embedded" />
+                  <DiditLogin mode={DiditLoginMode.EMBEDDED} />
                 </div>
               )}
             </>

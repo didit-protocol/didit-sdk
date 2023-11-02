@@ -24,13 +24,11 @@ import { DiditAuthContext } from './diditAuthContext';
 const INITIAL_AUTH_STATUS = AuthenticationStatus.LOADING;
 
 type DiditAuthProviderProps = {
-  emailAuthBaseUrl?: string;
   walletAuthBaseUrl?: string;
   children: React.ReactNode;
   clientId: string;
   claims?: string;
   authMethods?: DiditAuthMethod[];
-  emailAuthorizationPath?: string;
   emailAuthMode?: DiditEmailAuthMode;
   emailLogoutPath?: string;
   onError?: (error: string) => void;
@@ -53,10 +51,7 @@ const DiditAuthProvider = ({
   children,
   claims = DIDIT.DEFAULT_CLAIMS,
   clientId,
-  emailAuthBaseUrl = DIDIT.DEFAULT_EMAIL_AUTH_BASE_URL,
   emailAuthMode = DIDIT.DEFAULT_EMAIL_AUTH_MODE,
-  emailAuthorizationPath = DIDIT.DEFAULT_EMAIL_AUTH_AUTHORIZATION_PATH,
-  emailLogoutPath = DIDIT.DEFAULT_EMAIL_AUTH_LOGOUT_PATH,
   onError = () => {},
   onLogin = () => {},
   onLogout = () => {},
@@ -119,7 +114,7 @@ const DiditAuthProvider = ({
   // logoutFromDidit is used to logout from the Didit service.
   const logoutFromDidit = useCallback(async () => {
     try {
-      const url = `${emailAuthBaseUrl}${emailLogoutPath}`;
+      const url = `${DIDIT.EMAIL_AUTH_BASE_URL}${DIDIT.EMAIL_AUTH_LOGOUT_PATH}`;
 
       const response = await fetch(url, {
         headers: {
@@ -140,7 +135,7 @@ const DiditAuthProvider = ({
       console.error('Error logging out from Didit: ', error);
       return Promise.reject(error);
     }
-  }, [emailAuthBaseUrl, emailLogoutPath, token]);
+  }, [token]);
 
   // deauthenticate is used to force a frontend only logout. It remvoes all authentication data from the browser
   const deauthenticate = useCallback(() => {
@@ -260,9 +255,7 @@ const DiditAuthProvider = ({
         authMethod={authMethod}
         claims={claims}
         clientId={clientId}
-        emailAuthBaseUrl={emailAuthBaseUrl}
         emailAuthMode={emailAuthMode}
-        emailAuthorizationPath={emailAuthorizationPath}
         error={error}
         onAuthenticate={authenticate}
         onDeauthenticate={deauthenticate}
