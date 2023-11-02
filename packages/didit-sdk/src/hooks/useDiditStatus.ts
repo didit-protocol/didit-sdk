@@ -3,14 +3,14 @@ import { RainbowKitAuthenticationContext } from '../components/RainbowKitProvide
 import { useDiditAuthContext } from '../contexts/diditAuthContext';
 
 const useDiditStatus = () => {
-  const { authMethod, error, status, token } = useDiditAuthContext();
+  const { accessToken, authMethod, error, status } = useDiditAuthContext();
   const { address } = useContext(RainbowKitAuthenticationContext) ?? {};
 
   return {
+    accessToken,
     authMethod,
     error,
     status,
-    token,
     walletAddress: address,
   };
 };

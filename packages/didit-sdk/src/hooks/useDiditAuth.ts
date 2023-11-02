@@ -18,13 +18,14 @@ const useDiditAuth = ({
   onLogout = () => {},
 }: UseDiditAuthProps = {}) => {
   const {
+    accessToken,
+    accessTokenInfo,
     authMethod,
     availableAuthMethods,
     error,
     logout: deauthenticate,
+    refreshToken,
     status,
-    token,
-    tokenData,
     user,
   } = useDiditAuthContext();
   const { loginWithApple, loginWithEmail, loginWithGoogle, loginWithSocial } =
@@ -87,6 +88,8 @@ const useDiditAuth = ({
   }, [error, onError]);
 
   return {
+    accessToken,
+    accessTokenInfo,
     authMethod,
     availableAuthMethods,
     error,
@@ -100,9 +103,8 @@ const useDiditAuth = ({
     loginWithSocial,
     loginWithWallet,
     logout,
+    refreshToken,
     status,
-    token,
-    tokenData,
     user,
     walletAddress: address,
   };

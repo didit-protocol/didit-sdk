@@ -8,7 +8,11 @@ import {
 } from '../../components/RainbowKitProvider/AuthenticationContext';
 import { RainbowKitProviderProps } from '../../components/RainbowKitProvider/DiditRainbowkitProvider';
 import { DIDIT } from '../../config';
-import { AuthenticationStatus, DiditAuthMethod } from '../../types';
+import {
+  AuthenticationStatus,
+  DiditAuthMethod,
+  DiditTokensData,
+} from '../../types';
 
 export type DiditWalletProviderProps = {
   authMethod?: DiditAuthMethod;
@@ -19,7 +23,7 @@ export type DiditWalletProviderProps = {
   onAuthenticate?: (_authMethod: DiditAuthMethod) => void;
   onDeauthenticate?: () => void;
   onError?: (error: string) => void;
-  onUpdateToken?: (token: string) => void;
+  onUpdateTokens?: (tokens: DiditTokensData) => void;
   scope: string;
   status?: AuthenticationStatus;
   token?: string;
@@ -37,7 +41,7 @@ export function DiditWalletProvider({
   onAuthenticate = () => {},
   onDeauthenticate = () => {},
   onError = () => {},
-  onUpdateToken = () => {},
+  onUpdateTokens = () => {},
   scope,
   status = AuthenticationStatus.LOADING,
   token = '',
@@ -110,14 +114,17 @@ export function DiditWalletProvider({
           const endpoint = `${walletAuthBaseUrl}${tokenAuthorizationPath}`;
           const parameters = `code=${code}&wallet_signature=${signature}&grant_type=connect_wallet`;
           try {
-            var { access_token } = await postRequest(endpoint, parameters);
-            onUpdateToken(access_token);
+            var { access_token, refresh_token } = await postRequest(
+              endpoint,
+              parameters
+            );
+            onUpdateTokens({ access_token, refresh_token });
           } catch (tokenError) {
             throw tokenError;
           }
           if (access_token) {
             onAuthenticate(DiditAuthMethod.WALLET);
-            onUpdateToken(access_token);
+            onUpdateTokens({ access_token, refresh_token });
           } else {
             throw new Error('Something went wrong, try again please!');
           }

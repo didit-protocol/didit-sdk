@@ -16,7 +16,7 @@ enum AuthenticationStatus {
   UNAUTHENTICATED = 'unauthenticated',
 }
 
-type DiditTokenData = {
+type DiditTokenInfo = {
   identifier: string;
   identifier_type: string;
   sub: string;
@@ -28,15 +28,21 @@ type DiditTokenData = {
 };
 
 type DiditUser = {
-  identifier: DiditTokenData['identifier'];
-  identifierType: DiditTokenData['identifier_type'];
-  sub: DiditTokenData['sub'];
+  identifier: DiditTokenInfo['identifier'];
+  identifierType: DiditTokenInfo['identifier_type'];
+  sub: DiditTokenInfo['sub'];
 };
+
+interface DiditTokensData {
+  access_token: string;
+  refresh_token: string;
+}
 
 export {
   SocialAuthProvider,
   DiditAuthMethod,
   AuthenticationStatus,
-  type DiditTokenData,
+  type DiditTokenInfo,
   type DiditUser,
+  type DiditTokensData,
 };

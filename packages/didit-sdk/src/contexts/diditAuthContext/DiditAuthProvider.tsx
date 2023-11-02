@@ -11,10 +11,10 @@ import { DIDIT } from '../../config';
 import {
   AuthenticationStatus,
   DiditAuthMethod,
-  DiditTokenData,
+  DiditTokenInfo,
+  DiditTokensData,
   DiditUser,
 } from '../../types';
-import { parseJwt } from '../../utils';
 import decodeAccessToken from '../../utils/decodeAccessToken';
 import { DiditEmailAuthProvider } from '../diditEmailAuthContext';
 import { ConditionalWalletProvider } from '../diditWalletContext';
@@ -63,11 +63,30 @@ const DiditAuthProvider = ({
   ...RainbowKitProps
 }: DiditAuthProviderProps) => {
   const firstRender = useRef(true);
+  // const {
+  //   remove: removeAuthTokens,
+  //   set: setAuthTokens,
+  //   value: authTokens,
+  // } = useLocalStorageValue<{
+  //   accessToken: string;
+  //   refreshToken: string;
+  //   authMethod: DiditAuthMethod;
+  // }>(DIDIT.TOKEN_COOKIE_NAME, {
+  //   initializeWithValue: false,
+  // });
+
   const {
-    remove: removeToken,
-    set: setToken,
-    value: token,
+    remove: removeAccessToken,
+    set: setAccessToken,
+    value: accessToken,
   } = useLocalStorageValue<string>(DIDIT.TOKEN_COOKIE_NAME, {
+    initializeWithValue: false,
+  });
+  const {
+    remove: removeRefreshToken,
+    set: setRefreshToken,
+    value: refreshToken,
+  } = useLocalStorageValue<string>(DIDIT.REFRESH_TOKEN_COOKIE_NAME, {
     initializeWithValue: false,
   });
 
@@ -83,22 +102,35 @@ const DiditAuthProvider = ({
     useState<AuthenticationStatus>(INITIAL_AUTH_STATUS);
   const [error, setError] = useState('');
 
-  const tokenData: DiditTokenData | undefined = useMemo(
-    () => (token ? decodeAccessToken(token) : undefined),
-    [token]
+  const accessTokenInfo: DiditTokenInfo | undefined = useMemo(
+    () => (accessToken ? decodeAccessToken(accessToken) : undefined),
+    [accessToken]
   );
 
   const user: DiditUser | undefined = useMemo(
     () =>
-      tokenData
+      accessTokenInfo
         ? {
-            identifier: tokenData.identifier,
-            identifierType: tokenData.identifier_type,
-            sub: tokenData.sub,
+            identifier: accessTokenInfo.identifier,
+            identifierType: accessTokenInfo.identifier_type,
+            sub: accessTokenInfo.sub,
           }
         : undefined,
-    [tokenData]
+    [accessTokenInfo]
   );
+
+  const updateTokens = useCallback(
+    (tokens: DiditTokensData) => {
+      setAccessToken(tokens.access_token);
+      setRefreshToken(tokens.refresh_token);
+    },
+    [setAccessToken, setRefreshToken]
+  );
+
+  const removeTokens = useCallback(() => {
+    removeAccessToken();
+    removeRefreshToken();
+  }, [removeAccessToken, removeRefreshToken]);
 
   const authenticate = useCallback(
     (_authMethod: DiditAuthMethod) => {
@@ -115,11 +147,11 @@ const DiditAuthProvider = ({
     removeAuthMethod();
     if (status !== AuthenticationStatus.UNAUTHENTICATED) {
       setStatus(AuthenticationStatus.UNAUTHENTICATED);
-      removeToken();
+      removeTokens();
       setError('');
     }
     onLogout();
-  }, [removeAuthMethod, status, removeToken, onLogout]);
+  }, [removeAuthMethod, status, removeTokens, onLogout]);
 
   const handleError = useCallback(
     (error: string) => {
@@ -157,28 +189,29 @@ const DiditAuthProvider = ({
       firstRender.current = false;
       return;
     }
+    checkAccessToken();
     // TODO: Check if token is valid through Didit Auth service API
-    if (!!token && !!authMethod) {
+    if (!!accessToken && !!authMethod) {
       authenticate(authMethod);
     } else {
       setStatus(AuthenticationStatus.UNAUTHENTICATED);
       deauthenticate();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authMethod, token]);
+  }, [authMethod, accessToken]);
 
-  // Check token expiration
-  // Todo: call didi api check token expiration
-  // and use refresh token to get new token
-  useEffect(() => {
-    if (token) {
-      const token_info = parseJwt(token);
-      if (token_info.exp * 1000 < Date.now()) {
-        deauthenticate();
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+  // // Check token expiration
+  // // Todo: call didi api check token expiration
+  // // and use refresh token to get new token
+  // useEffect(() => {
+  //   if (accessToken) {
+  //     const token_info = parseJwt(accessToken);
+  //     if (token_info.exp * 1000 < Date.now()) {
+  //       deauthenticate();
+  //     }
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [accessToken]);
 
   // Validate configurable props
   useEffect(() => {
@@ -186,25 +219,70 @@ const DiditAuthProvider = ({
     validateScope();
   }, [validateClaims, validateScope]);
 
+  const checkAccessToken = useCallback(async () => {
+    const response = await fetch(`${DIDIT.DEFAUTL_AUTH_INTOSPECT_PATH}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      method: 'POST',
+    });
+    if (response.status === 200) {
+      // Handle successful response here
+      const decodedJwt = await response.json();
+      // console.log('decodedJwt', decodedJwt);
+      if (decodedJwt.active) {
+        return decodedJwt;
+      }
+    } else if (response.status === 401) {
+      // console.log('401');
+      // const newTokens = await rotateTokens();
+    } else {
+      const errorData = await response.json();
+      // console.log('errorData', errorData);
+      throw new Error(errorData);
+    }
+  }, [accessToken]);
+
+  // const rotateTokens = useCallback(async () => {
+  //   const formBodyJoined = `grant_type=refresh_token&client_id=${clientId}&refresh_token=${refreshToken}`;
+
+  //   const response = await fetch(`${DIDIT.DEFAULT_AUTH_ROTATE_TOKEN_PATH}`, {
+  //     body: formBodyJoined,
+  //     headers: {
+  //       'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+  //     },
+  //     method: 'POST',
+  //   });
+  //   if (response.ok) {
+  //     // Handle successful response here
+  //     return await response.json();
+  //   } else {
+  //     const errorData = await response.json();
+  //     throw new Error(errorData);
+  //   }
+  // }, [clientId, refreshToken]);
+
   const contextValue = useMemo(
     () => ({
+      accessToken,
+      accessTokenInfo,
       authMethod,
       availableAuthMethods: authMethods,
       error,
       logout: deauthenticate,
+      refreshToken,
       status,
-      token,
-      tokenData,
       user,
     }),
     [
+      refreshToken,
       authMethod,
       authMethods,
       deauthenticate,
       error,
       status,
-      token,
-      tokenData,
+      accessToken,
+      accessTokenInfo,
       user,
     ]
   );
@@ -227,10 +305,10 @@ const DiditAuthProvider = ({
         onAuthenticate={authenticate}
         onDeauthenticate={deauthenticate}
         onError={handleError}
-        onUpdateToken={setToken}
+        onUpdateTokens={updateTokens}
         scope={scope}
         status={status}
-        token={token}
+        token={accessToken}
       >
         <ConditionalWalletProvider
           {...RainbowKitProps}
@@ -240,10 +318,10 @@ const DiditAuthProvider = ({
           onAuthenticate={authenticate}
           onDeauthenticate={deauthenticate}
           onError={handleError}
-          onUpdateToken={setToken}
+          onUpdateTokens={updateTokens}
           scope={scope}
           status={status}
-          token={token}
+          token={accessToken}
           tokenAuthorizationPath={tokenAuthorizationPath}
           // conditionally render the wallet provider based on the authMethods prop
           useWalletProvider={useWalletProvider}

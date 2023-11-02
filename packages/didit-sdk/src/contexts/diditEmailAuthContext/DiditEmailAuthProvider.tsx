@@ -3,14 +3,11 @@ import { DIDIT } from '../../config';
 import {
   AuthenticationStatus,
   DiditAuthMethod,
+  DiditTokensData,
   SocialAuthProvider,
 } from '../../types';
 import { generateCodeChallenge, generateCodeVerifier } from '../../utils';
 import { DiditEmailAuthContext } from './diditEmailAuthContext';
-
-interface DiditTokenData {
-  access_token: string;
-}
 
 interface DiditEmailAuthProviderProps {
   authMethod?: DiditAuthMethod;
@@ -24,7 +21,7 @@ interface DiditEmailAuthProviderProps {
   onAuthenticate?: (_authMethod: DiditAuthMethod) => void;
   onDeauthenticate?: () => void;
   onError?: (error: string) => void;
-  onUpdateToken?: (token: string) => void;
+  onUpdateTokens?: (tokens: DiditTokensData) => void;
   scope: string;
   status: AuthenticationStatus;
   token?: string;
@@ -42,7 +39,7 @@ const DiditEmailAuthProvider = ({
   onAuthenticate = () => {},
   onDeauthenticate = () => {},
   onError = () => {},
-  onUpdateToken = () => {},
+  onUpdateTokens = () => {},
   scope,
   status,
   token,
@@ -57,11 +54,11 @@ const DiditEmailAuthProvider = ({
     useState<SocialAuthProvider>();
 
   const handleTokenSuccess = useCallback(
-    (tokenData: DiditTokenData) => {
-      onUpdateToken(tokenData?.access_token);
+    (tokensData: DiditTokensData) => {
+      onUpdateTokens(tokensData);
       onAuthenticate(socialAuthProvider as unknown as DiditAuthMethod);
     },
-    [onUpdateToken, onAuthenticate, socialAuthProvider]
+    [onUpdateTokens, onAuthenticate, socialAuthProvider]
   );
 
   const handleTokenError = useCallback(

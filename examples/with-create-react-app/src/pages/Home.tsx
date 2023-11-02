@@ -9,7 +9,14 @@ import {
 } from 'didit-sdk';
 
 const Home = () => {
-  const { authMethod, status, token, user, isAuthenticated } = useDiditAuth({
+  const {
+    authMethod,
+    status,
+    accessToken,
+    refreshToken,
+    user,
+    isAuthenticated,
+  } = useDiditAuth({
     onError: (_error: string) =>
       console.error('useDiditAuth: Didit error: ', _error),
     onLogin: (_authMethod?: string) =>
@@ -17,8 +24,6 @@ const Home = () => {
     onLogout: () => console.log('useDiditAuth: Logged out from Didit'),
   });
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-
-  const accessToken = String(token);
 
   return (
     <div
@@ -73,7 +78,23 @@ const Home = () => {
             <span>Didit access token: </span>
             {isAuthenticated && (
               <span>
-                <b>{`${accessToken.slice(0, 8)}...${accessToken.slice(-8)}`}</b>
+                {accessToken && (
+                  <b>{`${accessToken.slice(0, 8)}...${accessToken.slice(
+                    -8
+                  )}`}</b>
+                )}
+              </span>
+            )}
+          </p>
+          <p>
+            <span>Didit refresh token: </span>
+            {isAuthenticated && (
+              <span>
+                {refreshToken && (
+                  <b>{`${refreshToken.slice(0, 8)}...${refreshToken.slice(
+                    -8
+                  )}`}</b>
+                )}
               </span>
             )}
           </p>

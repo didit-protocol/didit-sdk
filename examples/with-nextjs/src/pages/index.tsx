@@ -7,16 +7,22 @@ import { useState } from 'react';
 const inter = Inter({ subsets: ['latin'] });
 
 export default function Home() {
-  const { authMethod, isAuthenticated, logout, status, token, walletAddress } =
-    useDiditAuth();
+  const {
+    authMethod,
+    isAuthenticated,
+    logout,
+    status,
+    accessToken,
+    refreshToken,
+    // accessTokenInfo,
+    walletAddress,
+  } = useDiditAuth();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [modeSelected, setModeSelected] = useState('modal');
   const [providers, setProviders] = useState({
     google: false,
     wallet: false,
   });
-
-  const accessToken = String(token);
 
   const handleProviderChange = (provider: string) => {
     setProviders({
@@ -48,7 +54,17 @@ export default function Home() {
             <span className="font-medium">Access Token:</span>
             {isAuthenticated && (
               <span className="font-bold text-blue-600">
-                {`${accessToken.slice(0, 8)}...${accessToken.slice(-8)}`}
+                {accessToken &&
+                  `${accessToken.slice(0, 8)}...${accessToken.slice(-8)}`}
+              </span>
+            )}
+          </p>
+          <p className="flex flex-col space-y-2">
+            <span className="font-medium">Refresh Token:</span>
+            {isAuthenticated && (
+              <span className="font-bold text-blue-600">
+                {refreshToken &&
+                  `${refreshToken.slice(0, 8)}...${refreshToken.slice(-8)}`}
               </span>
             )}
           </p>
