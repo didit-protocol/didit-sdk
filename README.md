@@ -137,7 +137,7 @@ import { DiditAuthProvider, DiditAuthMethod,  } from 'didit-sdk';
 
 ##### Configure Wagmi
 
-if you want to use the wallet method, You will also need to configure your desired chains, generate the required connectors and setup a `wagmi` config
+In case you want to use the wallet authentication method, You will also need to configure your desired chains, generate the required connectors and setup a `wagmi` config
 
 > Note: Every dApp that relies on WalletConnect now needs to obtain a `projectId` from [WalletConnect Cloud](https://cloud.walletconnect.com/). This is absolutely free and only takes a few minutes.
 
