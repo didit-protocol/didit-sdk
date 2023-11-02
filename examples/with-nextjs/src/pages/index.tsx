@@ -8,12 +8,12 @@ const inter = Inter({ subsets: ['latin'] });
 
 export default function Home() {
   const {
+    accessToken,
     authMethod,
     isAuthenticated,
     logout,
-    status,
-    accessToken,
     refreshToken,
+    status,
     // accessTokenInfo,
     walletAddress,
   } = useDiditAuth();
