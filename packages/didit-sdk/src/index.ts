@@ -38,6 +38,7 @@ export {
 export {
   SocialAuthProvider,
   DiditAuthMethod,
+  DiditEmailAuthMode,
   AuthenticationStatus,
 } from './types';
 export {

@@ -11,6 +11,7 @@ import { DIDIT } from '../../config';
 import {
   AuthenticationStatus,
   DiditAuthMethod,
+  DiditEmailAuthMode,
   DiditTokenData,
   DiditUser,
 } from '../../types';
@@ -30,11 +31,12 @@ type DiditAuthProviderProps = {
   claims?: string;
   authMethods?: DiditAuthMethod[];
   emailAuthorizationPath?: string;
+  emailAuthMode?: DiditEmailAuthMode;
   emailLogoutPath?: string;
-  emailRedirectionPath?: string;
   onError?: (error: string) => void;
   onLogin?: (authMethod?: DiditAuthMethod) => void;
   onLogout?: () => void;
+  redirectUri: string;
   tokenAuthorizationPath?: string;
   walletAuthorizationPath?: string;
   scope?: string;
@@ -52,12 +54,13 @@ const DiditAuthProvider = ({
   claims = DIDIT.DEFAULT_CLAIMS,
   clientId,
   emailAuthBaseUrl = DIDIT.DEFAULT_EMAIL_AUTH_BASE_URL,
+  emailAuthMode = DIDIT.DEFAULT_EMAIL_AUTH_MODE,
   emailAuthorizationPath = DIDIT.DEFAULT_EMAIL_AUTH_AUTHORIZATION_PATH,
   emailLogoutPath = DIDIT.DEFAULT_EMAIL_AUTH_LOGOUT_PATH,
-  emailRedirectionPath = DIDIT.DEFAULT_EMAIL_AUTH_REDIRECT_URI_PATH,
   onError = () => {},
   onLogin = () => {},
   onLogout = () => {},
+  redirectUri,
   scope = DIDIT.DEFAULT_SCOPE,
   tokenAuthorizationPath = DIDIT.DEFAULT_WALLET_AUTH_TOKEN_PATH,
   walletAuthBaseUrl = DIDIT.DEFAULT_WALLET_AUTH_BASE_URL,
@@ -258,13 +261,15 @@ const DiditAuthProvider = ({
         claims={claims}
         clientId={clientId}
         emailAuthBaseUrl={emailAuthBaseUrl}
+        emailAuthMode={emailAuthMode}
         emailAuthorizationPath={emailAuthorizationPath}
-        emailRedirectionPath={emailRedirectionPath}
         error={error}
         onAuthenticate={authenticate}
         onDeauthenticate={deauthenticate}
         onError={handleError}
+        onUpdateAuthMethod={setAuthMethod}
         onUpdateToken={setToken}
+        redirectUri={redirectUri}
         scope={scope}
         status={status}
         token={token}
