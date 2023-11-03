@@ -41,8 +41,6 @@ const LoginOptionsDialog: FC<LoginOptionsDialogProps> = ({
     DiditAuthMethod.WALLET
   );
 
-  console.log('->', title, description);
-
   const LoginClassName = clsx('dialog-wrapper', wrapperClassName);
 
   return (
