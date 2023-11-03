@@ -73,7 +73,7 @@ const useDiditAuth = ({
 
   // Login and logout event callbacks
   useEffect(() => {
-    if (prevIsAuthenticated === false && isAuthenticated === true) {
+    if (!prevIsAuthenticated && isAuthenticated === true) {
       onLogin(authMethod);
     } else if (prevIsAuthenticated === true && isAuthenticated === false) {
       onLogout();

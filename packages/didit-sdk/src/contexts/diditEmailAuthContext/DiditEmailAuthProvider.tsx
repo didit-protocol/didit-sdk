@@ -150,6 +150,7 @@ const DiditEmailAuthProvider = ({
 
       // Generate the authorization url
       const authorizeUrl = `${authorizationUrl}?client_id=${clientId}&response_type=${responseType}&scope=${scope}&claims=${claims}&redirect_uri=${encodedRedirectUrl}&code_verifier=${codeVerifier}&code_challenge=${codeChallenge}&code_challenge_method=${codeChallengeMethod}&idp=${idp}`;
+
       return authorizeUrl;
     },
     [
