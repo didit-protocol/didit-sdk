@@ -122,7 +122,7 @@ import { DiditAuthProvider, DiditAuthMethod,  } from 'didit-sdk';
         authMethods={[DiditAuthMethod.APPLE, DiditAuthMethod.GOOGLE]}
         walletAuthBaseUrl="https://my.didit.app/auth/wallet"
         clientId="676573"
-        claims="read:emails write:emails read:profile read:blockchain"
+        claims="read:email write:email read:blockchain"
         scope="openid profile"
         emailAuthMode={DiditEmailAuthMode.REDIRECT}
         walletAuthorizationPath="/wallet-authorization/"
