@@ -1,3 +1,13 @@
+enum DiditEmailAuthMode {
+  POPUP = 'popup',
+  REDIRECT = 'redirect',
+}
+
+enum DiditLoginMode {
+  MODAL = 'modal',
+  EMBEDDED = 'embedded',
+}
+
 enum SocialAuthProvider {
   GOOGLE = 'google',
   APPLE = 'apple',
@@ -34,8 +44,10 @@ type DiditUser = {
 };
 
 export {
+  DiditEmailAuthMode,
   SocialAuthProvider,
   DiditAuthMethod,
+  DiditLoginMode,
   AuthenticationStatus,
   type DiditTokenData,
   type DiditUser,

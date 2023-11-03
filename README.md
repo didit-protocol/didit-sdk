@@ -81,6 +81,7 @@ import { DiditAuthProvider, DiditLoginButton, DiditAuthMethod, ... } from 'didit
 1. Set up the `DiditAuthProvider` with minimum configurable props:
 
 - `clientId`: Your **Didit** client id
+- `redirectUri`: The redirect URI of your app. This is where the user will be redirected after authentication. It must be registered in your **Didit** client configuration and should be a valid page in your app.
 
 ```tsx
 import { DiditAuthProvider} from 'didit-sdk';
@@ -89,39 +90,41 @@ import { DiditAuthProvider} from 'didit-sdk';
 
       <DiditAuthProvider
         clientId="676573"
+        redirectUri="http://your-app.com/login/callback"
       >
         {children}
       </DiditAuthProvider>
 ```
 
-2. Additionally you can configure your **Didit** connection with more custom props:
+2. Didit supports multiple authentication methods. You can configure the `DiditAuthProvider` with the authentication methods you want to enable for your users. There are email base methods and wallet method, which can be configured with the following props:
+
+Additionally you can configure your **Didit** connection with more custom props:
 
 - `authMethods`: The authentication methods you want to enable for your users (Default: `['google', 'apple', 'wallet']`)
-- `emailAuthBaseUrl`: The base URL of your custom backend with **Didit** auth for email and social auth methods (Default: `https://apx.didit.me/auth`)
 - `walletAuthBaseUrl`: The base URL of your custom backend with **Didit** auth for wallet auth method (Default: `https://apx.didit.me/auth`)
-- `emailAuthorizationPath`: Custom path for email authorization endpoint (Default: `/oidc/authorize/`)
-- `emailRedirectionPath`: Custom path for email redirection. It is used as redirect_uri param after authorization (Default: `/oidc/callback/`)
+- `emailAuthMode`: The mode of the email based authentication methods. It can be either `popup` or `redirect` (Default: `popup`)
 - `walletAuthorizationPath`: Custom path for wallet authorization endpoint (Default: `/authorizations/v1/wallet-authorization/`)
 - `tokenAuthorizationPath`: Custom path for token endpoint (Default: `/authorizations/v1/token/`)
 - `claims`: The claims you want to request from your users (Default: `"read:email"`)
 - `scope`: The scopes you want to request from your users (Default: `"openid"`)
+
+3. Additionally you can configure the `DiditAuthProvider` with the some callbacks to customize your authentication flow:
+
 - `onError`: A callback function that will be called when an error occurs during the authentication process
 - `onLogin`: A callback function that will be called when the user successfully logs in
 - `onLogout`: A callback function that will be called when the user successfully logs out
 
 ```tsx
-import { DiditAuthProvider, DiditAuthMethod } from 'didit-sdk';
+import { DiditAuthProvider, DiditAuthMethod,  } from 'didit-sdk';
 
 ...
       <DiditAuthProvider
         authMethods={[DiditAuthMethod.APPLE, DiditAuthMethod.GOOGLE]}
-        emailAuthBaseUrl="https://my.didit.app/auth/email"
         walletAuthBaseUrl="https://my.didit.app/auth/wallet"
         clientId="676573"
-        claims="read:email write:email read:profile read:blockchain"
+        claims="read:emails read:email write:emails read:blockchain"
         scope="openid profile"
-        emailAuthorizationPath="/authorize/"
-        emailRedirectionPath="/redirect/"
+        emailAuthMode={DiditEmailAuthMode.REDIRECT}
         walletAuthorizationPath="/wallet-authorization/"
         tokenAuthorizationPath="/token/"
         onLogin={(_authMethod?: DiditAuthMethod) =>
@@ -243,12 +246,12 @@ import { DiditLogoutButton } from 'didit-sdk';
 - `mode`: The mode of the login component (`modal` or `embedded`) (Default: `modal`)
 
 ```tsx
-import { DiditLogin } from 'didit-sdk';
+import { DiditLogin, DiditLoginMode } from 'didit-sdk';
 
 ...
 
   <DiditLogin
-    mode="modal"
+    mode={ DiditLoginMode.MODAL }
     isModalOpen={isLoginModalOpen}
     onModalClose={() => setIsLoginModalOpen(false)}
   />
@@ -259,7 +262,7 @@ import { DiditLogin } from 'didit-sdk';
 
 ...
 
-  <DiditLogin mode="embedded" />
+  <DiditLogin mode={ DiditLoginMode.EMBEDDED } />
 ```
 
 > The `DiditLogin` is automatically configured with the authentication methods you provided to the `DiditAuthProvider` provider.

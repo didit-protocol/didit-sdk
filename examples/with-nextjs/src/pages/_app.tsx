@@ -3,6 +3,7 @@ import 'didit-sdk/styles.css';
 import {
   DiditAuthMethod,
   DiditAuthProvider,
+  DiditEmailAuthMode,
   getDefaultWallets,
   lightTheme,
 } from 'didit-sdk';
@@ -43,14 +44,13 @@ export default function App({ Component, pageProps }: AppProps) {
         chains={chains}
         claims={process.env.NEXT_PUBLIC_DIDIT_CLAIMS}
         clientId={process.env.NEXT_PUBLIC_DIDIT_CLIENT_ID || ''}
-        emailAuthBaseUrl={
-          process.env.NEXT_PUBLIC_DIDIT_EMAIL_AUTH_BASE_URL || ''
-        }
+        emailAuthMode={DiditEmailAuthMode.POPUP}
         onError={(_error: string) => console.error('Didit error: ', _error)}
         onLogin={(_authMethod?: DiditAuthMethod) =>
           console.warn('Logged in Didit with', _authMethod)
         }
         onLogout={() => console.warn('Logged out Didit')}
+        redirectUri={process.env.NEXT_PUBLIC_DIDIT_REDIRECT_URI || ''}
         scope={process.env.NEXT_PUBLIC_DIDIT_SCOPE}
         theme={lightTheme()}
         tokenAuthorizationPath="/token"

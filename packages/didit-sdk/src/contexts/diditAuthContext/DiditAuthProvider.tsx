@@ -11,6 +11,7 @@ import { DIDIT } from '../../config';
 import {
   AuthenticationStatus,
   DiditAuthMethod,
+  DiditEmailAuthMode,
   DiditTokenData,
   DiditUser,
 } from '../../types';
@@ -23,18 +24,17 @@ import { DiditAuthContext } from './diditAuthContext';
 const INITIAL_AUTH_STATUS = AuthenticationStatus.LOADING;
 
 type DiditAuthProviderProps = {
-  emailAuthBaseUrl?: string;
   walletAuthBaseUrl?: string;
   children: React.ReactNode;
   clientId: string;
   claims?: string;
   authMethods?: DiditAuthMethod[];
-  emailAuthorizationPath?: string;
+  emailAuthMode?: DiditEmailAuthMode;
   emailLogoutPath?: string;
-  emailRedirectionPath?: string;
   onError?: (error: string) => void;
   onLogin?: (authMethod?: DiditAuthMethod) => void;
   onLogout?: () => void;
+  redirectUri: string;
   tokenAuthorizationPath?: string;
   walletAuthorizationPath?: string;
   scope?: string;
@@ -51,13 +51,11 @@ const DiditAuthProvider = ({
   children,
   claims = DIDIT.DEFAULT_CLAIMS,
   clientId,
-  emailAuthBaseUrl = DIDIT.DEFAULT_EMAIL_AUTH_BASE_URL,
-  emailAuthorizationPath = DIDIT.DEFAULT_EMAIL_AUTH_AUTHORIZATION_PATH,
-  emailLogoutPath = DIDIT.DEFAULT_EMAIL_AUTH_LOGOUT_PATH,
-  emailRedirectionPath = DIDIT.DEFAULT_EMAIL_AUTH_REDIRECT_URI_PATH,
+  emailAuthMode = DIDIT.DEFAULT_EMAIL_AUTH_MODE,
   onError = () => {},
   onLogin = () => {},
   onLogout = () => {},
+  redirectUri,
   scope = DIDIT.DEFAULT_SCOPE,
   tokenAuthorizationPath = DIDIT.DEFAULT_WALLET_AUTH_TOKEN_PATH,
   walletAuthBaseUrl = DIDIT.DEFAULT_WALLET_AUTH_BASE_URL,
@@ -116,7 +114,7 @@ const DiditAuthProvider = ({
   // logoutFromDidit is used to logout from the Didit service.
   const logoutFromDidit = useCallback(async () => {
     try {
-      const url = `${emailAuthBaseUrl}${emailLogoutPath}`;
+      const url = `${DIDIT.EMAIL_AUTH_BASE_URL}${DIDIT.EMAIL_AUTH_LOGOUT_PATH}`;
 
       const response = await fetch(url, {
         headers: {
@@ -137,7 +135,7 @@ const DiditAuthProvider = ({
       console.error('Error logging out from Didit: ', error);
       return Promise.reject(error);
     }
-  }, [emailAuthBaseUrl, emailLogoutPath, token]);
+  }, [token]);
 
   // deauthenticate is used to force a frontend only logout. It remvoes all authentication data from the browser
   const deauthenticate = useCallback(() => {
@@ -257,14 +255,14 @@ const DiditAuthProvider = ({
         authMethod={authMethod}
         claims={claims}
         clientId={clientId}
-        emailAuthBaseUrl={emailAuthBaseUrl}
-        emailAuthorizationPath={emailAuthorizationPath}
-        emailRedirectionPath={emailRedirectionPath}
+        emailAuthMode={emailAuthMode}
         error={error}
         onAuthenticate={authenticate}
         onDeauthenticate={deauthenticate}
         onError={handleError}
+        onUpdateAuthMethod={setAuthMethod}
         onUpdateToken={setToken}
+        redirectUri={redirectUri}
         scope={scope}
         status={status}
         token={token}
