@@ -234,10 +234,9 @@ const DiditAuthProvider = ({
       firstRender.current = false;
       return;
     }
-    checkAccessToken();
     // TODO: Check if token is valid through Didit Auth service API
     if (!!accessToken && !!authMethod) {
-      authenticate(authMethod);
+      checkAccessToken();
     } else {
       // Consolidate logout status in both frontend and backend
       forceCompleteLogout();
@@ -251,6 +250,34 @@ const DiditAuthProvider = ({
     validateScope();
   }, [validateClaims, validateScope]);
 
+  const rotateTokens = useCallback(async () => {
+    const formBodyJoined = `grant_type=refresh_token&client_id=${clientId}&refresh_token=${refreshToken}`;
+
+    const response = await fetch(`${DIDIT.DEFAULT_AUTH_ROTATE_TOKEN_PATH}`, {
+      body: formBodyJoined,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      },
+      method: 'POST',
+    });
+    if (response.ok) {
+      // Handle successful response here
+      const newtokens = await response.json();
+      const { access_token, refresh_token } = newtokens;
+      updateTokens({ access_token, refresh_token });
+      authenticate(authMethod as DiditAuthMethod);
+    } else {
+      deauthenticate();
+    }
+  }, [
+    clientId,
+    refreshToken,
+    authMethod,
+    authenticate,
+    updateTokens,
+    deauthenticate,
+  ]);
+
   const checkAccessToken = useCallback(async () => {
     const response = await fetch(`${DIDIT.DEFAUTL_AUTH_INTOSPECT_PATH}`, {
       headers: {
@@ -261,38 +288,18 @@ const DiditAuthProvider = ({
     if (response.status === 200) {
       // Handle successful response here
       const decodedJwt = await response.json();
-      // console.log('decodedJwt', decodedJwt);
-      if (decodedJwt.active) {
-        return decodedJwt;
+      if (decodedJwt.active === true) {
+        authenticate(authMethod as DiditAuthMethod);
+      } else {
+        // refresh token
+        await rotateTokens();
       }
     } else if (response.status === 401) {
-      // console.log('401');
-      // const newTokens = await rotateTokens();
+      await rotateTokens();
     } else {
-      const errorData = await response.json();
-      // console.log('errorData', errorData);
-      throw new Error(errorData);
+      deauthenticate();
     }
-  }, [accessToken]);
-
-  // const rotateTokens = useCallback(async () => {
-  //   const formBodyJoined = `grant_type=refresh_token&client_id=${clientId}&refresh_token=${refreshToken}`;
-
-  //   const response = await fetch(`${DIDIT.DEFAULT_AUTH_ROTATE_TOKEN_PATH}`, {
-  //     body: formBodyJoined,
-  //     headers: {
-  //       'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-  //     },
-  //     method: 'POST',
-  //   });
-  //   if (response.ok) {
-  //     // Handle successful response here
-  //     return await response.json();
-  //   } else {
-  //     const errorData = await response.json();
-  //     throw new Error(errorData);
-  //   }
-  // }, [clientId, refreshToken]);
+  }, [accessToken, deauthenticate, rotateTokens, authMethod, authenticate]);
 
   const contextValue = useMemo(
     () => ({
