@@ -8,7 +8,7 @@ const DEFAULT_WALLET_AUTH_TOKEN_PATH = '/authorizations/v1/token/';
 
 // Email auth login
 const DEFAULT_EMAIL_AUTH_MODE = DiditEmailAuthMode.POPUP;
-const EMAIL_AUTH_BASE_URL = 'https://apx.didit.me/auth';
+const EMAIL_AUTH_BASE_URL = 'http://192.168.1.42:8000/auth';
 const EMAIL_AUTH_AUTHORIZATION_PATH = '/oidc/authorize/';
 const EMAIL_AUTH_LOGOUT_PATH = '/oidc/logout/';
 const EMAIL_AUTH_AUTHORIZATION_GRANNT_TYPE = 'authorization_code';
