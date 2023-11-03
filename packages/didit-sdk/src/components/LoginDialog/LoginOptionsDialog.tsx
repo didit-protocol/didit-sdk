@@ -13,12 +13,16 @@ interface LoginOptionsDialogProps {
   buttonClassName?: string;
   dataTestId?: string;
   onLoginWithSocials?: () => void;
+  title: string;
+  description: string;
 }
 
 const LoginOptionsDialog: FC<LoginOptionsDialogProps> = ({
   buttonClassName = '',
   dataTestId = '',
+  description,
   onLoginWithSocials = () => {},
+  title,
   wrapperClassName = '',
 }) => {
   const { availableAuthMethods, error, hasError, isAuthenticated } =
@@ -37,28 +41,27 @@ const LoginOptionsDialog: FC<LoginOptionsDialogProps> = ({
     DiditAuthMethod.WALLET
   );
 
+  console.log('->', title, description);
+
   const LoginClassName = clsx('dialog-wrapper', wrapperClassName);
 
   return (
     <div className={LoginClassName} data-testid={dataTestId}>
       <div className="dialog-text">
-        <h2 className="dialog-text-title">Sign In With Didit</h2>
-        <p className="dialog-text-description">
-          This paragraph of text is used to describe data and suggest the user
-          to fill in the fields.
-        </p>
+        <h2 className="dialog-text-title">{title}</h2>
+        <p className="dialog-text-description">{description}</p>
       </div>
       <div className="dialog-buttons">
         {/*
         { isEmailAuthAvailable && (
-          <DiditButton 
+          <DiditButton
             className={buttonClassName}
-            icon={<EmailIcon />} 
+            icon={<EmailIcon />}
             isDisabled={isAuthenticated}
-            label="Continue with Email" 
+            label="Continue with Email"
             onClick={loginWithEmail}
           />
-        } 
+        }
                 */}
         {isAnySocialAuthAvailable && (
           <DiditButton

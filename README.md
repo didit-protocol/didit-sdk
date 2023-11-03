@@ -243,7 +243,9 @@ import { DiditLogoutButton } from 'didit-sdk';
 
 3. Additionally you can use the `DiditLogin` component to provide multiple authentication methods. You can also configure it with:
 
-- `mode`: The mode of the login component (`modal` or `embedded`) (Default: `modal`)
+- `mode`: The mode of the login component (`modal` or `embedded`) (default: `modal`)
+- `title`: the title of the login dialog (`string`) (default: `Sign in with Didit`)
+- `description:` the description of the login dialog (`string`) (default: `<empty string>`)
 
 ```tsx
 import { DiditLogin, DiditLoginMode } from 'didit-sdk';
@@ -283,7 +285,8 @@ You can use the `useDiditAuth` hook to retrieve the authentication status and cu
   import { AuthenticationStatus } from 'didit-sdk';
   ```
 
-- `token`: The current **Didit** access token
+- `accessToken`: The current **Didit** access token
+- `refreshToken`: The current **Didit** refresh token
 - `isAuthenticated`: Whether the user is authenticated or not
 - `walletAddress`: The current user's wallet address if connected by the wallet auth method
 - `error`: The current error in authentication process if any
@@ -292,13 +295,13 @@ You can use the `useDiditAuth` hook to retrieve the authentication status and cu
 import { useDiditAuth } from 'didit-sdk';
 
 ...
-  const { authMethod, status, token, isAuthenticated, walletAddress, error } = useDiditAuth();
+  const { authMethod, status, accessToken, isAuthenticated, walletAddress, error } = useDiditAuth();
 
   return (
     <div>
       <p>Auth method: {authMethod}</p>
       <p>Status: {status}</p>
-      <p>Token: {token}</p>
+      <p>Token: {accessToken}</p>
       <p>Is authenticated: {isAuthenticated}</p>
       <p>Address: {walletAddress}</p>
       <p>Error: {error}</p>
@@ -333,7 +336,7 @@ const {
     token,
     tokenData,
     user,
-    walletAddress: address,
+    walletAddress, // if the user is connected with wallet method
 } = useDiditAuth({
   onError: (error: string) => console.error('Didit error: ', error),
   onLogin: (authMethod?: string) => console.log('Logged in Didit with', authMethod),

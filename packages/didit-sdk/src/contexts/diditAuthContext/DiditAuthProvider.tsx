@@ -63,17 +63,6 @@ const DiditAuthProvider = ({
   ...RainbowKitProps
 }: DiditAuthProviderProps) => {
   const firstRender = useRef(true);
-  // const {
-  //   remove: removeAuthTokens,
-  //   set: setAuthTokens,
-  //   value: authTokens,
-  // } = useLocalStorageValue<{
-  //   accessToken: string;
-  //   refreshToken: string;
-  //   authMethod: DiditAuthMethod;
-  // }>(DIDIT.TOKEN_COOKIE_NAME, {
-  //   initializeWithValue: false,
-  // });
 
   const {
     remove: removeAccessToken,
