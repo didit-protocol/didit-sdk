@@ -3,6 +3,7 @@ import {
   getDefaultWallets,
   lightTheme,
   DiditAuthProvider,
+  DiditEmailAuthMode,
   DiditAuthMethod,
 } from 'didit-sdk';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
@@ -53,12 +54,13 @@ function App() {
           DiditAuthMethod.WALLET,
           DiditAuthMethod.APPLE,
         ]}
-        emailAuthBaseUrl={process.env.REACT_APP_DIDIT_EMAIL_AUTH_BASE_URL || ''}
         walletAuthBaseUrl={
           process.env.REACT_APP_DIDIT_WALLET_AUTH_BASE_URL || ''
         }
         clientId={process.env.REACT_APP_DIDIT_CLIENT_ID || ''}
         claims={process.env.REACT_APP_DIDIT_CLAIMS}
+        emailAuthMode={DiditEmailAuthMode.POPUP}
+        redirectUri={process.env.REACT_APP_DIDIT_REDIRECT_URI || ''}
         scope={process.env.REACT_APP_DIDIT_SCOPE || ''}
         onLogin={(_authMethod?: DiditAuthMethod) =>
           console.log('DiditAuthProvider: Logged in Didit with', _authMethod)

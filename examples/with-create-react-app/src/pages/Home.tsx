@@ -4,6 +4,7 @@ import {
   DiditAuthMethod,
   DiditLogin,
   DiditLoginButton,
+  DiditLoginMode,
   DiditLogoutButton,
   useDiditAuth,
 } from 'didit-sdk';
@@ -136,7 +137,7 @@ const Home = () => {
             marginBottom: '40px',
           }}
         >
-          <DiditLogin mode="embedded" />
+          <DiditLogin mode={DiditLoginMode.EMBEDDED} />
         </div>
         <div
           style={{
@@ -151,7 +152,7 @@ const Home = () => {
             open login modal
           </button>
           <DiditLogin
-            mode="modal"
+            mode={DiditLoginMode.MODAL}
             isModalOpen={isLoginModalOpen}
             onModalClose={() => setIsLoginModalOpen(false)}
           />

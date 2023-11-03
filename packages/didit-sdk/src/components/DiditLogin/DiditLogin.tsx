@@ -1,17 +1,18 @@
 import React, { FC } from 'react';
+import { DiditLoginMode } from '../../types';
 import { LoginDialog } from '../LoginDialog';
 import LoginModal from '../LoginModal/LoginModal';
 
 const mode_map = {
-  embedded: LoginDialog,
-  modal: LoginModal,
+  [DiditLoginMode.EMBEDDED]: LoginDialog,
+  [DiditLoginMode.MODAL]: LoginModal,
 };
 
 interface DiditLoginProps {
   wrapperClassName?: string;
   buttonClassName?: string;
   dataTestId?: string;
-  mode?: 'modal' | 'embedded';
+  mode?: DiditLoginMode;
   isModalOpen?: boolean;
   onModalClose?: () => void;
 }
@@ -20,7 +21,7 @@ const DiditLogin: FC<DiditLoginProps> = ({
   buttonClassName = '',
   dataTestId = '',
   isModalOpen = false,
-  mode = 'modal',
+  mode = DiditLoginMode.MODAL,
   onModalClose = () => {},
   wrapperClassName = '',
 }) => {
