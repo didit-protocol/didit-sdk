@@ -3,7 +3,6 @@ import {
   getDefaultWallets,
   lightTheme,
   DiditAuthProvider,
-  DiditRainbowkitProvider,
   DiditAuthMethod,
 } from 'didit-sdk';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
@@ -68,10 +67,10 @@ function App() {
         onError={(_error: string) =>
           console.error('DiditAuthProvider: Didit error: ', _error)
         }
+        chains={chains}
+        theme={lightTheme()}
       >
-        <DiditRainbowkitProvider chains={chains} theme={lightTheme()}>
-          <Home />
-        </DiditRainbowkitProvider>
+        <Home />
       </DiditAuthProvider>
     </WagmiConfig>
   );

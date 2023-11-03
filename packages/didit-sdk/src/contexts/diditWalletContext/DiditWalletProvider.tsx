@@ -1,14 +1,16 @@
 import { useLocalStorageValue } from '@react-hookz/web';
 import React, { ReactNode, useEffect, useMemo } from 'react';
 import { useAccount, useDisconnect } from 'wagmi';
+import { DiditRainbowkitProvider } from '../../components';
 import {
   createAuthenticationAdapter,
   RainbowKitAuthenticationProvider,
 } from '../../components/RainbowKitProvider/AuthenticationContext';
+import { RainbowKitProviderProps } from '../../components/RainbowKitProvider/DiditRainbowkitProvider';
 import { DIDIT } from '../../config';
 import { AuthenticationStatus, DiditAuthMethod } from '../../types';
 
-interface DiditWalletProviderProps {
+export type DiditWalletProviderProps = {
   authMethod?: DiditAuthMethod;
   children: ReactNode;
   claims: string;
@@ -24,7 +26,7 @@ interface DiditWalletProviderProps {
   tokenAuthorizationPath?: string;
   walletAuthBaseUrl?: string;
   walletAuthorizationPath?: string;
-}
+} & RainbowKitProviderProps;
 
 export function DiditWalletProvider({
   authMethod = undefined,
@@ -42,6 +44,7 @@ export function DiditWalletProvider({
   tokenAuthorizationPath = DIDIT.DEFAULT_WALLET_AUTH_TOKEN_PATH,
   walletAuthBaseUrl = DIDIT.DEFAULT_WALLET_AUTH_BASE_URL,
   walletAuthorizationPath = DIDIT.DEFAULT_WALLET_AUTH_AUTHORIZATION_PATH,
+  ...restProps
 }: DiditWalletProviderProps) {
   const wagmiAccount = useAccount();
 
@@ -179,7 +182,9 @@ export function DiditWalletProvider({
       status={status}
       token={token}
     >
-      {children}
+      <DiditRainbowkitProvider {...restProps}>
+        {children}
+      </DiditRainbowkitProvider>
     </RainbowKitAuthenticationProvider>
   );
 }

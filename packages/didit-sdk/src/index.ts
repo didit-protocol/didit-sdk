@@ -35,7 +35,6 @@ export {
   DiditAuthContext,
   DiditAuthProvider,
 } from './contexts/diditAuthContext';
-export { DiditWalletProvider } from './contexts/diditWalletContext';
 export {
   SocialAuthProvider,
   DiditAuthMethod,

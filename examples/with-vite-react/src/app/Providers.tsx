@@ -1,9 +1,4 @@
-import {
-  lightTheme,
-  DiditAuthProvider,
-  DiditRainbowkitProvider,
-  DiditAuthMethod,
-} from 'didit-sdk';
+import { lightTheme, DiditAuthProvider, DiditAuthMethod } from 'didit-sdk';
 import { WagmiConfig } from 'wagmi';
 import { config, chains } from './config/wagmi';
 
@@ -28,10 +23,10 @@ const Providers = ({ children }: ProvidersProps) => {
         }
         onLogout={() => console.log('Logged out Didit')}
         onError={(_error: string) => console.error('Didit error: ', _error)}
+        chains={chains}
+        theme={lightTheme()}
       >
-        <DiditRainbowkitProvider chains={chains} theme={lightTheme()}>
-          {children}
-        </DiditRainbowkitProvider>
+        {children}
       </DiditAuthProvider>
     </WagmiConfig>
   );

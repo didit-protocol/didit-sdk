@@ -31,6 +31,7 @@ const useDiditAuth = ({
     useDiditEmailAuthContext();
   const { adapter, address } =
     useContext(RainbowKitAuthenticationContext) ?? {};
+  // TODO: useConnectModal will throw an error if we are noting using wallet auth method
   const { openConnectModal: loginWithWallet } = useConnectModal();
 
   // Boolean status
@@ -71,7 +72,7 @@ const useDiditAuth = ({
 
   // Login and logout event callbacks
   useEffect(() => {
-    if (prevIsAuthenticated === false && isAuthenticated === true) {
+    if (!prevIsAuthenticated && isAuthenticated === true) {
       onLogin(authMethod);
     } else if (prevIsAuthenticated === true && isAuthenticated === false) {
       onLogout();
@@ -80,7 +81,9 @@ const useDiditAuth = ({
 
   // Error callback
   useEffect(() => {
-    if (error) onError(error);
+    if (error) {
+      onError(error);
+    }
   }, [error, onError]);
 
   return {

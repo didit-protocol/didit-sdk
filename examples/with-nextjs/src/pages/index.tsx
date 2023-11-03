@@ -1,15 +1,14 @@
 /* eslint jsx-a11y/label-has-associated-control: 0 */
 
-import { DiditLogin, useAuthenticationAdapter, useDiditAuth } from 'didit-sdk';
+import { DiditLogin, useDiditAuth } from 'didit-sdk';
 import { Inter } from 'next/font/google';
 import { useState } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function Home() {
-  const { authMethod, isAuthenticated, status, token, walletAddress } =
+  const { authMethod, isAuthenticated, logout, status, token, walletAddress } =
     useDiditAuth();
-  const { signOut } = useAuthenticationAdapter();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [modeSelected, setModeSelected] = useState('modal');
   const [providers, setProviders] = useState({
@@ -72,7 +71,7 @@ export default function Home() {
             ) : (
               <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 w-52"
-                onClick={() => signOut()}
+                onClick={() => logout()}
                 type="button"
               >
                 Logout

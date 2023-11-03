@@ -1,3 +1,4 @@
+import { ConditionalWalletProvider } from './ConditionalWalletProvider';
 import { DiditWalletProvider } from './DiditWalletProvider';
 
-export { DiditWalletProvider };
+export { DiditWalletProvider, ConditionalWalletProvider };

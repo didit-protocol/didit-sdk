@@ -6,8 +6,8 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { RainbowKitProviderProps } from '../../components/RainbowKitProvider/DiditRainbowkitProvider';
 import { DIDIT } from '../../config';
-import usePreviousState from '../../hooks/usePreviousState';
 import {
   AuthenticationStatus,
   DiditAuthMethod,
@@ -17,12 +17,12 @@ import {
 import { parseJwt } from '../../utils';
 import decodeAccessToken from '../../utils/decodeAccessToken';
 import { DiditEmailAuthProvider } from '../diditEmailAuthContext';
-import { DiditWalletProvider } from '../diditWalletContext';
+import { ConditionalWalletProvider } from '../diditWalletContext';
 import { DiditAuthContext } from './diditAuthContext';
 
 const INITIAL_AUTH_STATUS = AuthenticationStatus.LOADING;
 
-interface DiditAuthProviderProps {
+type DiditAuthProviderProps = {
   emailAuthBaseUrl?: string;
   walletAuthBaseUrl?: string;
   children: React.ReactNode;
@@ -38,7 +38,7 @@ interface DiditAuthProviderProps {
   tokenAuthorizationPath?: string;
   walletAuthorizationPath?: string;
   scope?: string;
-}
+} & RainbowKitProviderProps;
 
 /*
 The DiditAuthProvider provides authentication for the Didit SDK.
@@ -62,6 +62,7 @@ const DiditAuthProvider = ({
   tokenAuthorizationPath = DIDIT.DEFAULT_WALLET_AUTH_TOKEN_PATH,
   walletAuthBaseUrl = DIDIT.DEFAULT_WALLET_AUTH_BASE_URL,
   walletAuthorizationPath = DIDIT.DEFAULT_WALLET_AUTH_AUTHORIZATION_PATH,
+  ...RainbowKitProps
 }: DiditAuthProviderProps) => {
   const firstRender = useRef(true);
   const {
@@ -82,7 +83,6 @@ const DiditAuthProvider = ({
 
   const [status, setStatus] =
     useState<AuthenticationStatus>(INITIAL_AUTH_STATUS);
-  const prevStatus = usePreviousState(status);
   const [error, setError] = useState('');
 
   const tokenData: DiditTokenData | undefined = useMemo(
@@ -105,12 +105,12 @@ const DiditAuthProvider = ({
   const authenticate = useCallback(
     (_authMethod: DiditAuthMethod) => {
       setAuthMethod(_authMethod);
-
       if (status !== AuthenticationStatus.AUTHENTICATED) {
         setStatus(AuthenticationStatus.AUTHENTICATED);
+        onLogin(_authMethod);
       }
     },
-    [setAuthMethod, status]
+    [setAuthMethod, status, onLogin]
   );
 
   // logoutFromDidit is used to logout from the Didit service.
@@ -205,11 +205,9 @@ const DiditAuthProvider = ({
     // TODO: Check if token is valid through Didit Auth service API
     if (!!token && !!authMethod) {
       authenticate(authMethod);
-      onLogin(authMethod);
     } else {
       // Consolidate logout status in both frontend and backend
       forceCompleteLogout();
-      onLogout();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authMethod, token]);
@@ -227,21 +225,6 @@ const DiditAuthProvider = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
-
-  // Login and logout event callbacks
-  useEffect(() => {
-    if (
-      prevStatus === AuthenticationStatus.UNAUTHENTICATED &&
-      status === AuthenticationStatus.AUTHENTICATED
-    ) {
-      onLogin(authMethod);
-    } else if (
-      prevStatus === AuthenticationStatus.AUTHENTICATED &&
-      status === AuthenticationStatus.UNAUTHENTICATED
-    ) {
-      onLogout();
-    }
-  }, [prevStatus, status, authMethod, onLogin, onLogout]);
 
   // Validate configurable props
   useEffect(() => {
@@ -263,6 +246,11 @@ const DiditAuthProvider = ({
     [authMethod, authMethods, logout, error, status, token, tokenData, user]
   );
 
+  const useWalletProvider = useMemo(
+    () => authMethods.includes(DiditAuthMethod.WALLET),
+    [authMethods]
+  );
+
   return (
     <DiditAuthContext.Provider value={contextValue}>
       <DiditEmailAuthProvider
@@ -281,7 +269,8 @@ const DiditAuthProvider = ({
         status={status}
         token={token}
       >
-        <DiditWalletProvider
+        <ConditionalWalletProvider
+          {...RainbowKitProps}
           authMethod={authMethod}
           claims={claims}
           error={error}
@@ -293,11 +282,13 @@ const DiditAuthProvider = ({
           status={status}
           token={token}
           tokenAuthorizationPath={tokenAuthorizationPath}
+          // conditionally render the wallet provider based on the authMethods prop
+          useWalletProvider={useWalletProvider}
           walletAuthBaseUrl={walletAuthBaseUrl}
           walletAuthorizationPath={walletAuthorizationPath}
         >
           {children}
-        </DiditWalletProvider>
+        </ConditionalWalletProvider>
       </DiditEmailAuthProvider>
     </DiditAuthContext.Provider>
   );
