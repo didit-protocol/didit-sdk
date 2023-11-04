@@ -1,25 +1,16 @@
+import CryptoJS from 'crypto-js';
+
 const generateCodeVerifier = () => {
-  const array = new Uint8Array(32);
-  window.crypto.getRandomValues(array);
-  let codeVerifier = btoa(String.fromCharCode.apply(null, array as any))
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
+  const codeVerifier = CryptoJS.lib.WordArray.random(128 / 8).toString();
   return codeVerifier;
 };
 
-const generateCodeChallenge = async (verifier: string) => {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(verifier);
-  const hashed = await crypto.subtle.digest('SHA-256', data);
-
-  let base64Url = btoa(
-    String.fromCharCode.apply(null, new Uint8Array(hashed) as any)
-  )
+const generateCodeChallenge = (verifier: string) => {
+  const hashed = CryptoJS.SHA256(verifier).toString(CryptoJS.enc.Base64);
+  const base64Url = hashed
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
     .replace(/=+$/, '');
-
   return base64Url;
 };
 

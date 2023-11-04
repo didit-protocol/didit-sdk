@@ -11,13 +11,17 @@ interface LoginModalProps {
   dataTestId?: string;
   isOpen: boolean;
   onClose: () => void;
+  title: string;
+  description: string;
 }
 
 const LoginModal: FC<LoginModalProps> = ({
   buttonClassName = '',
   dataTestId = '',
+  description,
   isOpen = false,
   onClose = () => {},
+  title,
   wrapperClassName = '',
 }) => {
   return (
@@ -42,6 +46,8 @@ const LoginModal: FC<LoginModalProps> = ({
           <LoginDialog
             buttonClassName={buttonClassName}
             dataTestId={dataTestId}
+            description={description}
+            title={title}
             wrapperClassName={wrapperClassName}
           />
         </Box>

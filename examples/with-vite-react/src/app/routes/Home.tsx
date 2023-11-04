@@ -8,8 +8,8 @@ import {
 } from 'didit-sdk';
 
 const Home = () => {
-  const { authMethod, status, token, isAuthenticated, error } = useDiditAuth();
-  const accessToken = String(token);
+  const { authMethod, status, accessToken, isAuthenticated, error } =
+    useDiditAuth();
 
   useEffect(() => {
     if (error) {
@@ -70,7 +70,10 @@ const Home = () => {
             <span>Didit access token: </span>
             {isAuthenticated && (
               <span>
-                <b>{`${accessToken.slice(0, 8)}...${accessToken.slice(-8)}`}</b>
+                <b>
+                  {accessToken &&
+                    `${accessToken.slice(0, 8)}...${accessToken.slice(-8)}`}
+                </b>
               </span>
             )}
           </p>

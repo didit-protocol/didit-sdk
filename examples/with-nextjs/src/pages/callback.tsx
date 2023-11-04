@@ -1,16 +1,11 @@
-/* eslint jsx-a11y/label-has-associated-control: 0 */
-
-import { DiditLogin, useDiditAuth } from 'didit-sdk';
+import { useDiditAuth } from 'didit-sdk';
 import { Inter } from 'next/font/google';
-import { useState } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function Home() {
-  const { authMethod, isAuthenticated, logout, status, token, walletAddress } =
+  const { accessToken, authMethod, isAuthenticated, status, walletAddress } =
     useDiditAuth();
-
-  const accessToken = String(token);
 
   return (
     <main
@@ -19,7 +14,7 @@ export default function Home() {
       {/* Authentication Details Header */}
       <header className="mb-6 p-6 bg-white shadow-lg rounded-lg">
         <h1 className="text-3xl font-bold mb-4">
-          You're logged in with Didit:
+          You`&apos;`re logged in with Didit:
         </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <p className="flex flex-col space-y-2">
@@ -38,7 +33,8 @@ export default function Home() {
             <span className="font-medium">Access Token:</span>
             {isAuthenticated && (
               <span className="font-bold text-blue-600">
-                {`${accessToken.slice(0, 8)}...${accessToken.slice(-8)}`}
+                {accessToken &&
+                  `${accessToken.slice(0, 8)}...${accessToken.slice(-8)}`}
               </span>
             )}
           </p>

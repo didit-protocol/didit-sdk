@@ -5,14 +5,11 @@ import {
   AuthenticationStatus,
   DiditAuthMethod,
   DiditEmailAuthMode,
+  DiditTokensData,
   SocialAuthProvider,
 } from '../../types';
 import { generateCodeChallenge, generateCodeVerifier } from '../../utils';
 import { DiditEmailAuthContext } from './diditEmailAuthContext';
-
-interface DiditTokenData {
-  access_token: string;
-}
 
 interface DiditEmailAuthProviderProps {
   authMethod?: DiditAuthMethod;
@@ -24,8 +21,8 @@ interface DiditEmailAuthProviderProps {
   onAuthenticate?: (_authMethod: DiditAuthMethod) => void;
   onDeauthenticate?: () => void;
   onError?: (error: string) => void;
+  onUpdateTokens?: (tokens: DiditTokensData) => void;
   onUpdateAuthMethod?: (authMethod: DiditAuthMethod) => void;
-  onUpdateToken?: (token: string) => void;
   redirectUri: string;
   scope: string;
   status: AuthenticationStatus;
@@ -43,7 +40,7 @@ const DiditEmailAuthProvider = ({
   onDeauthenticate = () => {},
   onError = () => {},
   onUpdateAuthMethod = () => {},
-  onUpdateToken = () => {},
+  onUpdateTokens = () => {},
   redirectUri,
   scope,
   status,
@@ -107,24 +104,24 @@ const DiditEmailAuthProvider = ({
   );
 
   const handleTokenSuccess = useCallback(
-    (tokenData: DiditTokenData) => {
+    (tokenData: DiditTokensData) => {
       if (!tokenData?.access_token)
         handleTokenError(
           'Didit token error',
           'No access token found in token data'
         );
-      onUpdateToken(tokenData.access_token);
+      onUpdateTokens(tokenData);
       onAuthenticate(socialAuthProvider as unknown as DiditAuthMethod);
       removeSocialAuthProvider();
       removeCodeVerifier();
     },
     [
       handleTokenError,
-      onUpdateToken,
       onAuthenticate,
       socialAuthProvider,
       removeSocialAuthProvider,
       removeCodeVerifier,
+      onUpdateTokens,
     ]
   );
 
