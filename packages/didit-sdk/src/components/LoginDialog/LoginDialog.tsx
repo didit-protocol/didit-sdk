@@ -7,11 +7,15 @@ interface LoginDialogProps {
   wrapperClassName?: string;
   buttonClassName?: string;
   dataTestId?: string;
+  title: string;
+  description: string;
 }
 const LoginDialog: FC<LoginDialogProps> = ({
   buttonClassName = '',
   dataTestId = '',
-  wrapperClassName = '',
+  description = '',
+  title,
+  wrapperClassName,
 }) => {
   const [isSocialOptionsDialog, setIsSocialOptionsDialog] = useState(false);
 
@@ -37,7 +41,9 @@ const LoginDialog: FC<LoginDialogProps> = ({
         <LoginOptionsDialog
           buttonClassName={buttonClassName}
           dataTestId={dataTestId}
+          description={description}
           onLoginWithSocials={HandleLoginWithSocials}
+          title={title}
           wrapperClassName={wrapperClassName}
         />
       )}

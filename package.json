@@ -13,6 +13,7 @@
     "dev:template:next-app": "pnpm --filter rainbowkit-next-app dev",
     "build": "pnpm --recursive --parallel build",
     "build:watch": "pnpm --recursive --parallel --filter ./packages/didit-sdk build:watch",
+    "build:sdk": "pnpm --recursive --parallel --filter ./packages/didit-sdk build",
     "start": "pnpm dev",
     "lint": "eslint . --ext=js,jsx,mjs,ts,cjs,tsx && pnpm format:check && pnpm --recursive typecheck",
     "lint:fix": "eslint . --ext=js,jsx,mjs,ts,cjs,tsx --fix && pnpm format:fix",

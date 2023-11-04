@@ -6,7 +6,7 @@ import {
 } from 'didit-sdk';
 
 function AuthStatus() {
-  const { token, walletAddress, status, error } = useDiditStatus();
+  const { accessToken, walletAddress, status, error } = useDiditStatus();
   const adapter = useAuthenticationAdapter();
   const { openConnectModal } = useConnectModal();
 
@@ -19,8 +19,8 @@ function AuthStatus() {
   return (
     <>
       <h1>
-        This is the second view token: {token} address: {walletAddress} status:{' '}
-        {status}
+        This is the second view token: {accessToken} address: {walletAddress}{' '}
+        status: {status}
       </h1>
       <button onClick={() => adapter.signOut()}>LOGOUT</button>
       {openConnectModal && (

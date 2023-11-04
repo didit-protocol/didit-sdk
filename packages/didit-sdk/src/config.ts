@@ -1,5 +1,12 @@
 import { DiditAuthMethod, DiditEmailAuthMode } from './types';
 
+// Didit TOKENS CHECK
+
+const DEFAULT_AUTH_INTOSPECT_PATH =
+  'https://apx.dev.didit.me/auth/authorizations/v1/introspect/';
+const DEFAULT_AUTH_ROTATE_TOKEN_PATH =
+  'https://apx.dev.didit.me/auth/authorizations/v1/token/';
+
 // Didit Wallet login
 const DEFAULT_WALLET_AUTH_BASE_URL = 'https://apx.didit.me/auth';
 const DEFAULT_WALLET_AUTH_AUTHORIZATION_PATH =
@@ -23,6 +30,7 @@ const EMAIL_AUTH_SOCIAL_AUTH_PROVIDER_COOKIE_NAME =
 // General Didit
 const AUTH_METHOD_COOKIE_NAME = 'didit_auth_method';
 const TOKEN_COOKIE_NAME = 'didit_token';
+const REFRESH_TOKEN_COOKIE_NAME = 'didit_refresh_token';
 const WALLET_ADDRESS_COOKIE_NAME = 'didit_wallet_address';
 const DEFAULT_CLAIMS = 'read:email';
 const DEFAULT_SCOPE = 'openid';
@@ -34,7 +42,9 @@ const DEFAULT_AUTH_METHODS = [
 
 const DIDIT = {
   AUTH_METHOD_COOKIE_NAME,
+  DEFAULT_AUTH_INTOSPECT_PATH,
   DEFAULT_AUTH_METHODS,
+  DEFAULT_AUTH_ROTATE_TOKEN_PATH,
   DEFAULT_CLAIMS,
   DEFAULT_EMAIL_AUTH_MODE,
   DEFAULT_SCOPE,
@@ -51,6 +61,7 @@ const DIDIT = {
   EMAIL_AUTH_POPUP_WIDTH,
   EMAIL_AUTH_RESPONSE_TYPE,
   EMAIL_AUTH_SOCIAL_AUTH_PROVIDER_COOKIE_NAME,
+  REFRESH_TOKEN_COOKIE_NAME,
   TOKEN_COOKIE_NAME,
   WALLET_ADDRESS_COOKIE_NAME,
 };

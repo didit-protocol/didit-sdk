@@ -3,6 +3,9 @@ import { DiditLoginMode } from '../../types';
 import { LoginDialog } from '../LoginDialog';
 import LoginModal from '../LoginModal/LoginModal';
 
+const LOGIN_DIALOG_DEFAULT_TITLE = 'Sign In With Didit';
+const LOGIN_DIALOG_DEFAULT_DESCRIPTION = '';
+
 const mode_map = {
   [DiditLoginMode.EMBEDDED]: LoginDialog,
   [DiditLoginMode.MODAL]: LoginModal,
@@ -15,15 +18,19 @@ interface DiditLoginProps {
   mode?: DiditLoginMode;
   isModalOpen?: boolean;
   onModalClose?: () => void;
+  title?: string;
+  description?: string;
 }
 
 const DiditLogin: FC<DiditLoginProps> = ({
   buttonClassName = '',
   dataTestId = '',
+  description = LOGIN_DIALOG_DEFAULT_DESCRIPTION,
   isModalOpen = false,
   mode = DiditLoginMode.MODAL,
   onModalClose = () => {},
-  wrapperClassName = '',
+  title = LOGIN_DIALOG_DEFAULT_TITLE,
+  wrapperClassName,
 }) => {
   const Login = mode_map[mode] || LoginModal;
 
@@ -31,8 +38,10 @@ const DiditLogin: FC<DiditLoginProps> = ({
     <Login
       buttonClassName={buttonClassName}
       dataTestId={dataTestId}
+      description={description}
       isOpen={isModalOpen}
       onClose={onModalClose}
+      title={title}
       wrapperClassName={wrapperClassName}
     />
   );
