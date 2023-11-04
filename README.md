@@ -290,6 +290,7 @@ You can use the `useDiditAuth` hook to retrieve the authentication status and cu
 - `isAuthenticated`: Whether the user is authenticated or not
 - `walletAddress`: The current user's wallet address if connected by the wallet auth method
 - `error`: The current error in authentication process if any
+- `user : { identifier: <email | walletAddress>, identifierType: <"email" | "wallet" }`: the user identifier based on the user login method
 
 ```tsx
 import { useDiditAuth } from 'didit-sdk';
