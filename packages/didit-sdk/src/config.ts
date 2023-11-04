@@ -3,9 +3,9 @@ import { DiditAuthMethod, DiditEmailAuthMode } from './types';
 // Didit TOKENS CHECK
 
 const DEFAULT_AUTH_INTOSPECT_PATH =
-  'https://apx.dev.didit.me/auth/authorizations/v1/introspect/';
+  'https://apx.didit.me/auth/authorizations/v1/introspect/';
 const DEFAULT_AUTH_ROTATE_TOKEN_PATH =
-  'https://apx.dev.didit.me/auth/authorizations/v1/token/';
+  'https://apx.didit.me/auth/authorizations/v1/token/';
 
 // Didit Wallet login
 const DEFAULT_WALLET_AUTH_BASE_URL = 'https://apx.didit.me/auth';
