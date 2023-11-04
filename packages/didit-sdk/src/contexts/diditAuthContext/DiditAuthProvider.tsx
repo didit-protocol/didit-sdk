@@ -223,7 +223,12 @@ const DiditAuthProvider = ({
     }
     // TODO: Check if token is valid through Didit Auth service API
     if (!!accessToken && !!authMethod) {
-      checkAccessToken();
+      try {
+        checkAccessToken();
+      } catch (error) {
+        console.warn('Error checking access token: ', error);
+        forceCompleteLogout();
+      }
     } else {
       // Consolidate logout status in both frontend and backend
       forceCompleteLogout();
@@ -238,12 +243,16 @@ const DiditAuthProvider = ({
   }, [validateClaims, validateScope]);
 
   const rotateTokens = useCallback(async () => {
-    const formBodyJoined = `grant_type=refresh_token&client_id=${clientId}&refresh_token=${refreshToken}`;
+    const payload = {
+      client_id: clientId,
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+    };
 
     const response = await fetch(`${DIDIT.DEFAULT_AUTH_ROTATE_TOKEN_PATH}`, {
-      body: formBodyJoined,
+      body: JSON.stringify(payload),
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+        'Content-Type': 'application/json',
       },
       method: 'POST',
     });
@@ -255,6 +264,7 @@ const DiditAuthProvider = ({
       authenticate(authMethod as DiditAuthMethod);
     } else {
       deauthenticate();
+      console.warn('unable to refresh token');
     }
   }, [
     clientId,
@@ -266,7 +276,7 @@ const DiditAuthProvider = ({
   ]);
 
   const checkAccessToken = useCallback(async () => {
-    const response = await fetch(`${DIDIT.DEFAUTL_AUTH_INTOSPECT_PATH}`, {
+    const response = await fetch(`${DIDIT.DEFAULT_AUTH_INTOSPECT_PATH}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -275,7 +285,7 @@ const DiditAuthProvider = ({
     if (response.status === 200) {
       // Handle successful response here
       const decodedJwt = await response.json();
-      if (decodedJwt.active === true) {
+      if (decodedJwt.active !== true) {
         authenticate(authMethod as DiditAuthMethod);
       } else {
         // refresh token
@@ -285,6 +295,7 @@ const DiditAuthProvider = ({
       await rotateTokens();
     } else {
       deauthenticate();
+      console.warn('Invalid access token');
     }
   }, [accessToken, deauthenticate, rotateTokens, authMethod, authenticate]);
 
