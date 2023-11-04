@@ -178,7 +178,7 @@ const DiditAuthProvider = ({
     const claimsRegex = /^(\w+:\w+)(\s\w+:\w+)*$/;
     if (!claimsRegex.test(claims)) {
       throw new Error(
-        "Invalid claims. Claims must be a string of the form 'read:claim write:claim'."
+        "Invalid claims. Claims must be a string of the form 'read:claim'."
       );
     }
     return true;
