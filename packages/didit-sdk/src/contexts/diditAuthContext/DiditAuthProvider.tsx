@@ -285,7 +285,7 @@ const DiditAuthProvider = ({
     if (response.status === 200) {
       // Handle successful response here
       const decodedJwt = await response.json();
-      if (decodedJwt.active !== true) {
+      if (decodedJwt.active === true) {
         authenticate(authMethod as DiditAuthMethod);
       } else {
         // refresh token
