@@ -246,7 +246,7 @@ const DiditEmailAuthProvider = ({
           // we're here when the childPopup window has been closed
           if (windowPopup.closed) {
             clearInterval(interval);
-            handleTokenError('Error Popup is closed', 'Cant open Popup');
+            handleTokenError('Error Popup is closed', 'Connection Rejected');
           }
         }
       }, 500);
