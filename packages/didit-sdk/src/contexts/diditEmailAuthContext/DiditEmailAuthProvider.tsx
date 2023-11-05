@@ -1,5 +1,5 @@
 import { useLocalStorageValue } from '@react-hookz/web';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { DIDIT } from '../../config';
 import {
   AuthenticationStatus,
@@ -46,24 +46,6 @@ const DiditEmailAuthProvider = ({
   status,
   token,
 }: DiditEmailAuthProviderProps) => {
-  // Sanitize window values. Window reference is not available in SSR (nextjs)
-  const isPopupWindow = typeof window !== 'undefined' && !!window?.opener;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const windowLocation =
-    typeof window !== 'undefined'
-      ? window?.location
-      : {
-          href: '',
-          origin: '',
-          pathname: '',
-          search: '',
-        };
-
-  // Create the Didit auth popup and broadcast channel to communicate with auth popup
-  const [diditAuthPopup, setDiditEmailAuthPopup] = useState<Window | null>(
-    null
-  );
-
   const {
     remove: removeCodeVerifier,
     set: setCodeVerifier,
@@ -72,6 +54,18 @@ const DiditEmailAuthProvider = ({
     defaultValue: '',
     initializeWithValue: false,
   });
+
+  const firstRenderRef = useRef(true);
+  useEffect(() => {
+    if (firstRenderRef.current) {
+      firstRenderRef.current = false;
+      return;
+    }
+    if (!codeVerifier) {
+      const _codeVerifier = generateCodeVerifier();
+      setCodeVerifier(_codeVerifier);
+    }
+  }, [codeVerifier, setCodeVerifier]);
 
   const {
     remove: removeSocialAuthProvider,
@@ -88,19 +82,12 @@ const DiditEmailAuthProvider = ({
   const handleTokenError = useCallback(
     (_error: string, _errorDescription: string) => {
       console.error(_error, _errorDescription);
-      diditAuthPopup?.close();
       onError(_error);
       onDeauthenticate();
       removeSocialAuthProvider();
       removeCodeVerifier();
     },
-    [
-      diditAuthPopup,
-      onError,
-      onDeauthenticate,
-      removeCodeVerifier,
-      removeSocialAuthProvider,
-    ]
+    [onError, onDeauthenticate, removeCodeVerifier, removeSocialAuthProvider]
   );
 
   const handleTokenSuccess = useCallback(
@@ -111,11 +98,23 @@ const DiditEmailAuthProvider = ({
           'No access token found in token data'
         );
       onUpdateTokens(tokenData);
-      onAuthenticate(socialAuthProvider as unknown as DiditAuthMethod);
+      // we have a problem with code identifier and social auth provider state
+      // sense we want them be presictent in the browser for the redirection
+      // functionality
+      // but for the popup case, the states don't have a change to change, so they
+      // stay at the initial state. I fixed the code verifier by generating one at
+      // first before we start the auth flow. but for the social auth provider,
+      // I find this solution to be a hacky one,
+      // TODO: find a better solution for this
+      setSocialAuthProvider(s => {
+        onAuthenticate(s as unknown as DiditAuthMethod);
+        return socialAuthProvider || s || '';
+      });
       removeSocialAuthProvider();
       removeCodeVerifier();
     },
     [
+      setSocialAuthProvider,
       handleTokenError,
       onAuthenticate,
       socialAuthProvider,
@@ -123,6 +122,69 @@ const DiditEmailAuthProvider = ({
       removeCodeVerifier,
       onUpdateTokens,
     ]
+  );
+
+  const getDiditToken = useCallback(
+    async (_authorizationCode: string, _codeVerifier: string) => {
+      const tokenUrl = `${DIDIT.EMAIL_AUTH_BASE_URL}/oidc/token/`;
+
+      const tokenBody = new URLSearchParams();
+      tokenBody.append('client_id', clientId);
+      tokenBody.append('code', _authorizationCode);
+      tokenBody.append('code_verifier', _codeVerifier);
+      tokenBody.append('grant_type', 'authorization_code');
+      tokenBody.append('redirect_uri', `http://localhost:3000/callback`);
+      try {
+        const tokenData = await fetch(tokenUrl, {
+          body: tokenBody,
+          method: 'POST',
+        })
+          .then(response => response.json())
+          .catch(error =>
+            handleTokenError('Error retrieving Didit token', String(error))
+          );
+
+        handleTokenSuccess(tokenData);
+        return tokenData;
+      } catch (error) {
+        handleTokenError('Error retrieving Didit token', String(error));
+      }
+    },
+    [clientId, handleTokenError, handleTokenSuccess]
+  );
+
+  const getParamasAndAuthenticate = useCallback(
+    (windowLocation: Location, isPopup: boolean = false) => {
+      if (!windowLocation.search) {
+        handleTokenError(
+          'Error getting authorization code',
+          'No search params found'
+        );
+        return;
+      }
+      const urlSearchParams = new URLSearchParams(windowLocation.search);
+      const params = Object.fromEntries(urlSearchParams.entries());
+      const _authorizationCode = params?.code;
+      const authorizationError = params?.error;
+      const authorizationErrorDescription = params?.error_description;
+
+      if (_authorizationCode && !token && codeVerifier) {
+        if (!isPopup) {
+          urlSearchParams.delete('code');
+          window.history.replaceState({}, '', `${windowLocation.pathname}`);
+        }
+        // Request the Didit token
+        getDiditToken(_authorizationCode, codeVerifier);
+      } else if (authorizationError) {
+        if (!isPopup) {
+          urlSearchParams.delete('error');
+          urlSearchParams.delete('error_description');
+          window.history.replaceState({}, '', `${windowLocation.pathname}`);
+        }
+        handleTokenError(authorizationError, authorizationErrorDescription);
+      }
+    },
+    [token, codeVerifier, getDiditToken, handleTokenError]
   );
 
   const generateAuthorizeWithUrl = useCallback(
@@ -141,9 +203,7 @@ const DiditEmailAuthProvider = ({
       const encodedRedirectUrl = encodeURIComponent(redirectUri);
 
       // Generate a random string as code_verifier and code_challenge, and store the code_verifier in local storage
-      const _codeVerifier = generateCodeVerifier();
-      const codeChallenge = await generateCodeChallenge(_codeVerifier);
-      setCodeVerifier(_codeVerifier);
+      const codeChallenge = await generateCodeChallenge(codeVerifier as string);
 
       // Generate the authorization url
       const authorizeUrl = `${authorizationUrl}?client_id=${clientId}&response_type=${responseType}&scope=${scope}&claims=${claims}&redirect_uri=${encodedRedirectUrl}&code_verifier=${codeVerifier}&code_challenge=${codeChallenge}&code_challenge_method=${codeChallengeMethod}&idp=${idp}`;
@@ -154,7 +214,6 @@ const DiditEmailAuthProvider = ({
       authMethod,
       setSocialAuthProvider,
       redirectUri,
-      setCodeVerifier,
       clientId,
       scope,
       claims,
@@ -168,27 +227,55 @@ const DiditEmailAuthProvider = ({
     window.location.href = _authorizationUrl;
   };
 
-  const authorizeDiditOnPopupMode = useCallback((_authorizationUrl: string) => {
-    // Open a pop-up centered in the middle of the screen instead of redirecting
-    const width = DIDIT.EMAIL_AUTH_POPUP_WIDTH;
-    const height = DIDIT.EMAIL_AUTH_POPUP_HEIGHT;
-
-    // Recalculate the left and top positions just before opening the popup
-    const left = window.innerWidth / 2 - width / 2 + window.screenX;
-    const top = window.innerHeight / 2 - height / 2 + window.screenY;
-    var popupReference = window.open(
-      '',
-      'Authorization',
-      `width=${width},height=${height},left=${left},top=${top}`
-    );
-    if (popupReference) {
-      // update popup url
-      if (popupReference) {
-        popupReference.location = _authorizationUrl;
-        setDiditEmailAuthPopup(popupReference);
+  const getSearchFromPopup = useCallback(
+    (windowPopup: Window) => {
+      function getSearchFromRedirection(popup: Window) {
+        if (popup.document.domain === document.domain) {
+          if (popup.document.readyState === 'complete') {
+            clearInterval(interval);
+            getParamasAndAuthenticate(popup.location, true);
+            popup.close();
+          }
+        }
       }
-    }
-  }, []);
+
+      const interval = setInterval(function () {
+        try {
+          getSearchFromRedirection(windowPopup);
+        } catch (e) {
+          // we're here when the childPopup window has been closed
+          if (windowPopup.closed) {
+            clearInterval(interval);
+            handleTokenError('Error Popup is closed', 'Cant open Popup');
+          }
+        }
+      }, 500);
+    },
+    [getParamasAndAuthenticate, handleTokenError]
+  );
+
+  const authorizeDiditOnPopupMode = useCallback(
+    (_authorizationUrl: string) => {
+      // Open a pop-up centered in the middle of the screen instead of redirecting
+      const width = DIDIT.EMAIL_AUTH_POPUP_WIDTH;
+      const height = DIDIT.EMAIL_AUTH_POPUP_HEIGHT;
+
+      // Recalculate the left and top positions just before opening the popup
+      const left = window.innerWidth / 2 - width / 2 + window.screenX;
+      const top = window.innerHeight / 2 - height / 2 + window.screenY;
+      var popupReference = window.open(
+        _authorizationUrl,
+        'Authorization-Popup',
+        `width=${width},height=${height},left=${left},top=${top}`
+      );
+      if (!popupReference) {
+        handleTokenError('Error retrieving Didit token', 'Cant open Popup');
+        return;
+      }
+      getSearchFromPopup(popupReference);
+    },
+    [getSearchFromPopup, handleTokenError]
+  );
 
   const loginWithSocial = useCallback(
     async (socialAuthProvider: SocialAuthProvider) => {
@@ -210,36 +297,6 @@ const DiditEmailAuthProvider = ({
     ]
   );
 
-  const getDiditToken = useCallback(
-    async (_authorizationCode: string, _codeVerifier: string) => {
-      const tokenUrl = `${DIDIT.EMAIL_AUTH_BASE_URL}/oidc/token/`;
-
-      const tokenBody = new URLSearchParams();
-      tokenBody.append('client_id', clientId);
-      tokenBody.append('code', _authorizationCode);
-      tokenBody.append('code_verifier', _codeVerifier);
-      tokenBody.append('grant_type', 'authorization_code');
-      tokenBody.append('redirect_uri', `http://localhost:3000/callback`);
-
-      try {
-        const tokenData = await fetch(tokenUrl, {
-          body: tokenBody,
-          method: 'POST',
-        })
-          .then(response => response.json())
-          .catch(error =>
-            handleTokenError('Error retrieving Didit token', String(error))
-          );
-
-        handleTokenSuccess(tokenData);
-        return tokenData;
-      } catch (error) {
-        handleTokenError('Error retrieving Didit token', String(error));
-      }
-    },
-    [clientId, handleTokenError, handleTokenSuccess]
-  );
-
   const loginWithGoogle = useCallback(
     () => loginWithSocial(SocialAuthProvider.GOOGLE),
     [loginWithSocial]
@@ -255,47 +312,27 @@ const DiditEmailAuthProvider = ({
     []
   );
 
-  // Effect to request the Didit token when the authorization code is present in the URL
+  // now we are either on a opopup or on the redirect url
+  // if we are on the popup we should do nothing, the parent window will get the code from the url
+  // if we are on the redirect url, we need to check if we have the code ...
+
   useEffect(() => {
-    // Assert token request never happens in the popup window
-    if (isPopupWindow) return;
-
-    const urlSearchParams = new URLSearchParams(windowLocation.search);
-    const params = Object.fromEntries(urlSearchParams.entries());
-
-    const _authorizationCode = params?.code;
-    const authorizationError = params?.error;
-    const authorizationErrorDescription = params?.error_description;
-
-    if (_authorizationCode && !token && codeVerifier) {
-      urlSearchParams.delete('code');
-      window.history.replaceState({}, '', `${windowLocation.pathname}`);
-
-      // Request the Didit token
-      getDiditToken(_authorizationCode, codeVerifier);
-    } else if (authorizationError) {
-      urlSearchParams.delete('error');
-      urlSearchParams.delete('error_description');
-      window.history.replaceState({}, '', `${windowLocation.pathname}`);
-
-      handleTokenError(authorizationError, authorizationErrorDescription);
+    // first check if we are on popup to do nothing
+    if (
+      typeof window === 'undefined' ||
+      (window.opener &&
+        window.opener !== window &&
+        window.name === 'Authorization-Popup')
+    )
+      return;
+    else {
+      // first check if we are on the redirect url
+      const windowLocation = window.location;
+      const windowUrl = windowLocation.origin + windowLocation.pathname;
+      if (windowUrl !== redirectUri || !windowLocation.search) return;
+      getParamasAndAuthenticate(windowLocation);
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [windowLocation.search, token, getDiditToken, handleTokenError]);
-
-  // Effect to propagate redirection from the popup to the parent window
-  useEffect(() => {
-    const windowUrl = windowLocation.origin + windowLocation.pathname;
-
-    // If there is a parent window and redirect uri matches, we are in the popup
-    if (isPopupWindow && windowUrl === redirectUri) {
-      // Redirect the parent window to the current URL with search params
-      window.opener.location.href = windowLocation.href;
-      // Close the popup
-      window.close();
-    }
-  }, [isPopupWindow, windowLocation, redirectUri]);
+  }, [redirectUri, getParamasAndAuthenticate]);
 
   const contextValue = useMemo(
     () => ({
