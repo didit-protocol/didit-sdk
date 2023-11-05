@@ -200,14 +200,23 @@ const DiditEmailAuthProvider = ({
       const responseType = DIDIT.EMAIL_AUTH_RESPONSE_TYPE;
       const idp = _socialAuthProvider;
       setSocialAuthProvider(_socialAuthProvider);
-      const encodedRedirectUrl = encodeURIComponent(redirectUri);
 
       // Generate a random string as code_verifier and code_challenge, and store the code_verifier in local storage
       const codeChallenge = await generateCodeChallenge(codeVerifier as string);
 
-      // Generate the authorization url
-      const authorizeUrl = `${authorizationUrl}?client_id=${clientId}&response_type=${responseType}&scope=${scope}&claims=${claims}&redirect_uri=${encodedRedirectUrl}&code_verifier=${codeVerifier}&code_challenge=${codeChallenge}&code_challenge_method=${codeChallengeMethod}&idp=${idp}`;
-
+      // we don't encode redirect uri, scopes and cliams because they are already encoded with URLSearchParams
+      const params: URLSearchParams = new URLSearchParams({
+        claims: claims,
+        client_id: clientId,
+        code_challenge: codeChallenge,
+        code_challenge_method: codeChallengeMethod,
+        code_verifier: codeVerifier as string,
+        idp,
+        redirect_uri: redirectUri,
+        response_type: responseType,
+        scope: scope,
+      });
+      const authorizeUrl = `${authorizationUrl}?${params.toString()}`;
       return authorizeUrl;
     },
     [
