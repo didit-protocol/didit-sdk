@@ -3,18 +3,18 @@ import { DiditAuthMethod, DiditEmailAuthMode } from './types';
 // Didit TOKENS CHECK
 
 const DEFAULT_AUTH_INTOSPECT_PATH =
-  'https://apx.staging.didit.me/auth/v2/introspect/';
+  'https://apx.dev.didit.me/auth/v2/introspect/';
 const DEFAULT_AUTH_ROTATE_TOKEN_PATH =
-  'https://apx.staging.didit.me/auth/v2/token/';
+  'https://apx.dev.didit.me/auth/v2/token/';
 
 // Didit Wallet login
-const DEFAULT_WALLET_AUTH_BASE_URL = 'https://apx.staging.didit.me/auth';
+const DEFAULT_WALLET_AUTH_BASE_URL = 'https://apx.dev.didit.me/auth';
 const DEFAULT_WALLET_AUTH_AUTHORIZATION_PATH = '/v2/wallet-authorization/';
 const DEFAULT_WALLET_AUTH_TOKEN_PATH = '/v2/token/';
 
 // Email auth login
 const DEFAULT_EMAIL_AUTH_MODE = DiditEmailAuthMode.POPUP;
-const EMAIL_AUTH_BASE_URL = 'https://apx.staging.didit.me/auth';
+const EMAIL_AUTH_BASE_URL = 'https://apx.dev.didit.me/auth';
 const EMAIL_AUTH_AUTHORIZATION_PATH = '/oidc/authorize/';
 const EMAIL_AUTH_LOGOUT_PATH = '/oidc/logout/';
 const EMAIL_AUTH_AUTHORIZATION_GRANNT_TYPE = 'authorization_code';
