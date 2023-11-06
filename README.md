@@ -101,6 +101,7 @@ import { DiditAuthProvider} from 'didit-sdk';
 Additionally you can configure your **Didit** connection with more custom props:
 
 - `authMethods`: The authentication methods you want to enable for your users (Default: `['google', 'apple', 'wallet']`)
+- `authBaseUrl`: The base URL of a custom backend with **Didit** auth for email based authentication methods and token revalidation (Default: `https://apx.didit.me/auth`)
 - `walletAuthBaseUrl`: The base URL of your custom backend with **Didit** auth for wallet auth method (Default: `https://apx.didit.me/auth`)
 - `emailAuthMode`: The mode of the email based authentication methods. It can be either `popup` or `redirect` (Default: `popup`)
 - `walletAuthorizationPath`: Custom path for wallet authorization endpoint (Default: `/v2/wallet-authorization/`)
@@ -120,6 +121,7 @@ import { DiditAuthProvider, DiditAuthMethod,  } from 'didit-sdk';
 ...
       <DiditAuthProvider
         authMethods={[DiditAuthMethod.APPLE, DiditAuthMethod.GOOGLE]}
+        authBaseUrl="https://apx.staging.didit.me/auth"
         walletAuthBaseUrl="https://my.didit.app/auth/wallet"
         clientId="676573"
         claims="read:email read:blockchain"

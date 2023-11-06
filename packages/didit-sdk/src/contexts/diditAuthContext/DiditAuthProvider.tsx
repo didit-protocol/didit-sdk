@@ -24,6 +24,7 @@ import { DiditAuthContext } from './diditAuthContext';
 const INITIAL_AUTH_STATUS = AuthenticationStatus.LOADING;
 
 type DiditAuthProviderProps = {
+  authBaseUrl?: string;
   walletAuthBaseUrl?: string;
   children: React.ReactNode;
   clientId: string;
@@ -47,6 +48,7 @@ It is used to authenticate users with their email address, social media accounts
 */
 
 const DiditAuthProvider = ({
+  authBaseUrl = DIDIT.DEFAULT_AUTH_BASE_URL,
   authMethods = DIDIT.DEFAULT_AUTH_METHODS,
   children,
   claims = DIDIT.DEFAULT_CLAIMS,
@@ -135,7 +137,7 @@ const DiditAuthProvider = ({
   // logoutFromDidit is used to logout from the Didit service.
   const logoutFromDidit = useCallback(async () => {
     try {
-      const url = `${DIDIT.EMAIL_AUTH_BASE_URL}${DIDIT.EMAIL_AUTH_LOGOUT_PATH}`;
+      const url = `${authBaseUrl}${DIDIT.EMAIL_AUTH_LOGOUT_PATH}`;
 
       const response = await fetch(url, {
         headers: {
@@ -249,13 +251,16 @@ const DiditAuthProvider = ({
       refresh_token: refreshToken,
     };
 
-    const response = await fetch(`${DIDIT.DEFAULT_AUTH_ROTATE_TOKEN_PATH}`, {
-      body: JSON.stringify(payload),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-    });
+    const response = await fetch(
+      `${authBaseUrl}${DIDIT.AUTH_ROTATE_TOKEN_PATH}`,
+      {
+        body: JSON.stringify(payload),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+      }
+    );
     if (response.ok) {
       // Handle successful response here
       const newtokens = await response.json();
@@ -267,6 +272,7 @@ const DiditAuthProvider = ({
       console.warn('unable to refresh token');
     }
   }, [
+    authBaseUrl,
     clientId,
     refreshToken,
     authMethod,
@@ -276,7 +282,7 @@ const DiditAuthProvider = ({
   ]);
 
   const checkAccessToken = useCallback(async () => {
-    const response = await fetch(`${DIDIT.DEFAULT_AUTH_INTOSPECT_PATH}`, {
+    const response = await fetch(`${authBaseUrl}${DIDIT.AUTH_INTOSPECT_PATH}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -297,7 +303,14 @@ const DiditAuthProvider = ({
       deauthenticate();
       console.warn('Invalid access token');
     }
-  }, [accessToken, deauthenticate, rotateTokens, authMethod, authenticate]);
+  }, [
+    authBaseUrl,
+    accessToken,
+    deauthenticate,
+    rotateTokens,
+    authMethod,
+    authenticate,
+  ]);
 
   const contextValue = useMemo(
     () => ({
@@ -335,6 +348,7 @@ const DiditAuthProvider = ({
         authMethod={authMethod}
         claims={claims}
         clientId={clientId}
+        emailAuthBaseUrl={authBaseUrl}
         emailAuthMode={emailAuthMode}
         error={error}
         onAuthenticate={authenticate}
