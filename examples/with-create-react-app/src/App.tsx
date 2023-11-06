@@ -54,6 +54,7 @@ function App() {
           DiditAuthMethod.WALLET,
           DiditAuthMethod.APPLE,
         ]}
+        authBaseUrl={process.env.REACT_APP_DIDIT_AUTH_BASE_URL || ''}
         walletAuthBaseUrl={
           process.env.REACT_APP_DIDIT_WALLET_AUTH_BASE_URL || ''
         }

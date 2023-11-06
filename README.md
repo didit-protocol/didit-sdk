@@ -101,10 +101,11 @@ import { DiditAuthProvider} from 'didit-sdk';
 Additionally you can configure your **Didit** connection with more custom props:
 
 - `authMethods`: The authentication methods you want to enable for your users (Default: `['google', 'apple', 'wallet']`)
+- `authBaseUrl`: The base URL of a custom backend with **Didit** auth for email based authentication methods and token revalidation (Default: `https://apx.didit.me/auth`)
 - `walletAuthBaseUrl`: The base URL of your custom backend with **Didit** auth for wallet auth method (Default: `https://apx.didit.me/auth`)
 - `emailAuthMode`: The mode of the email based authentication methods. It can be either `popup` or `redirect` (Default: `popup`)
-- `walletAuthorizationPath`: Custom path for wallet authorization endpoint (Default: `/authorizations/v1/wallet-authorization/`)
-- `tokenAuthorizationPath`: Custom path for token endpoint (Default: `/authorizations/v1/token/`)
+- `walletAuthorizationPath`: Custom path for wallet authorization endpoint (Default: `/v2/wallet-authorization/`)
+- `tokenAuthorizationPath`: Custom path for token endpoint (Default: `/v2/token/`)
 - `claims`: The claims you want to request from your users (Default: `"read:email"`)
 - `scope`: The scopes you want to request from your users (Default: `"openid"`)
 
@@ -120,6 +121,7 @@ import { DiditAuthProvider, DiditAuthMethod,  } from 'didit-sdk';
 ...
       <DiditAuthProvider
         authMethods={[DiditAuthMethod.APPLE, DiditAuthMethod.GOOGLE]}
+        authBaseUrl="https://apx.staging.didit.me/auth"
         walletAuthBaseUrl="https://my.didit.app/auth/wallet"
         clientId="676573"
         claims="read:email read:blockchain"
@@ -290,6 +292,7 @@ You can use the `useDiditAuth` hook to retrieve the authentication status and cu
 - `isAuthenticated`: Whether the user is authenticated or not
 - `walletAddress`: The current user's wallet address if connected by the wallet auth method
 - `error`: The current error in authentication process if any
+- `user : { identifier: <email | walletAddress>, identifierType: <"email" | "wallet" }`: the user identifier based on the user login method
 
 ```tsx
 import { useDiditAuth } from 'didit-sdk';

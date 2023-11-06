@@ -16,6 +16,7 @@ const Providers = ({ children }: ProvidersProps) => {
     <WagmiConfig config={config}>
       <DiditAuthProvider
         authMethods={[DiditAuthMethod.WALLET, DiditAuthMethod.GOOGLE]}
+        authBaseUrl={import.meta.env.VITE_DIDIT_AUTH_BASE_URL || ''}
         walletAuthBaseUrl={
           import.meta.env.VITE_DIDIT_WALLET_AUTH_BASE_URL || ''
         }
