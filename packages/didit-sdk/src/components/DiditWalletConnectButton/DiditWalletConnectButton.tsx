@@ -20,7 +20,7 @@ const DiditConnectWalletButton: FC<DiditConnectWalletButtonProps> = ({
       dataTestId={dataTestId}
       icon={<CoinbaseIcon />}
       isDisabled={isAuthenticated}
-      label="Continue with wallet"
+      label="Continue with Digital Wallet"
       onClick={loginWithWallet}
     />
   );

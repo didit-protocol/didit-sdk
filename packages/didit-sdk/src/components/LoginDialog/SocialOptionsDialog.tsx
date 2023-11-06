@@ -43,13 +43,12 @@ const SocialOptionsDialog: FC<SocialOptionsDialogProps> = ({
   return (
     <div className={LoginClassName} data-testid={dataTestId}>
       <div className="dialog-text">
-        <div className="dialog-header">
+        <div className="flex-col dialog-header">
           <LeftArrowButton onClick={onBackClick} />
-          <h2 className="dialog-text-title">Select social account</h2>
+          <h2 className="dialog-text-title">Select Social Account</h2>
         </div>
         <p className="dialog-text-description">
-          This paragraph of text is used to describe data and suggest the user
-          to fill in the fields.
+          Quickly sign in with your trusted provider
         </p>
       </div>
       <div className="dialog-buttons">
