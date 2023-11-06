@@ -20,7 +20,7 @@ enum DiditAuthMethod {
   WALLET = 'wallet',
 }
 
-enum AuthenticationStatus {
+enum DiditAuthStatus {
   LOADING = 'loading',
   AUTHENTICATED = 'authenticated',
   UNAUTHENTICATED = 'unauthenticated',
@@ -53,7 +53,7 @@ export {
   SocialAuthProvider,
   DiditAuthMethod,
   DiditLoginMode,
-  AuthenticationStatus,
+  DiditAuthStatus,
   type DiditTokenInfo,
   type DiditUser,
   type DiditTokensData,

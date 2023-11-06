@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   DiditAuthMethod,
+  DiditAuthStatus,
   DiditLogin,
   DiditLoginButton,
   DiditLoginMode,
@@ -25,6 +26,15 @@ const Home = () => {
     onLogout: () => console.log('useDiditAuth: Logged out from Didit'),
   });
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+  // Simulate a request to a protected resource when the user is authenticated
+  useEffect(() => {
+    if (status === DiditAuthStatus.AUTHENTICATED) {
+      console.log(
+        'User is authenticated in Didit, making a request to a protected resource...'
+      );
+    }
+  }, [status]);
 
   return (
     <div

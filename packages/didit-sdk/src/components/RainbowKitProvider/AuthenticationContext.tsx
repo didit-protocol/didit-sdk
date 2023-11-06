@@ -7,7 +7,7 @@ import React, {
   useRef,
 } from 'react';
 import { useAccount } from 'wagmi';
-import { AuthenticationStatus } from '../../types';
+import { DiditAuthStatus } from '../../types';
 
 export interface AuthenticationAdapter {
   getNonce: () => Promise<string>;
@@ -22,7 +22,7 @@ export interface AuthenticationAdapter {
 
 export interface RainbowKitAuthenticationConfig {
   adapter: AuthenticationAdapter;
-  status: AuthenticationStatus;
+  status: DiditAuthStatus;
   token: string | boolean;
   address: string;
   error: string;
@@ -70,7 +70,7 @@ export function RainbowKitAuthenticationProvider({
     if (onceRef.current) return;
     onceRef.current = true;
 
-    if (isDisconnected && status === AuthenticationStatus.AUTHENTICATED) {
+    if (isDisconnected && status === DiditAuthStatus.AUTHENTICATED) {
       adapter.signOut();
     }
   }, [status, adapter, isDisconnected, token, address]);

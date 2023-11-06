@@ -5,7 +5,7 @@ import { useIsMounted } from '../../hooks/useIsMounted';
 import { useMainnetEnsAvatar } from '../../hooks/useMainnetEnsAvatar';
 import { useMainnetEnsName } from '../../hooks/useMainnetEnsName';
 import { useRecentTransactions } from '../../transactions/useRecentTransactions';
-import { AuthenticationStatus } from '../../types';
+import { DiditAuthStatus } from '../../types';
 import { useAsyncImage } from '../AsyncImage/useAsyncImage';
 import {
   useAccountModal,
@@ -43,7 +43,7 @@ export interface ConnectButtonRendererProps {
       unsupported?: boolean;
     };
     mounted: boolean;
-    authenticationStatus?: AuthenticationStatus;
+    authenticationStatus?: DiditAuthStatus;
     openAccountModal: () => void;
     openChainModal: () => void;
     openConnectModal: () => void;

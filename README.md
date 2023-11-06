@@ -284,7 +284,7 @@ You can use the `useDiditAuth` hook to retrieve the authentication status and cu
 - `status`: The current authentication status ('loading', 'authenticated', 'unauthenticated')
 
   ```tsx
-  import { AuthenticationStatus } from 'didit-sdk';
+  import { DiditAuthStatus } from 'didit-sdk';
   ```
 
 - `accessToken`: The current **Didit** access token
