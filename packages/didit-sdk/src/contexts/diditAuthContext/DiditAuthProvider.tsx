@@ -9,8 +9,8 @@ import React, {
 import { RainbowKitProviderProps } from '../../components/RainbowKitProvider/DiditRainbowkitProvider';
 import { DIDIT } from '../../config';
 import {
-  AuthenticationStatus,
   DiditAuthMethod,
+  DiditAuthStatus,
   DiditEmailAuthMode,
   DiditTokenInfo,
   DiditTokensData,
@@ -21,7 +21,7 @@ import { DiditEmailAuthProvider } from '../diditEmailAuthContext';
 import { ConditionalWalletProvider } from '../diditWalletContext';
 import { DiditAuthContext } from './diditAuthContext';
 
-const INITIAL_AUTH_STATUS = AuthenticationStatus.LOADING;
+const INITIAL_AUTH_STATUS = DiditAuthStatus.UNAUTHENTICATED;
 
 type DiditAuthProviderProps = {
   authBaseUrl?: string;
@@ -89,8 +89,7 @@ const DiditAuthProvider = ({
     initializeWithValue: false,
   });
 
-  const [status, setStatus] =
-    useState<AuthenticationStatus>(INITIAL_AUTH_STATUS);
+  const [status, setStatus] = useState<DiditAuthStatus>(INITIAL_AUTH_STATUS);
   const [error, setError] = useState('');
 
   const accessTokenInfo: DiditTokenInfo | undefined = useMemo(
@@ -126,8 +125,8 @@ const DiditAuthProvider = ({
   const authenticate = useCallback(
     (_authMethod: DiditAuthMethod) => {
       setAuthMethod(_authMethod);
-      if (status !== AuthenticationStatus.AUTHENTICATED) {
-        setStatus(AuthenticationStatus.AUTHENTICATED);
+      if (status !== DiditAuthStatus.AUTHENTICATED) {
+        setStatus(DiditAuthStatus.AUTHENTICATED);
         onLogin(_authMethod);
       }
     },
@@ -158,11 +157,11 @@ const DiditAuthProvider = ({
       console.error('Error logging out from Didit: ', error);
       return Promise.reject(error);
     }
-  }, [accessToken]);
+  }, [accessToken, authBaseUrl]);
 
   // deauthenticate is used to force a frontend only logout. It remvoes all authentication data from the browser
   const deauthenticate = useCallback(() => {
-    setStatus(AuthenticationStatus.UNAUTHENTICATED);
+    setStatus(DiditAuthStatus.UNAUTHENTICATED);
     removeTokens();
     removeAuthMethod();
     setError('');
@@ -177,7 +176,7 @@ const DiditAuthProvider = ({
   // logout is the callback used to logout from the SDK.
   const logout = useCallback(async () => {
     try {
-      if (status === AuthenticationStatus.AUTHENTICATED && !!accessToken) {
+      if (status === DiditAuthStatus.AUTHENTICATED && !!accessToken) {
         await logoutFromDidit();
       }
       deauthenticate();
@@ -195,6 +194,77 @@ const DiditAuthProvider = ({
     },
     [setError, onError]
   );
+
+  const rotateTokens = useCallback(async () => {
+    const payload = {
+      client_id: clientId,
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+    };
+
+    const response = await fetch(
+      `${authBaseUrl}${DIDIT.AUTH_ROTATE_TOKEN_PATH}`,
+      {
+        body: JSON.stringify(payload),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+      }
+    );
+    if (response.ok) {
+      // Handle successful response here
+      const newtokens = await response.json();
+      const { access_token, refresh_token } = newtokens;
+      updateTokens({ access_token, refresh_token });
+      // User is only authenticated when the token has been validated or rotated (status is loading until then)
+      authenticate(authMethod as DiditAuthMethod);
+    } else {
+      deauthenticate();
+      console.warn('unable to refresh token');
+    }
+  }, [
+    authBaseUrl,
+    clientId,
+    refreshToken,
+    authMethod,
+    authenticate,
+    updateTokens,
+    deauthenticate,
+  ]);
+
+  const checkAccessToken = useCallback(async () => {
+    const response = await fetch(`${authBaseUrl}${DIDIT.AUTH_INTOSPECT_PATH}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      method: 'POST',
+    });
+
+    if (response.status === 200) {
+      // Handle successful response here
+      const decodedJwt = await response.json();
+      if (decodedJwt.active === true) {
+        // User is only authenticated when the token has been validated or rotated (status is loading until then)
+        authenticate(authMethod as DiditAuthMethod);
+      } else {
+        // refresh token
+        await rotateTokens();
+      }
+    } else if (response.status === 401) {
+      await rotateTokens();
+    } else {
+      deauthenticate();
+      console.warn('Invalid access token');
+    }
+  }, [
+    authBaseUrl,
+    accessToken,
+    deauthenticate,
+    rotateTokens,
+    authMethod,
+    authenticate,
+  ]);
 
   const validateClaims = useCallback(() => {
     // Check if claims is a valid string with one or more claims separated by spaces
@@ -223,15 +293,17 @@ const DiditAuthProvider = ({
       firstRender.current = false;
       return;
     }
-    // TODO: Check if token is valid through Didit Auth service API
+
     if (!!accessToken && !!authMethod) {
       try {
+        setStatus(DiditAuthStatus.LOADING); // Set status to loading while checking the access token
         checkAccessToken();
       } catch (error) {
         console.warn('Error checking access token: ', error);
+        // Consolidate logout status in both frontend and backend
         forceCompleteLogout();
       }
-    } else {
+    } else if (status !== DiditAuthStatus.LOADING) {
       // Consolidate logout status in both frontend and backend
       forceCompleteLogout();
     }
@@ -243,74 +315,6 @@ const DiditAuthProvider = ({
     validateClaims();
     validateScope();
   }, [validateClaims, validateScope]);
-
-  const rotateTokens = useCallback(async () => {
-    const payload = {
-      client_id: clientId,
-      grant_type: 'refresh_token',
-      refresh_token: refreshToken,
-    };
-
-    const response = await fetch(
-      `${authBaseUrl}${DIDIT.AUTH_ROTATE_TOKEN_PATH}`,
-      {
-        body: JSON.stringify(payload),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
-      }
-    );
-    if (response.ok) {
-      // Handle successful response here
-      const newtokens = await response.json();
-      const { access_token, refresh_token } = newtokens;
-      updateTokens({ access_token, refresh_token });
-      authenticate(authMethod as DiditAuthMethod);
-    } else {
-      deauthenticate();
-      console.warn('unable to refresh token');
-    }
-  }, [
-    authBaseUrl,
-    clientId,
-    refreshToken,
-    authMethod,
-    authenticate,
-    updateTokens,
-    deauthenticate,
-  ]);
-
-  const checkAccessToken = useCallback(async () => {
-    const response = await fetch(`${authBaseUrl}${DIDIT.AUTH_INTOSPECT_PATH}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-      method: 'POST',
-    });
-    if (response.status === 200) {
-      // Handle successful response here
-      const decodedJwt = await response.json();
-      if (decodedJwt.active === true) {
-        authenticate(authMethod as DiditAuthMethod);
-      } else {
-        // refresh token
-        await rotateTokens();
-      }
-    } else if (response.status === 401) {
-      await rotateTokens();
-    } else {
-      deauthenticate();
-      console.warn('Invalid access token');
-    }
-  }, [
-    authBaseUrl,
-    accessToken,
-    deauthenticate,
-    rotateTokens,
-    authMethod,
-    authenticate,
-  ]);
 
   const contextValue = useMemo(
     () => ({
@@ -351,7 +355,7 @@ const DiditAuthProvider = ({
         emailAuthBaseUrl={authBaseUrl}
         emailAuthMode={emailAuthMode}
         error={error}
-        onAuthenticate={authenticate}
+        onAuthenticate={setAuthMethod}
         onDeauthenticate={deauthenticate}
         onError={handleError}
         onUpdateAuthMethod={setAuthMethod}
@@ -366,7 +370,7 @@ const DiditAuthProvider = ({
           authMethod={authMethod}
           claims={claims}
           error={error}
-          onAuthenticate={authenticate}
+          onAuthenticate={setAuthMethod}
           onDeauthenticate={deauthenticate}
           onError={handleError}
           onUpdateTokens={updateTokens}

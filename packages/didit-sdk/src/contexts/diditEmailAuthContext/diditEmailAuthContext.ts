@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { AuthenticationStatus, SocialAuthProvider } from '../../types';
+import { DiditAuthStatus, SocialAuthProvider } from '../../types';
 
 const CONTEXT_NAME = 'DiditEmailAuth';
 
@@ -9,7 +9,7 @@ interface DiditEmailAuthContextState {
   loginWithEmail: () => void;
   loginWithGoogle: () => void;
   loginWithSocial: (socialAuthProvider: SocialAuthProvider) => void;
-  status: AuthenticationStatus;
+  status: DiditAuthStatus;
   token?: string;
 }
 
@@ -19,7 +19,7 @@ const defaultState: DiditEmailAuthContextState = {
   loginWithEmail: () => {},
   loginWithGoogle: () => {},
   loginWithSocial: () => {},
-  status: AuthenticationStatus.LOADING,
+  status: DiditAuthStatus.UNAUTHENTICATED,
   token: undefined,
 };
 

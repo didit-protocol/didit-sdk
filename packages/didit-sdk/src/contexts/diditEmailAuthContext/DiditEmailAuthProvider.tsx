@@ -2,8 +2,8 @@ import { useLocalStorageValue } from '@react-hookz/web';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DIDIT } from '../../config';
 import {
-  AuthenticationStatus,
   DiditAuthMethod,
+  DiditAuthStatus,
   DiditEmailAuthMode,
   DiditTokensData,
   SocialAuthProvider,
@@ -26,7 +26,7 @@ interface DiditEmailAuthProviderProps {
   onUpdateAuthMethod?: (authMethod: DiditAuthMethod) => void;
   redirectUri: string;
   scope: string;
-  status: AuthenticationStatus;
+  status: DiditAuthStatus;
   token?: string;
 }
 
@@ -216,13 +216,12 @@ const DiditEmailAuthProvider = ({
   const getDiditToken = useCallback(
     async (_authorizationCode: string, _codeVerifier: string) => {
       const tokenUrl = `${emailAuthBaseUrl}${DIDIT.EMAIL_AUTH_TOKEN_PATH}`;
-
       const tokenBody = new URLSearchParams();
       tokenBody.append('client_id', clientId);
       tokenBody.append('code', _authorizationCode);
       tokenBody.append('code_verifier', _codeVerifier);
       tokenBody.append('grant_type', 'authorization_code');
-      tokenBody.append('redirect_uri', `http://localhost:3000/callback`);
+      tokenBody.append('redirect_uri', redirectUri);
 
       try {
         const tokenData = await fetch(tokenUrl, {
@@ -233,14 +232,19 @@ const DiditEmailAuthProvider = ({
           .catch(error =>
             handleTokenError('Error retrieving Didit token', String(error))
           );
-
         handleTokenSuccess(tokenData);
         return tokenData;
       } catch (error) {
         handleTokenError('Error retrieving Didit token', String(error));
       }
     },
-    [clientId, emailAuthBaseUrl, handleTokenError, handleTokenSuccess]
+    [
+      clientId,
+      emailAuthBaseUrl,
+      handleTokenError,
+      handleTokenSuccess,
+      redirectUri,
+    ]
   );
 
   const loginWithGoogle = useCallback(
@@ -292,7 +296,10 @@ const DiditEmailAuthProvider = ({
     const windowUrl = windowLocation.origin + windowLocation.pathname;
 
     // If there is a parent window and redirect uri matches, we are in the popup
-    if (isPopupWindow && windowUrl === redirectUri) {
+    if (
+      isPopupWindow &&
+      windowUrl.replace(/\/$/, '') === redirectUri.replace(/\/$/, '')
+    ) {
       // Redirect the parent window to the current URL with search params
       window.opener.location.href = windowLocation.href;
       // Close the popup

@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react';
 import {
-  AuthenticationStatus,
   DiditAuthMethod,
+  DiditAuthStatus,
   DiditTokenInfo,
   DiditUser,
 } from '../../types';
@@ -13,7 +13,7 @@ interface DiditAuthContextState {
   availableAuthMethods: DiditAuthMethod[];
   error?: string;
   logout: () => void;
-  status: AuthenticationStatus;
+  status: DiditAuthStatus;
   accessToken?: string;
   refreshToken?: string;
   accessTokenInfo?: DiditTokenInfo;
@@ -28,7 +28,7 @@ const defaultState: DiditAuthContextState = {
   error: undefined,
   logout: () => {},
   refreshToken: undefined,
-  status: AuthenticationStatus.LOADING,
+  status: DiditAuthStatus.UNAUTHENTICATED,
   user: undefined,
 };
 

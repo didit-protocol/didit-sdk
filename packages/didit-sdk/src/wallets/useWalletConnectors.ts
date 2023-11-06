@@ -1,6 +1,6 @@
 import { Connector, useConnect } from 'wagmi';
 import { useDiditAuthContext } from '../contexts/diditAuthContext';
-import { AuthenticationStatus, DiditAuthMethod } from '../types';
+import { DiditAuthMethod, DiditAuthStatus } from '../types';
 import { flatten } from '../utils/flatten';
 import { indexBy } from '../utils/indexBy';
 import { isNotNullish } from '../utils/isNotNullish';
@@ -34,7 +34,7 @@ export function useWalletConnectors(): WalletConnector[] {
 
     // Force logout if the user is authenticated with a non-wallet method before connecting a wallet
     if (
-      status === AuthenticationStatus.AUTHENTICATED &&
+      status === DiditAuthStatus.AUTHENTICATED &&
       authMethod !== DiditAuthMethod.WALLET
     )
       logout();

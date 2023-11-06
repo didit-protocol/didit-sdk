@@ -284,7 +284,7 @@ You can use the `useDiditAuth` hook to retrieve the authentication status and cu
 - `status`: The current authentication status ('loading', 'authenticated', 'unauthenticated')
 
   ```tsx
-  import { AuthenticationStatus } from 'didit-sdk';
+  import { DiditAuthStatus } from 'didit-sdk';
   ```
 
 - `accessToken`: The current **Didit** access token
@@ -371,3 +371,42 @@ return (
 )
 
 ```
+
+##### Special cases
+
+###### App with localized routing
+
+In case you have localized routing in your app there are two possible ways to configure the `redirectUri` prop in the `DiditAuthProvider`:
+
+1. You create a single page and route withouth localization and use the `redirectUri` prop as usual:
+
+```tsx
+import { DiditAuthProvider } from 'didit-sdk';
+
+...
+
+  <DiditAuthProvider
+    clientId="676573"
+    redirectUri="http://your-app.com/no-locale-login/callback"
+  >
+    {children}
+  </DiditAuthProvider>
+```
+
+2. You can use a dynamic `redirectUri` prop based on the current language or locale:
+
+```tsx
+
+import { DiditAuthProvider } from 'didit-sdk';
+
+...
+
+  <DiditAuthProvider
+    clientId="676573"
+    redirectUri={`http://your-app.com/${locale}/login/callback`}
+  >
+    {children}
+  </DiditAuthProvider>
+```
+
+> Note: In case you use the second option, you will need to add each of the `redirectUri` to your **Didit** client configuration for each language or locale to support all the possible routes.

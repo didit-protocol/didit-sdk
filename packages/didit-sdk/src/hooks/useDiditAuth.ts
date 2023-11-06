@@ -3,7 +3,7 @@ import { RainbowKitAuthenticationContext } from '../components/RainbowKitProvide
 import { useConnectModal } from '../components/RainbowKitProvider/ModalContext';
 import { useDiditAuthContext } from '../contexts/diditAuthContext';
 import { useDiditEmailAuthContext } from '../contexts/diditEmailAuthContext';
-import { AuthenticationStatus, DiditAuthMethod } from '../types';
+import { DiditAuthMethod, DiditAuthStatus } from '../types';
 import usePreviousState from './usePreviousState';
 
 interface UseDiditAuthProps {
@@ -37,12 +37,12 @@ const useDiditAuth = ({
 
   // Boolean status
   const isAuthenticated = useMemo(() => {
-    if (status === AuthenticationStatus.AUTHENTICATED) return true;
-    if (status === AuthenticationStatus.UNAUTHENTICATED) return false;
+    if (status === DiditAuthStatus.AUTHENTICATED) return true;
+    if (status === DiditAuthStatus.UNAUTHENTICATED) return false;
     return undefined;
   }, [status]);
   const prevIsAuthenticated = usePreviousState(isAuthenticated);
-  const isLoading = status === AuthenticationStatus.LOADING;
+  const isLoading = status === DiditAuthStatus.LOADING;
   const hasError = !!error;
 
   const login = useCallback(
