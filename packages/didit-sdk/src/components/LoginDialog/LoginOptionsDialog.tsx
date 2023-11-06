@@ -66,7 +66,7 @@ const LoginOptionsDialog: FC<LoginOptionsDialogProps> = ({
             className={buttonClassName}
             icon={<SocialIcon />}
             isDisabled={isAuthenticated}
-            label="Continue with a social account"
+            label="Continue with Social Account"
             onClick={onLoginWithSocials}
           />
         )}
