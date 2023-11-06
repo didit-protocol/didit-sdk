@@ -222,7 +222,7 @@ const DiditEmailAuthProvider = ({
       tokenBody.append('code', _authorizationCode);
       tokenBody.append('code_verifier', _codeVerifier);
       tokenBody.append('grant_type', 'authorization_code');
-      tokenBody.append('redirect_uri', `http://localhost:3000/callback`);
+      tokenBody.append('redirect_uri', redirectUri);
 
       try {
         const tokenData = await fetch(tokenUrl, {
@@ -240,7 +240,13 @@ const DiditEmailAuthProvider = ({
         handleTokenError('Error retrieving Didit token', String(error));
       }
     },
-    [clientId, emailAuthBaseUrl, handleTokenError, handleTokenSuccess]
+    [
+      clientId,
+      emailAuthBaseUrl,
+      handleTokenError,
+      handleTokenSuccess,
+      redirectUri,
+    ]
   );
 
   const loginWithGoogle = useCallback(
