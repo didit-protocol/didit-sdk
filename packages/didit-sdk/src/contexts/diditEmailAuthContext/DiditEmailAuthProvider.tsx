@@ -161,6 +161,7 @@ const DiditEmailAuthProvider = ({
       // Generate the authorization url
       const authorizeUrl = `${authorizationUrl}?${params.toString()}`;
 
+      // Generate the authorization url
       return authorizeUrl;
     },
     [
