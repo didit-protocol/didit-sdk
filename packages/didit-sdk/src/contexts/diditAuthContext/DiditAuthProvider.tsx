@@ -293,8 +293,7 @@ const DiditAuthProvider = ({
       firstRender.current = false;
       return;
     }
-
-    if (!!accessToken && !!authMethod) {
+    if (!!accessToken && !!refreshToken) {
       try {
         // setStatus(DiditAuthStatus.LOADING); // Set status to loading while checking the access token
         checkAccessToken();
@@ -305,10 +304,11 @@ const DiditAuthProvider = ({
       }
     } else {
       // Consolidate logout status in both frontend and backend
-      forceCompleteLogout();
+      // instead of forcing logout we only set the status to unauthenticated
+      setStatus(DiditAuthStatus.UNAUTHENTICATED);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authMethod, accessToken]);
+  }, [accessToken, refreshToken]);
 
   // Validate configurable props
   useEffect(() => {
