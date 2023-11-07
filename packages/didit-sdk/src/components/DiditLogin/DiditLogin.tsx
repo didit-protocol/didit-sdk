@@ -4,7 +4,7 @@ import { LoginDialog } from '../LoginDialog';
 import LoginModal from '../LoginModal/LoginModal';
 
 const LOGIN_DIALOG_DEFAULT_TITLE = 'Sign In With Didit';
-const LOGIN_DIALOG_DEFAULT_DESCRIPTION = '';
+const LOGIN_DIALOG_DEFAULT_DESCRIPTION = 'Access with your universal identity';
 
 const mode_map = {
   [DiditLoginMode.EMBEDDED]: LoginDialog,
