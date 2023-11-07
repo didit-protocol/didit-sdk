@@ -21,7 +21,7 @@ import { DiditEmailAuthProvider } from '../diditEmailAuthContext';
 import { ConditionalWalletProvider } from '../diditWalletContext';
 import { DiditAuthContext } from './diditAuthContext';
 
-const INITIAL_AUTH_STATUS = DiditAuthStatus.UNAUTHENTICATED;
+const INITIAL_AUTH_STATUS = DiditAuthStatus.LOADING;
 
 type DiditAuthProviderProps = {
   authBaseUrl?: string;
@@ -296,14 +296,14 @@ const DiditAuthProvider = ({
 
     if (!!accessToken && !!authMethod) {
       try {
-        setStatus(DiditAuthStatus.LOADING); // Set status to loading while checking the access token
+        // setStatus(DiditAuthStatus.LOADING); // Set status to loading while checking the access token
         checkAccessToken();
       } catch (error) {
         console.warn('Error checking access token: ', error);
         // Consolidate logout status in both frontend and backend
         forceCompleteLogout();
       }
-    } else if (status !== DiditAuthStatus.LOADING) {
+    } else {
       // Consolidate logout status in both frontend and backend
       forceCompleteLogout();
     }
