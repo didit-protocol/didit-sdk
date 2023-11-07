@@ -66,28 +66,19 @@ const DiditAuthProvider = ({
 }: DiditAuthProviderProps) => {
   const firstRender = useRef(true);
 
-  const {
-    remove: removeAccessToken,
-    set: setAccessToken,
-    value: accessToken,
-  } = useLocalStorageValue<string>(DIDIT.TOKEN_COOKIE_NAME, {
-    initializeWithValue: false,
-  });
-  const {
-    remove: removeRefreshToken,
-    set: setRefreshToken,
-    value: refreshToken,
-  } = useLocalStorageValue<string>(DIDIT.REFRESH_TOKEN_COOKIE_NAME, {
-    initializeWithValue: false,
-  });
+  const { set: setAccessToken, value: accessToken } =
+    useLocalStorageValue<string>(DIDIT.TOKEN_COOKIE_NAME, {
+      initializeWithValue: false,
+    });
+  const { set: setRefreshToken, value: refreshToken } =
+    useLocalStorageValue<string>(DIDIT.REFRESH_TOKEN_COOKIE_NAME, {
+      initializeWithValue: false,
+    });
 
-  const {
-    remove: removeAuthMethod,
-    set: setAuthMethod,
-    value: authMethod,
-  } = useLocalStorageValue<DiditAuthMethod>(DIDIT.AUTH_METHOD_COOKIE_NAME, {
-    initializeWithValue: false,
-  });
+  const { set: setAuthMethod, value: authMethod } =
+    useLocalStorageValue<DiditAuthMethod>(DIDIT.AUTH_METHOD_COOKIE_NAME, {
+      initializeWithValue: false,
+    });
 
   const [status, setStatus] = useState<DiditAuthStatus>(INITIAL_AUTH_STATUS);
   const [error, setError] = useState('');
@@ -118,9 +109,12 @@ const DiditAuthProvider = ({
   );
 
   const removeTokens = useCallback(() => {
-    removeAccessToken();
-    removeRefreshToken();
-  }, [removeAccessToken, removeRefreshToken]);
+    // instead of remove data from local storage, we set empty value
+    // to trigget localstorage change event, remove the value doesn't trigger
+    // the change. so the second tab desn't know that value is deleted
+    setAccessToken('');
+    setRefreshToken('');
+  }, [setAccessToken, setRefreshToken]);
 
   const authenticate = useCallback(
     (_authMethod: DiditAuthMethod) => {
@@ -163,9 +157,9 @@ const DiditAuthProvider = ({
   const deauthenticate = useCallback(() => {
     setStatus(DiditAuthStatus.UNAUTHENTICATED);
     removeTokens();
-    removeAuthMethod();
+    setAuthMethod('' as DiditAuthMethod);
     setError('');
-  }, [removeAuthMethod, removeTokens]);
+  }, [setAuthMethod, removeTokens]);
 
   // forceCompleteLogout is used to force a complete logout from the Didit service and from the frontend.
   const forceCompleteLogout = useCallback(() => {
