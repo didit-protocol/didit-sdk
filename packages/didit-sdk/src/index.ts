@@ -40,7 +40,7 @@ export {
   DiditAuthMethod,
   DiditEmailAuthMode,
   DiditLoginMode,
-  AuthenticationStatus,
+  DiditAuthStatus,
 } from './types';
 export {
   useDiditStatus,

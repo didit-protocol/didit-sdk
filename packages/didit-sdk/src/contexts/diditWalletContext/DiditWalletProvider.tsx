@@ -8,11 +8,7 @@ import {
 } from '../../components/RainbowKitProvider/AuthenticationContext';
 import { RainbowKitProviderProps } from '../../components/RainbowKitProvider/DiditRainbowkitProvider';
 import { DIDIT } from '../../config';
-import {
-  AuthenticationStatus,
-  DiditAuthMethod,
-  DiditTokensData,
-} from '../../types';
+import { DiditAuthMethod, DiditAuthStatus, DiditTokensData } from '../../types';
 
 export type DiditWalletProviderProps = {
   authMethod?: DiditAuthMethod;
@@ -25,7 +21,7 @@ export type DiditWalletProviderProps = {
   onError?: (error: string) => void;
   onUpdateTokens?: (tokens: DiditTokensData) => void;
   scope: string;
-  status?: AuthenticationStatus;
+  status?: DiditAuthStatus;
   token?: string;
   tokenAuthorizationPath?: string;
   walletAuthBaseUrl?: string;
@@ -43,7 +39,7 @@ export function DiditWalletProvider({
   onError = () => {},
   onUpdateTokens = () => {},
   scope,
-  status = AuthenticationStatus.LOADING,
+  status = DiditAuthStatus.UNAUTHENTICATED,
   token = '',
   tokenAuthorizationPath = DIDIT.DEFAULT_WALLET_AUTH_TOKEN_PATH,
   walletAuthBaseUrl = DIDIT.DEFAULT_WALLET_AUTH_BASE_URL,
