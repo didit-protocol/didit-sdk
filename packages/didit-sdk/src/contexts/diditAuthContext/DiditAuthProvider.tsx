@@ -64,8 +64,6 @@ const DiditAuthProvider = ({
   walletAuthorizationPath = DIDIT.DEFAULT_WALLET_AUTH_AUTHORIZATION_PATH,
   ...RainbowKitProps
 }: DiditAuthProviderProps) => {
-  const firstRender = useRef(true);
-
   const { set: setAccessToken, value: accessToken } =
     useLocalStorageValue<string>(DIDIT.TOKEN_COOKIE_NAME, {
       initializeWithValue: false,
@@ -282,6 +280,7 @@ const DiditAuthProvider = ({
     return true;
   }, [scope]);
 
+  const firstRender = useRef(true);
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
@@ -300,6 +299,8 @@ const DiditAuthProvider = ({
       // Consolidate logout status in both frontend and backend
       // instead of forcing logout we only set the status to unauthenticated
       setStatus(DiditAuthStatus.UNAUTHENTICATED);
+      console.warn('Logout');
+      onLogout?.();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessToken, refreshToken]);
