@@ -18,6 +18,8 @@ import {
 } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import Home from './pages/Home';
+import Callback from './pages/Callback';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
@@ -44,6 +46,21 @@ const wagmiConfig = createConfig({
   publicClient,
   webSocketPublicClient,
 });
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Home />,
+  },
+  {
+    path: '/login',
+    element: <Home />,
+  },
+  {
+    path: '/callback',
+    element: <Callback />,
+  },
+]);
 
 function App() {
   return (
@@ -73,7 +90,7 @@ function App() {
         chains={chains}
         theme={lightTheme()}
       >
-        <Home />
+        <RouterProvider router={router} />
       </DiditAuthProvider>
     </WagmiConfig>
   );
