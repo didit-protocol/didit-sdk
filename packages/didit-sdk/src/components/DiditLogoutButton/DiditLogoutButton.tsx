@@ -19,7 +19,7 @@ const DiditLogoutButton: FC<DiditLogoutButtonProps> = ({
     <DiditButton
       className={className}
       dataTestId={dataTestId}
-      isDisabled={!isAuthenticated}
+      isDisabled={isAuthenticated !== true} // Authenticated or loading
       label={label}
       onClick={logout}
     />

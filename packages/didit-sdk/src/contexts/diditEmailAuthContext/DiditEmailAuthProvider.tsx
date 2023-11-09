@@ -50,7 +50,7 @@ const DiditEmailAuthProvider = ({
 }: DiditEmailAuthProviderProps) => {
   // Sanitize window values. Window reference is not available in SSR (nextjs)
   const isPopupWindow = typeof window !== 'undefined' && !!window?.opener;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   const windowLocation =
     typeof window !== 'undefined'
       ? window?.location
@@ -60,6 +60,13 @@ const DiditEmailAuthProvider = ({
           pathname: '',
           search: '',
         };
+
+  const isRedirectUrl = useMemo(() => {
+    const windowUrl = windowLocation?.origin + windowLocation?.pathname;
+    const _redirectUri = new URL(redirectUri);
+    const redirectUrl = _redirectUri?.origin + _redirectUri?.pathname;
+    return windowUrl.replace(/\/$/, '') === redirectUrl.replace(/\/$/, '');
+  }, [redirectUri, windowLocation?.origin, windowLocation?.pathname]);
 
   // Create the Didit auth popup and broadcast channel to communicate with auth popup
   const [diditAuthPopup, setDiditEmailAuthPopup] = useState<Window | null>(
@@ -274,10 +281,7 @@ const DiditEmailAuthProvider = ({
   );
 
   // Effect to request the Didit token when the authorization code is present in the URL
-  useEffect(() => {
-    // Assert token request never happens in the popup window
-    if (isPopupWindow) return;
-
+  const requestDiditAccessToken = useCallback(async () => {
     const urlSearchParams = new URLSearchParams(windowLocation.search);
     const params = Object.fromEntries(urlSearchParams.entries());
 
@@ -290,7 +294,10 @@ const DiditEmailAuthProvider = ({
       window.history.replaceState({}, '', `${windowLocation.pathname}`);
 
       // Request the Didit token
-      getDiditToken(_authorizationCode, codeVerifier);
+      await getDiditToken(_authorizationCode, codeVerifier);
+
+      // Close the popup when the token is retrieved
+      window.close();
     } else if (authorizationError) {
       urlSearchParams.delete('error');
       urlSearchParams.delete('error_description');
@@ -298,25 +305,22 @@ const DiditEmailAuthProvider = ({
 
       handleTokenError(authorizationError, authorizationErrorDescription);
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [windowLocation.search, token, getDiditToken, handleTokenError]);
+  }, [
+    windowLocation.search,
+    windowLocation.pathname,
+    token,
+    codeVerifier,
+    getDiditToken,
+    handleTokenError,
+  ]);
 
   // Effect to propagate redirection from the popup to the parent window
   useEffect(() => {
-    const windowUrl = windowLocation.origin + windowLocation.pathname;
-
     // If there is a parent window and redirect uri matches, we are in the popup
-    if (
-      isPopupWindow &&
-      windowUrl.replace(/\/$/, '') === redirectUri.replace(/\/$/, '')
-    ) {
-      // Redirect the parent window to the current URL with search params
-      window.opener.location.href = windowLocation.href;
-      // Close the popup
-      window.close();
+    if (isPopupWindow && isRedirectUrl) {
+      requestDiditAccessToken(); // Token request always happens in the popup window
     }
-  }, [isPopupWindow, windowLocation, redirectUri]);
+  }, [isPopupWindow, isRedirectUrl, redirectUri, requestDiditAccessToken]);
 
   const contextValue = useMemo(
     () => ({
