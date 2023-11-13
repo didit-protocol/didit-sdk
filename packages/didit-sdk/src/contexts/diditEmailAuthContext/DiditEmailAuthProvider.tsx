@@ -68,7 +68,7 @@ const DiditEmailAuthProvider = ({
     return windowUrl.replace(/\/$/, '') === redirectUrl.replace(/\/$/, '');
   }, [redirectUri, windowLocation?.origin, windowLocation?.pathname]);
 
-  // Create the Didit auth popup and broadcast channel to communicate with auth popup
+  // Create the Didit auth popup
   const [diditAuthPopup, setDiditEmailAuthPopup] = useState<Window | null>(
     null
   );
@@ -197,7 +197,7 @@ const DiditEmailAuthProvider = ({
     // Recalculate the left and top positions just before opening the popup
     const left = window.innerWidth / 2 - width / 2 + window.screenX;
     const top = window.innerHeight / 2 - height / 2 + window.screenY;
-    var popupReference = window.open(
+    const popupReference = window.open(
       '',
       'Authorization',
       `width=${width},height=${height},left=${left},top=${top}`
