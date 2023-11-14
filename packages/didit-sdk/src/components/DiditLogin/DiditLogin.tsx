@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 import { DiditLoginMode } from '../../types';
 import { LoginDialog } from '../LoginDialog';
 import LoginModal from '../LoginModal/LoginModal';
@@ -20,12 +20,16 @@ interface DiditLoginProps {
   onModalClose?: () => void;
   title?: string;
   description?: string;
+  header?: ReactNode;
+  footer?: ReactNode;
 }
 
 const DiditLogin: FC<DiditLoginProps> = ({
   buttonClassName = '',
   dataTestId = '',
   description = LOGIN_DIALOG_DEFAULT_DESCRIPTION,
+  footer = null,
+  header = null,
   isModalOpen = false,
   mode = DiditLoginMode.MODAL,
   onModalClose = () => {},
@@ -39,6 +43,8 @@ const DiditLogin: FC<DiditLoginProps> = ({
       buttonClassName={buttonClassName}
       dataTestId={dataTestId}
       description={description}
+      footer={footer}
+      header={header}
       isOpen={isModalOpen}
       onClose={onModalClose}
       title={title}

@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React, { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 import { useDiditAuth } from '../../hooks';
 import { DiditAuthMethod, SocialAuthProvider } from '../../types';
 import { DiditButton } from '../DiditButton';
@@ -15,12 +15,16 @@ interface LoginOptionsDialogProps {
   onLoginWithSocials?: () => void;
   title: string;
   description: string;
+  header?: ReactNode;
+  footer?: ReactNode;
 }
 
 const LoginOptionsDialog: FC<LoginOptionsDialogProps> = ({
   buttonClassName = '',
   dataTestId = '',
   description,
+  footer = null,
+  header = null,
   onLoginWithSocials = () => {},
   title,
   wrapperClassName = '',
@@ -45,10 +49,14 @@ const LoginOptionsDialog: FC<LoginOptionsDialogProps> = ({
 
   return (
     <div className={LoginClassName} data-testid={dataTestId}>
-      <div className="dialog-text">
-        <h2 className="dialog-text-title">{title}</h2>
-        <p className="dialog-text-description">{description}</p>
-      </div>
+      {header ? (
+        header
+      ) : (
+        <div className="dialog-text">
+          <h2 className="dialog-text-title">{title}</h2>
+          <p className="dialog-text-description">{description}</p>
+        </div>
+      )}
       <div className="dialog-buttons">
         {/*
         { isEmailAuthAvailable && (
@@ -72,13 +80,15 @@ const LoginOptionsDialog: FC<LoginOptionsDialogProps> = ({
         )}
         {isWalletAuthAvailable && <DiditConnectWalletButton />}
       </div>
-      <div className="dialog-error">
-        <DiditError
-          description={error || ''}
-          isHidden={!hasError}
-          title="Opps something went wrong"
-        />
-      </div>
+      {hasError && (
+        <div className="dialog-error">
+          <DiditError
+            description={error || ''}
+            title="Opps something went wrong"
+          />
+        </div>
+      )}
+      {footer}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, ReactNode, useCallback, useState } from 'react';
 // import LeftArrowButton from '../LeftArrowButton/LeftArrowButton';
 import LoginOptionsDialog from './LoginOptionsDialog';
 import SocialOptionsDialog from './SocialOptionsDialog';
@@ -7,6 +7,8 @@ interface LoginDialogProps {
   wrapperClassName?: string;
   buttonClassName?: string;
   dataTestId?: string;
+  header?: ReactNode;
+  footer?: ReactNode;
   title: string;
   description: string;
 }
@@ -14,6 +16,8 @@ const LoginDialog: FC<LoginDialogProps> = ({
   buttonClassName = '',
   dataTestId = '',
   description = '',
+  footer,
+  header,
   title,
   wrapperClassName,
 }) => {
@@ -42,6 +46,8 @@ const LoginDialog: FC<LoginDialogProps> = ({
           buttonClassName={buttonClassName}
           dataTestId={dataTestId}
           description={description}
+          footer={footer}
+          header={header}
           onLoginWithSocials={HandleLoginWithSocials}
           title={title}
           wrapperClassName={wrapperClassName}

@@ -134,12 +134,52 @@ export default function Home() {
                   <DiditLogin
                     isModalOpen={isLoginModalOpen}
                     onModalClose={() => setIsLoginModalOpen(false)}
+                    header={
+                      <div className="w-full">
+                        <h1 className="m-0 mb-4 text-2xl font-medium">
+                          Signup to
+                          <strong className="text-blue-700"> Didit</strong>
+                        </h1>
+                        <p>All you issentials in one place</p>
+                      </div>
+                    }
+                    footer={
+                      <div className=" text-sm">
+                        You don't have an account?{' '}
+                        <a href="mode=signup">
+                          <span className="font-bold text-blue-700">
+                            register
+                          </span>
+                        </a>
+                      </div>
+                    }
                   />
                 </div>
               )}
               {modeSelected === 'embedded' && (
                 <div className="flex flex-col space-y-2">
-                  <DiditLogin mode={DiditLoginMode.EMBEDDED} />
+                  <DiditLogin
+                    mode={DiditLoginMode.EMBEDDED}
+                    header={
+                      <div className="w-full">
+                        <h1 className="m-0 mb-4 text-2xl font-medium">
+                          Signup to
+                          <strong className="text-blue-700"> Didit</strong>
+                        </h1>
+                        <p>All you issentials in one place</p>
+                      </div>
+                    }
+                    footer={
+                      <div className=" text-sm">
+                        You don't have an account?{' '}
+                        <a href="mode=signup">
+                          <span className="font-bold text-blue-700">
+                            register
+                          </span>
+                        </a>
+                      </div>
+                    }
+                  />
                 </div>
               )}
             </>

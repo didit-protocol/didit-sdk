@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 import { Box } from '../Box/Box';
 import { CloseButton } from '../CloseButton/CloseButton';
 import { Dialog } from '../Dialog/Dialog';
@@ -13,12 +13,16 @@ interface LoginModalProps {
   onClose: () => void;
   title: string;
   description: string;
+  header: ReactNode;
+  footer: ReactNode;
 }
 
 const LoginModal: FC<LoginModalProps> = ({
   buttonClassName = '',
   dataTestId = '',
   description,
+  footer = null,
+  header = null,
   isOpen = false,
   onClose = () => {},
   title,
@@ -47,6 +51,8 @@ const LoginModal: FC<LoginModalProps> = ({
             buttonClassName={buttonClassName}
             dataTestId={dataTestId}
             description={description}
+            footer={footer}
+            header={header}
             title={title}
             wrapperClassName={wrapperClassName}
           />
