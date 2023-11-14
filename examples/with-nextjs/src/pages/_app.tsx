@@ -51,12 +51,15 @@ export default function App({ Component, pageProps }: AppProps) {
           console.warn('Logged in Didit with', _authMethod)
         }
         onLogout={() => console.warn('Logged out Didit')}
-        redirectUri={process.env.NEXT_PUBLIC_DIDIT_REDIRECT_URI || ''}
+        redirectUri={
+          process.env.NEXT_PUBLIC_DIDIT_REDIRECT_URI || 'http://localhost'
+        }
         scope={process.env.NEXT_PUBLIC_DIDIT_SCOPE}
         theme={lightTheme()}
         tokenAuthorizationPath="/token"
         walletAuthBaseUrl={
-          process.env.NEXT_PUBLIC_DIDIT_WALLET_AUTH_BASE_URL || ''
+          process.env.NEXT_PUBLIC_DIDIT_WALLET_AUTH_BASE_URL ||
+          'http://localhost'
         }
         walletAuthorizationPath="/wallet-authorization"
       >
