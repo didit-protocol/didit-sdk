@@ -132,6 +132,25 @@ export default function Home() {
               {modeSelected === 'modal' && (
                 <div className="flex flex-col space-y-2">
                   <DiditLogin
+                    footer={
+                      <div className=" text-sm">
+                        You dont have an account?{' '}
+                        <a href="mode=signup">
+                          <span className="font-bold text-blue-700">
+                            register
+                          </span>
+                        </a>
+                      </div>
+                    }
+                    header={
+                      <div className="w-full">
+                        <h1 className="m-0 mb-4 text-2xl font-medium">
+                          Signup to
+                          <strong className="text-blue-700"> Didit</strong>
+                        </h1>
+                        <p>All your life essentials in one place</p>
+                      </div>
+                    }
                     isModalOpen={isLoginModalOpen}
                     onModalClose={() => setIsLoginModalOpen(false)}
                   />
@@ -139,7 +158,28 @@ export default function Home() {
               )}
               {modeSelected === 'embedded' && (
                 <div className="flex flex-col space-y-2">
-                  <DiditLogin mode={DiditLoginMode.EMBEDDED} />
+                  <DiditLogin
+                    footer={
+                      <div className=" text-sm">
+                        You dont have an account?{' '}
+                        <a href="mode=signup">
+                          <span className="font-bold text-blue-700">
+                            register
+                          </span>
+                        </a>
+                      </div>
+                    }
+                    header={
+                      <div className="w-full">
+                        <h1 className="m-0 mb-4 text-2xl font-medium">
+                          Signup to
+                          <strong className="text-blue-700"> Didit</strong>
+                        </h1>
+                        <p>All you issentials in one place</p>
+                      </div>
+                    }
+                    mode={DiditLoginMode.EMBEDDED}
+                  />
                 </div>
               )}
             </>
