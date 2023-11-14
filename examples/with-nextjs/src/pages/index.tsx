@@ -148,7 +148,7 @@ export default function Home() {
                           Signup to
                           <strong className="text-blue-700"> Didit</strong>
                         </h1>
-                        <p>All you issentials in one place</p>
+                        <p>All your life essentials in one place</p>
                       </div>
                     }
                     isModalOpen={isLoginModalOpen}
