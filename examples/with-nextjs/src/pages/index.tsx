@@ -132,8 +132,16 @@ export default function Home() {
               {modeSelected === 'modal' && (
                 <div className="flex flex-col space-y-2">
                   <DiditLogin
-                    isModalOpen={isLoginModalOpen}
-                    onModalClose={() => setIsLoginModalOpen(false)}
+                    footer={
+                      <div className=" text-sm">
+                        You dont have an account?{' '}
+                        <a href="mode=signup">
+                          <span className="font-bold text-blue-700">
+                            register
+                          </span>
+                        </a>
+                      </div>
+                    }
                     header={
                       <div className="w-full">
                         <h1 className="m-0 mb-4 text-2xl font-medium">
@@ -143,23 +151,24 @@ export default function Home() {
                         <p>All you issentials in one place</p>
                       </div>
                     }
-                    footer={
-                      <div className=" text-sm">
-                        You don't have an account?{' '}
-                        <a href="mode=signup">
-                          <span className="font-bold text-blue-700">
-                            register
-                          </span>
-                        </a>
-                      </div>
-                    }
+                    isModalOpen={isLoginModalOpen}
+                    onModalClose={() => setIsLoginModalOpen(false)}
                   />
                 </div>
               )}
               {modeSelected === 'embedded' && (
                 <div className="flex flex-col space-y-2">
                   <DiditLogin
-                    mode={DiditLoginMode.EMBEDDED}
+                    footer={
+                      <div className=" text-sm">
+                        You dont have an account?{' '}
+                        <a href="mode=signup">
+                          <span className="font-bold text-blue-700">
+                            register
+                          </span>
+                        </a>
+                      </div>
+                    }
                     header={
                       <div className="w-full">
                         <h1 className="m-0 mb-4 text-2xl font-medium">
@@ -169,16 +178,7 @@ export default function Home() {
                         <p>All you issentials in one place</p>
                       </div>
                     }
-                    footer={
-                      <div className=" text-sm">
-                        You don't have an account?{' '}
-                        <a href="mode=signup">
-                          <span className="font-bold text-blue-700">
-                            register
-                          </span>
-                        </a>
-                      </div>
-                    }
+                    mode={DiditLoginMode.EMBEDDED}
                   />
                 </div>
               )}
