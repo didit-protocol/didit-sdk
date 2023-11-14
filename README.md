@@ -4,7 +4,7 @@
 
 # Didit-SDK
 
-**The easiest way to connect to [Didit protocol(https://docs.didit.me/)]**
+**The easiest way to connect to [Didit protocol](https://docs.didit.me/)**
 
 Didit-SDK is a [React](https://reactjs.org/) library that makes it easy to add wallet connection to your dapp.
 
@@ -12,6 +12,10 @@ Didit-SDK is a [React](https://reactjs.org/) library that makes it easy to add w
 - 🔥 Out-of-the-box wallet management
 - ✅ Easily customizable
 - 🦄 Built on top of [rainbowkit](https://www.rainbowkit.com), [wagmi](https://wagmi.sh) and [viem](https://viem.sh)
+
+## Repository
+
+Didit SDK [Github Repo](https://github.com/didit-protocol/didit-sdk)
 
 ## Try it out
 
