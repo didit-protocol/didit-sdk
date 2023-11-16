@@ -317,10 +317,12 @@ const DiditEmailAuthProvider = ({
   // Effect to propagate redirection from the popup to the parent window
   useEffect(() => {
     // If there is a parent window and redirect uri matches, we are in the popup
-    if (isPopupWindow && isRedirectUrl) {
+    // Request a token only when we have defined a new code verifier (avoid multiple token requests)
+    if (isPopupWindow && isRedirectUrl && codeVerifier) {
       requestDiditAccessToken(); // Token request always happens in the popup window
     }
-  }, [isPopupWindow, isRedirectUrl, redirectUri, requestDiditAccessToken]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [codeVerifier]);
 
   const contextValue = useMemo(
     () => ({
